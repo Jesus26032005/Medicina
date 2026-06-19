@@ -22,6 +22,7 @@ import { supabase } from '../../lib/supabaseClient';
 const SUCCESS_WINDOW_MS = 100;
 const PRECISION_WINDOW_MS = 250;
 const MIN_INTERVAL_BETWEEN_PRESSES_MS = 250;
+const MIN_VALID_PRESSES_FOR_SCORE = 5;
 const durationOptions = [
   { label: 'Modo Practica (30s)', value: 30000 },
   { label: 'Modo Estandar (60s)', value: 60000 },
@@ -95,6 +96,26 @@ function getBeatWindowAverage(beatScores, startMs, endMs, durationMs, beatInterv
 }
 
 function buildResults(attempts, durationMs, beatIntervalMs, targetBPM, spamAttempts) {
+  if (attempts.length < MIN_VALID_PRESSES_FOR_SCORE) {
+    const totalBeats = getTotalBeats(durationMs, beatIntervalMs);
+
+    return {
+      averageBPM: 0,
+      bpmAdherence: 0,
+      errorsCount: totalBeats + spamAttempts,
+      failedPresses: 0,
+      finalPrecision: 0,
+      initialPrecision: 0,
+      inactive: true,
+      mechanicalPrecision: 0,
+      missedBeats: totalBeats,
+      score: 0,
+      spamAttempts,
+      successfulHits: 0,
+      totalBeats,
+    };
+  }
+
   const beatScores = new Map();
   let failedPresses = 0;
 
@@ -136,6 +157,7 @@ function buildResults(attempts, durationMs, beatIntervalMs, targetBPM, spamAttem
     errorsCount,
     failedPresses,
     finalPrecision,
+    inactive: false,
     initialPrecision,
     mechanicalPrecision: roundMetric(clamp(finalPrecision - spamAttempts * 2, 0, 100)),
     missedBeats,
@@ -301,7 +323,9 @@ export default function RcpHero() {
     );
     setResults({
       ...nextResults,
-      note: medicalNotes[Math.floor(Math.random() * medicalNotes.length)],
+      note: nextResults.inactive
+        ? 'Simulacion fallida por inactividad. Recuerda: en un paro cardiaco, hacer compresiones siempre es mejor que no hacer nada. ¡No dudes en actuar!'
+        : medicalNotes[Math.floor(Math.random() * medicalNotes.length)],
     });
     setLastFeedback('Sesion completada. Revisa tu retroalimentacion clinica.');
     persistSession(nextResults, finalAttempts, soundtrack, gameDurationMs, targetBPM, beatIntervalMs);
