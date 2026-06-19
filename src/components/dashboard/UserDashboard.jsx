@@ -452,12 +452,12 @@ Reglas:
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:px-6">
+      <section className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:px-6 md:px-8">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
             Panel personal
           </p>
-          <h1 className="mt-2 text-3xl font-bold">Hola, vamos a practicar con datos reales</h1>
+          <h1 className="mt-2 text-2xl font-bold md:text-3xl">Hola, vamos a practicar con datos reales</h1>
           <p className="mt-3 max-w-2xl text-gray-600 dark:text-gray-300">
             Tu sesion es {user?.email}. Este panel compara como empiezas y como
             terminas cada intento, para ver si la practica de verdad esta

@@ -10,6 +10,7 @@ import {
 import AuthPage from './components/auth/AuthPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import MedicalBackingPage from './components/common/MedicalBackingPage';
+import ScrollToTop from './components/common/ScrollToTop';
 import GlobalEvidence from './components/dashboard/GlobalEvidence';
 import UserDashboard from './components/dashboard/UserDashboard';
 import BurnLab from './components/games/BurnLab';
@@ -71,6 +72,7 @@ function GameRouter() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           <Route element={<AuthPage />} path="/login" />

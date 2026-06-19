@@ -63,16 +63,27 @@ export default function AuthPage() {
 
     try {
       if (isRegisterMode) {
-        await register({ email, password, fullName });
+        const data = await register({ email, password, fullName });
+
+        if (data.session) {
+          navigate(from, { replace: true });
+          return;
+        }
+
         setSuccessMessage(
-          'Registro creado. Revisa tu correo si Supabase solicita confirmacion.'
+          'Registro creado. Si quieres entrar sin confirmar correo, desactiva la confirmacion de email en Supabase Auth.'
         );
       } else {
         await login({ email, password });
         navigate(from, { replace: true });
       }
     } catch (error) {
-      setErrorMessage(error.message ?? 'No se pudo completar la autenticacion.');
+      const message = error.message ?? 'No se pudo completar la autenticacion.';
+      setErrorMessage(
+        message.toLowerCase().includes('email not confirmed')
+          ? 'El correo aun no esta confirmado. Para permitir acceso directo, desactiva Confirm email en Supabase Auth.'
+          : message
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -89,7 +100,7 @@ export default function AuthPage() {
       <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
         <ThemeToggle />
       </div>
-      <section className="mx-auto grid min-h-screen w-full max-w-6xl items-center gap-10 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_430px] lg:py-12">
+      <section className="mx-auto grid min-h-screen w-full max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 md:px-8 lg:grid-cols-[1fr_430px] lg:py-12">
         <div className="max-w-3xl">
           <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-lg bg-cyan-600 text-white shadow-lg shadow-cyan-900/20">
             <HeartHandshake aria-hidden="true" className="h-8 w-8" />
@@ -97,7 +108,7 @@ export default function AuthPage() {
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
             LifeSaver Arcade
           </p>
-          <h1 className="text-4xl font-black leading-tight text-teal-950 dark:text-white sm:text-6xl">
+          <h1 className="text-3xl font-black leading-tight text-teal-950 dark:text-white md:text-6xl">
             Aprende a salvar vidas jugando
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-teal-800 dark:text-slate-300">

@@ -627,7 +627,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white"
+        className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6"
         initial={{ opacity: 0, y: 18 }}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Notas de la IA</p>
@@ -637,14 +637,14 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <ResultMetric label="Final" value={`${results.finalPrecision}%`} />
           <ResultMetric label="Score" value={results.score} />
         </div>
-        <p className="mt-5 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
+        <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="h-4 w-4" />
           {saveState === 'saving' ? 'Guardando evidencia en Supabase...' : null}
           {saveState === 'saved' ? 'Evidencia guardada en Supabase.' : null}
           {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
         </div>
-        <div className="mt-6 flex flex-wrap justify-end gap-3">
+        <div className="mt-5 flex flex-wrap justify-end gap-3">
           <button className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto" onClick={onExit} type="button">
             Salir al Dashboard
           </button>

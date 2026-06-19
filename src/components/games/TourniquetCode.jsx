@@ -311,7 +311,7 @@ export default function TourniquetCode() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-6">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between">
           <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
@@ -329,7 +329,7 @@ export default function TourniquetCode() {
           <div className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[1fr_360px]">
             <section className="rounded-lg border border-white/10 bg-white/5 p-6">
               <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} perdida</p>
-              <h1 className="mt-2 text-4xl font-bold">{caseData.title}</h1>
+              <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
               <p className="mt-3 text-slate-300">{caseData.description}</p>
 
               <div className="mt-8 flex justify-center">
@@ -475,7 +475,7 @@ function Metric({ label, value }) {
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section animate={{ opacity: 1, y: 0 }} className="w-full max-w-xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white" initial={{ opacity: 0, y: 18 }}>
+      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6" initial={{ opacity: 0, y: 18 }}>
         <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Notas de la IA</p>
         <h2 className="mt-1 text-2xl font-bold">Sangrado controlado</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -483,18 +483,18 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <Metric label="Final" value={`${results.finalPrecision}%`} />
           <Metric label="Score" value={results.score} />
         </div>
-        <p className="mt-5 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
+        <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="h-4 w-4" />
           {saveState === 'saving' ? 'Guardando evidencia en Supabase...' : null}
           {saveState === 'saved' ? 'Evidencia guardada en Supabase.' : null}
           {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
         </div>
-        <div className="mt-6 flex flex-wrap justify-end gap-3">
-          <button className="h-12 touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600" onClick={onExit} type="button">
+        <div className="mt-5 flex flex-wrap justify-end gap-3">
+          <button className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto" onClick={onExit} type="button">
             Salir al Dashboard
           </button>
-          <button className="h-12 touch-manipulation select-none rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700" onClick={onRestart} type="button">
+          <button className="h-12 w-full touch-manipulation select-none rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700 sm:w-auto" onClick={onRestart} type="button">
             Nuevo caso
           </button>
         </div>

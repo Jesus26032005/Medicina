@@ -488,7 +488,7 @@ export default function BurnLab() {
         backgroundSize: 'auto, 30px 30px, 30px 30px',
       }}
     >
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-6">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between gap-4">
           <Link
             className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
@@ -511,7 +511,7 @@ export default function BurnLab() {
               <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
                 Sala de urgencias - Burn Lab
               </p>
-              <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
+              <h1 className="mt-2 text-2xl font-bold md:text-5xl">
                 {caseData.title}
               </h1>
               <p className="mt-4 max-w-2xl text-slate-300">{caseData.mechanism}</p>
@@ -604,7 +604,7 @@ export default function BurnLab() {
               </div>
               <div className="mt-5 grid gap-3">
                 <button
-                  className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-cyan-600 px-4 text-sm font-semibold text-white transition hover:bg-cyan-700"
+                  className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md bg-cyan-600 px-4 text-sm font-semibold text-white transition hover:bg-cyan-700"
                   onClick={showHint}
                   type="button"
                 >
@@ -612,7 +612,7 @@ export default function BurnLab() {
                   Ayuda/Pista
                 </button>
                 <button
-                  className="flex h-10 w-full items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-100 dark:hover:bg-white/10"
+                  className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-100 dark:hover:bg-white/10"
                   onClick={() => resetGame()}
                   type="button"
                 >
@@ -744,7 +744,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="w-full max-w-xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white"
+        className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6"
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         transition={{ duration: 0.2 }}
       >
@@ -767,7 +767,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <Metric label="Tiempo" value={`${results.completionTimeSeconds}s`} />
         </div>
 
-        <div className="mt-5 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
+        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
           <p className="text-sm font-bold text-cyan-950 dark:text-cyan-100">Nota adicional</p>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">{results.note}</p>
         </div>
@@ -779,16 +779,16 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
         </div>
 
-        <div className="mt-6 flex flex-wrap justify-end gap-3">
+        <div className="mt-5 flex flex-wrap justify-end gap-3">
           <button
-            className="flex h-12 items-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+            className="flex h-12 w-full touch-manipulation select-none items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto"
             onClick={onExit}
             type="button"
           >
             Salir al Dashboard
           </button>
           <button
-            className="flex h-12 items-center gap-2 rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"
+            className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700 sm:w-auto"
             onClick={onRestart}
             type="button"
           >
