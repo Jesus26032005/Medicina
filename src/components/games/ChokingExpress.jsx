@@ -76,11 +76,18 @@ function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount)
   return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
 }
 
+function scrollToGameTop() {
+  window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
 export default function ChokingExpress() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [caseData, setCaseData] = useState(() => pickCase());
   const [showBriefing, setShowBriefing] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(true);
   const [hits, setHits] = useState(0);
   const [errorsCount, setErrorsCount] = useState(0);
   const [lastPrecision, setLastPrecision] = useState(0);
@@ -99,7 +106,7 @@ export default function ChokingExpress() {
     async (nextResults) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta sesion activa o Supabase.');
+        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
         return;
       }
 
@@ -189,8 +196,13 @@ export default function ChokingExpress() {
     return indicatorCenter >= targetRect.top && indicatorCenter <= targetRect.bottom;
   }, []);
 
+  const beginInteractiveRun = useCallback(() => {
+    startTimeRef.current = Date.now();
+    setShowTutorial(false);
+  }, []);
+
   const applyCompression = useCallback(() => {
-    if (results || showBriefing) {
+    if (results || showBriefing || showTutorial) {
       return;
     }
 
@@ -230,6 +242,7 @@ export default function ChokingExpress() {
     isIndicatorInsideTarget,
     results,
     showBriefing,
+    showTutorial,
   ]);
 
   useEffect(() => {
@@ -239,6 +252,12 @@ export default function ChokingExpress() {
       }
 
       event.preventDefault();
+
+      if (!showBriefing && showTutorial && !results) {
+        beginInteractiveRun();
+        return;
+      }
+
       applyCompression();
     }
 
@@ -247,16 +266,17 @@ export default function ChokingExpress() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [applyCompression]);
+  }, [applyCompression, beginInteractiveRun, results, showBriefing, showTutorial]);
 
   function startSimulation() {
-    startTimeRef.current = Date.now();
+    scrollToGameTop();
     samplesRef.current = [];
     setHits(0);
     setErrorsCount(0);
     setLastPrecision(0);
     setLastSuccess(false);
     setFeedback(`Objetivo: ${caseData.targetLabel}.`);
+    setShowTutorial(true);
     setShowBriefing(false);
   }
 
@@ -264,6 +284,7 @@ export default function ChokingExpress() {
     setCaseData(pickCase());
     setResults(null);
     setShowBriefing(true);
+    setShowTutorial(true);
     setHits(0);
     setErrorsCount(0);
     setLastPrecision(0);
@@ -290,8 +311,30 @@ export default function ChokingExpress() {
         {showBriefing ? (
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
-          <div className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[1fr_360px]">
-            <section className="rounded-lg border border-white/10 bg-white/5 p-6">
+          <div className="grid flex-1 items-center gap-8 py-4 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <section className="relative flex h-[calc(100dvh-120px)] flex-col justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4 md:h-auto md:p-6">
+              {showTutorial ? (
+                <button
+                  aria-label="Cerrar tutorial e iniciar practica"
+                  className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm transition"
+                  onClick={beginInteractiveRun}
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    beginInteractiveRun();
+                  }}
+                  type="button"
+                >
+                  <span className="animate-bounce text-5xl" aria-hidden="true">
+                    👇
+                  </span>
+                  <span className="mt-4 max-w-xs rounded-lg border border-cyan-300/30 bg-cyan-300/15 p-4 text-base font-bold text-cyan-50 shadow-2xl">
+                    Toca aqui para iniciar. Despues presiona el boton o usa la barra espaciadora cuando el indicador llegue a la zona verde.
+                  </span>
+                  <span className="mt-3 text-sm text-slate-200">
+                    En celular: toca el boton. En computadora: barra espaciadora.
+                  </span>
+                </button>
+              ) : null}
               <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">{caseData.force}</p>
               <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
               <p className="mt-3 text-slate-300">{caseData.description}</p>
@@ -299,8 +342,8 @@ export default function ChokingExpress() {
                 Objetivo: {caseData.targetLabel}
               </p>
 
-              <div className="mt-8 flex flex-col items-center justify-center gap-8 sm:flex-row">
-                <div ref={trackRef} className="relative h-[520px] w-24 overflow-hidden rounded-full border border-white/10 bg-slate-900">
+              <div className="mt-4 flex w-full flex-row items-center justify-center gap-8 overflow-hidden md:mt-8">
+                <div ref={trackRef} className="relative h-64 w-16 overflow-hidden rounded-full border border-white/10 bg-slate-900 md:h-96 md:w-24">
                   <div
                     ref={targetRef}
                     className="absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
@@ -310,17 +353,17 @@ export default function ChokingExpress() {
                     }}
                   />
                   <div
-                    className="heimlich-indicator absolute left-1/2 top-0 h-6 w-20 rounded-full bg-cyan-300 shadow-lg shadow-cyan-400/50"
+                    className="heimlich-indicator absolute left-1/2 top-0 h-5 w-14 rounded-full bg-cyan-300 shadow-lg shadow-cyan-400/50 md:h-6 md:w-20"
                     ref={indicatorRef}
                   />
                 </div>
 
                 <div className="flex flex-col justify-center">
-                  <div className="relative h-80 w-56 rounded-full bg-amber-100">
-                    <div className="absolute left-1/2 top-10 h-20 w-20 -translate-x-1/2 rounded-full bg-amber-200" />
-                    <div className="absolute bottom-8 left-1/2 h-56 w-40 -translate-x-1/2 rounded-t-full bg-amber-200" />
+                  <div className="relative h-40 w-32 rounded-full bg-amber-100 md:h-80 md:w-56">
+                    <div className="absolute left-1/2 top-5 h-10 w-10 -translate-x-1/2 rounded-full bg-amber-200 md:top-10 md:h-20 md:w-20" />
+                    <div className="absolute bottom-4 left-1/2 h-28 w-24 -translate-x-1/2 rounded-t-full bg-amber-200 md:bottom-8 md:h-56 md:w-40" />
                     <div
-                      className={`absolute left-1/2 h-14 w-36 -translate-x-1/2 rounded-full border-4 ${
+                      className={`absolute left-1/2 h-9 w-24 -translate-x-1/2 rounded-full border-4 md:h-14 md:w-36 ${
                         lastSuccess ? 'border-emerald-500 bg-emerald-300/60' : 'border-cyan-500 bg-cyan-300/40'
                       }`}
                       style={{
@@ -332,7 +375,7 @@ export default function ChokingExpress() {
               </div>
 
               <button
-                className="mt-8 h-14 w-full touch-manipulation select-none rounded-md bg-cyan-600 text-sm font-bold text-white transition hover:bg-cyan-700 active:scale-[0.99]"
+                className="mt-4 min-h-[48px] w-full touch-manipulation select-none rounded-md bg-cyan-600 text-sm font-bold text-white transition hover:bg-cyan-700 active:scale-[0.99] md:mt-8 md:h-14"
                 onClick={applyCompression}
                 type="button"
               >
@@ -397,7 +440,7 @@ function Briefing({ caseData, onStart }) {
           </p>
         </div>
         <MedicalDisclaimer />
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button
             className="h-12 touch-manipulation select-none rounded-md bg-cyan-600 px-5 text-sm font-bold text-white transition hover:bg-cyan-700"
             onClick={onStart}
@@ -424,8 +467,8 @@ function Metric({ label, value }) {
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6" initial={{ opacity: 0, y: 18 }}>
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Notas de la IA</p>
+      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
+        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Retroalimentacion clinica</p>
         <h2 className="mt-1 text-2xl font-bold">Ya puede respirar mejor</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Inicial" value={`${results.initialPrecision}%`} />
@@ -435,11 +478,11 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando evidencia en Supabase...' : null}
-          {saveState === 'saved' ? 'Evidencia guardada en Supabase.' : null}
-          {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
+          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
+          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
+          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
         </div>
-        <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
           <button
             className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto"
             onClick={onExit}

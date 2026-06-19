@@ -90,11 +90,18 @@ function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount)
   return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
 }
 
+function scrollToGameTop() {
+  window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
 export default function TourniquetCode() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [caseData, setCaseData] = useState(() => pickCase());
   const [showBriefing, setShowBriefing] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [pressure, setPressure] = useState(0);
   const [isTwisting, setIsTwisting] = useState(false);
   const [holdSeconds, setHoldSeconds] = useState(0);
@@ -123,7 +130,7 @@ export default function TourniquetCode() {
     async (nextResults) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta sesion activa o Supabase.');
+        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
         return;
       }
 
@@ -180,17 +187,17 @@ export default function TourniquetCode() {
   }, [errorsCount, persistSession]);
 
   const startTwisting = useCallback(() => {
-    if (!showBriefing && !results) {
+    if (!showBriefing && !showTutorial && !results) {
       setIsTwisting(true);
     }
-  }, [results, showBriefing]);
+  }, [results, showBriefing, showTutorial]);
 
   const stopTwisting = useCallback(() => {
     setIsTwisting(false);
   }, []);
 
   useEffect(() => {
-    if (showBriefing || results) {
+    if (showBriefing || showTutorial || results) {
       return undefined;
     }
 
@@ -208,10 +215,10 @@ export default function TourniquetCode() {
     }, 100);
 
     return () => window.clearInterval(interval);
-  }, [caseData, isTwisting, results, showBriefing]);
+  }, [caseData, isTwisting, results, showBriefing, showTutorial]);
 
   useEffect(() => {
-    if (showBriefing || results) {
+    if (showBriefing || showTutorial || results) {
       return undefined;
     }
 
@@ -249,7 +256,7 @@ export default function TourniquetCode() {
     }, 100);
 
     return () => window.clearInterval(timer);
-  }, [finishGame, pressure, results, showBriefing, zone]);
+  }, [finishGame, pressure, results, showBriefing, showTutorial, zone]);
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -258,6 +265,11 @@ export default function TourniquetCode() {
       }
 
       event.preventDefault();
+      if (!showBriefing && showTutorial && !results) {
+        dismissTutorial();
+        return;
+      }
+
       startTwisting();
     }
 
@@ -277,22 +289,29 @@ export default function TourniquetCode() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [startTwisting, stopTwisting]);
+  }, [results, showBriefing, showTutorial, startTwisting, stopTwisting]);
 
   function startSimulation() {
-    startTimeRef.current = Date.now();
+    scrollToGameTop();
     samplesRef.current = [];
     setPressure(0);
     setErrorsCount(0);
     setHoldSeconds(0);
     setFeedback('Gira la varilla hasta entrar en zona verde.');
     setShowBriefing(false);
+    setShowTutorial(true);
+  }
+
+  function dismissTutorial() {
+    startTimeRef.current = Date.now();
+    setShowTutorial(false);
   }
 
   function resetGame() {
     setCaseData(pickCase());
     setResults(null);
     setShowBriefing(true);
+    setShowTutorial(false);
     setPressure(0);
     setIsTwisting(false);
     setHoldSeconds(0);
@@ -326,14 +345,36 @@ export default function TourniquetCode() {
         {showBriefing ? (
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
-          <div className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[1fr_360px]">
+          <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+            {showTutorial ? (
+              <button
+                aria-label="Cerrar tutorial de Codigo Torniquete"
+                className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
+                onClick={dismissTutorial}
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  dismissTutorial();
+                }}
+                type="button"
+              >
+                <span className="animate-bounce text-6xl" aria-hidden="true">
+                  👇
+                </span>
+                <span className="mt-4 max-w-sm rounded-lg border border-rose-300/40 bg-rose-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                  Mantén presionado para girar la varilla hasta llegar a la zona verde.
+                </span>
+                <span className="mt-3 text-sm text-slate-200">
+                  En celular mantén el dedo. En computadora usa la barra espaciadora.
+                </span>
+              </button>
+            ) : null}
             <section className="rounded-lg border border-white/10 bg-white/5 p-6">
               <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} perdida</p>
               <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
               <p className="mt-3 text-slate-300">{caseData.description}</p>
 
               <div className="mt-8 flex justify-center">
-                <div className="relative h-80 w-80 rounded-full border border-white/10 bg-slate-900 shadow-2xl shadow-rose-950/30">
+                <div className="relative h-72 w-72 max-w-full rounded-full border border-white/10 bg-slate-900 shadow-2xl shadow-rose-950/30 sm:h-80 sm:w-80">
                   <svg className="h-full w-full" viewBox="0 0 320 320">
                     <circle cx="160" cy="160" fill="none" r="120" stroke="rgba(255,255,255,0.08)" strokeWidth="22" />
                     <path d={describeArc(160, 160, 120, greenStart, greenEnd)} fill="none" stroke="#22c55e" strokeLinecap="round" strokeWidth="22" />
@@ -452,7 +493,7 @@ function Briefing({ caseData, onStart }) {
           </p>
         </div>
         <MedicalDisclaimer />
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button className="h-12 touch-manipulation select-none rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700" onClick={onStart} type="button">
             Entendido, Iniciar Simulacion
           </button>
@@ -475,8 +516,8 @@ function Metric({ label, value }) {
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6" initial={{ opacity: 0, y: 18 }}>
-        <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Notas de la IA</p>
+      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
+        <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Retroalimentacion clinica</p>
         <h2 className="mt-1 text-2xl font-bold">Sangrado controlado</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Inicial" value={`${results.initialPrecision}%`} />
@@ -486,11 +527,11 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando evidencia en Supabase...' : null}
-          {saveState === 'saved' ? 'Evidencia guardada en Supabase.' : null}
-          {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
+          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
+          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
+          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
         </div>
-        <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
           <button className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto" onClick={onExit} type="button">
             Salir al Dashboard
           </button>

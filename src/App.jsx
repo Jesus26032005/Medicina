@@ -23,7 +23,7 @@ import { AuthProvider } from './context/AuthContext';
 function GamePlaceholder() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
-      <div className="max-w-md rounded-lg border border-white/10 bg-white/5 p-6">
+      <div className="mx-auto w-full max-w-md rounded-lg border border-white/10 bg-white/5 p-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
           Ruta protegida
         </p>

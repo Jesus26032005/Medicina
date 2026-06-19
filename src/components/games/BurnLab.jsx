@@ -289,6 +289,12 @@ function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount)
   return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
 }
 
+function scrollToGameTop() {
+  window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
 function buildToolList(caseData) {
   return [...Object.keys(caseData.correctTools), ...Object.keys(caseData.incorrectTools)];
 }
@@ -311,6 +317,7 @@ export default function BurnLab() {
   const [saveState, setSaveState] = useState('idle');
   const [saveError, setSaveError] = useState('');
   const [showBriefing, setShowBriefing] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
   const startTimeRef = useRef(Date.now());
 
   const caseTools = useMemo(() => buildToolList(caseData), [caseData]);
@@ -325,7 +332,7 @@ export default function BurnLab() {
     async (nextResults, finalActions) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta sesion activa o Supabase.');
+        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
         return;
       }
 
@@ -392,7 +399,7 @@ export default function BurnLab() {
   );
 
   function applyTool(toolId) {
-    if (results || usedTools.includes(toolId)) {
+    if (results || showTutorial || usedTools.includes(toolId)) {
       return;
     }
 
@@ -468,11 +475,18 @@ export default function BurnLab() {
     setSaveState('idle');
     setSaveError('');
     setShowBriefing(true);
+    setShowTutorial(false);
   }
 
   function startSimulation() {
-    startTimeRef.current = Date.now();
+    scrollToGameTop();
     setShowBriefing(false);
+    setShowTutorial(true);
+  }
+
+  function dismissTutorial() {
+    startTimeRef.current = Date.now();
+    setShowTutorial(false);
   }
 
   function showHint() {
@@ -506,7 +520,25 @@ export default function BurnLab() {
         {showBriefing ? (
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
-          <div className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[1fr_380px]">
+          <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+            {showTutorial ? (
+              <button
+                aria-label="Cerrar tutorial de Burn Lab"
+                className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
+                onClick={dismissTutorial}
+                type="button"
+              >
+                <span className="animate-bounce text-6xl" aria-hidden="true">
+                  👇
+                </span>
+                <span className="mt-4 max-w-sm rounded-lg border border-cyan-300/40 bg-cyan-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                  Lee el caso y selecciona la accion medica correcta.
+                </span>
+                <span className="mt-3 text-sm text-slate-200">
+                  Puedes tocar una herramienta o arrastrarla hacia la zona de intervencion.
+                </span>
+              </button>
+            ) : null}
             <section>
               <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
                 Sala de urgencias - Burn Lab
@@ -516,7 +548,7 @@ export default function BurnLab() {
               </h1>
               <p className="mt-4 max-w-2xl text-slate-300">{caseData.mechanism}</p>
 
-              <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
+              <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
                 <motion.div
                   animate={
                     shakeKey
@@ -713,7 +745,7 @@ function Briefing({ caseData, onStart }) {
           </p>
         </div>
         <MedicalDisclaimer />
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button
             className="flex h-12 w-full items-center justify-center rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700 sm:w-auto"
             onClick={onStart}
@@ -744,14 +776,14 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6"
+        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         transition={{ duration: 0.2 }}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">
-              Notas de la IA
+              Retroalimentacion clinica
             </p>
             <h2 className="mt-1 text-2xl font-bold">{results.caseTitle}</h2>
           </div>
@@ -774,12 +806,12 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
 
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando evidencia en Supabase...' : null}
-          {saveState === 'saved' ? 'Evidencia guardada en Supabase.' : null}
-          {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
+          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
+          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
+          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
         </div>
 
-        <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
           <button
             className="flex h-12 w-full touch-manipulation select-none items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto"
             onClick={onExit}

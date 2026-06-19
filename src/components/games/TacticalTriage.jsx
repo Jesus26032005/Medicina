@@ -233,6 +233,12 @@ function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount)
   return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
 }
 
+function scrollToGameTop() {
+  window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
 function getStartCategory(patient) {
   if (patient.walks) {
     return 'green';
@@ -273,6 +279,7 @@ export default function TacticalTriage() {
   const [feedback, setFeedback] = useState('');
   const [isLocked, setIsLocked] = useState(false);
   const [showBriefing, setShowBriefing] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [results, setResults] = useState(null);
   const [saveState, setSaveState] = useState('idle');
   const [saveError, setSaveError] = useState('');
@@ -286,7 +293,7 @@ export default function TacticalTriage() {
     async (nextResults, finalAnswers) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta sesion activa o Supabase.');
+        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
         return;
       }
 
@@ -359,7 +366,7 @@ export default function TacticalTriage() {
 
   const classifyPatient = useCallback(
     (selectedKey, timedOut = false) => {
-      if (isLocked || results || showBriefing) {
+      if (isLocked || results || showBriefing || showTutorial) {
         return;
       }
 
@@ -385,11 +392,11 @@ export default function TacticalTriage() {
             : `Clasificacion incorrecta. Regla START: ${currentPatient.explanation}`
       );
     },
-    [answers, currentPatient, isLocked, results, secondsLeft, showBriefing]
+    [answers, currentPatient, isLocked, results, secondsLeft, showBriefing, showTutorial]
   );
 
   useEffect(() => {
-    if (showBriefing || results || isLocked) {
+    if (showBriefing || showTutorial || results || isLocked) {
       return undefined;
     }
 
@@ -406,7 +413,7 @@ export default function TacticalTriage() {
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [classifyPatient, isLocked, results, showBriefing]);
+  }, [classifyPatient, isLocked, results, showBriefing, showTutorial]);
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -425,8 +432,14 @@ export default function TacticalTriage() {
   }, []);
 
   function startSimulation() {
-    startTimeRef.current = Date.now();
+    scrollToGameTop();
     setShowBriefing(false);
+    setShowTutorial(true);
+  }
+
+  function dismissTutorial() {
+    startTimeRef.current = Date.now();
+    setShowTutorial(false);
   }
 
   function resetGame() {
@@ -440,6 +453,7 @@ export default function TacticalTriage() {
     setSaveState('idle');
     setSaveError('');
     setShowBriefing(true);
+    setShowTutorial(false);
   }
 
   return (
@@ -459,7 +473,25 @@ export default function TacticalTriage() {
         {showBriefing ? (
           <Briefing onStart={startSimulation} />
         ) : (
-          <div className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[1fr_340px]">
+          <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+            {showTutorial ? (
+              <button
+                aria-label="Cerrar tutorial de triage tactico"
+                className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
+                onClick={dismissTutorial}
+                type="button"
+              >
+                <span className="animate-bounce text-6xl" aria-hidden="true">
+                  👇
+                </span>
+                <span className="mt-4 max-w-sm rounded-lg border border-red-300/40 bg-red-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                  Lee el caso y selecciona la accion medica correcta.
+                </span>
+                <span className="mt-3 text-sm text-slate-200">
+                  Toca VERDE, AMARILLO, ROJO o NEGRO segun la regla START.
+                </span>
+              </button>
+            ) : null}
             <section className="rounded-lg border border-red-400/20 bg-white/5 p-6 shadow-2xl shadow-red-950/20">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
@@ -602,7 +634,7 @@ function Briefing({ onStart }) {
           </div>
         </div>
         <MedicalDisclaimer />
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button className="h-12 w-full touch-manipulation select-none rounded-md bg-red-600 px-5 text-sm font-bold text-white transition hover:bg-red-700 sm:w-auto" onClick={onStart} type="button">
             Entendido, Iniciar Simulacion
           </button>
@@ -627,10 +659,10 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="max-h-[85vh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6"
+        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
         initial={{ opacity: 0, y: 18 }}
       >
-        <p className="text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Notas de la IA</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Retroalimentacion clinica</p>
         <h2 className="mt-1 text-2xl font-bold">Triage completado</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <ResultMetric label="Inicial" value={`${results.initialPrecision}%`} />
@@ -640,11 +672,11 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando evidencia en Supabase...' : null}
-          {saveState === 'saved' ? 'Evidencia guardada en Supabase.' : null}
-          {saveState === 'error' ? `No se guardo la evidencia: ${saveError}` : null}
+          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
+          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
+          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
         </div>
-        <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
           <button className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto" onClick={onExit} type="button">
             Salir al Dashboard
           </button>

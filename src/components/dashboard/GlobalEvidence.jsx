@@ -28,7 +28,7 @@ export default function GlobalEvidence() {
         return;
       }
 
-      const [{ data: sessionData, error: sessionError }, { data: testimonialData }] =
+      const [{ data: sessionData, error: sessionError }, { data: testimonialData, error: testimonialError }] =
         await Promise.all([
           supabase
             .from('game_sessions')
@@ -36,7 +36,7 @@ export default function GlobalEvidence() {
             .order('created_at', { ascending: true }),
           supabase
             .from('testimonials')
-            .select('id, content, learning_text, created_at')
+            .select('id, content, learning_text, user_id, created_at')
             .order('created_at', { ascending: false })
             .limit(12),
         ]);
@@ -45,8 +45,38 @@ export default function GlobalEvidence() {
         setErrorMessage(sessionError.message);
       }
 
+      if (testimonialError) {
+        setErrorMessage((current) =>
+          current ? `${current} ${testimonialError.message}` : testimonialError.message
+        );
+      }
+
+      const authorIds = [
+        ...new Set((testimonialData ?? []).map((testimonial) => testimonial.user_id).filter(Boolean)),
+      ];
+      let profilesById = {};
+
+      if (authorIds.length) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', authorIds);
+
+        profilesById = Object.fromEntries(
+          (profileData ?? []).map((profile) => [
+            profile.id,
+            profile.full_name || 'Usuario Anónimo',
+          ])
+        );
+      }
+
       setSessions(sessionData ?? []);
-      setTestimonials(testimonialData ?? []);
+      setTestimonials(
+        (testimonialData ?? []).map((testimonial) => ({
+          ...testimonial,
+          authorName: profilesById[testimonial.user_id] ?? 'Usuario Anónimo',
+        }))
+      );
       setLoading(false);
     }
 
@@ -176,6 +206,9 @@ export default function GlobalEvidence() {
                   key={testimonial.id}
                 >
                   <MessageSquareQuote aria-hidden="true" className="h-6 w-6 text-cyan-300" />
+                  <p className="mt-4 text-sm font-semibold text-teal-700 dark:text-teal-300">
+                    {testimonial.authorName || 'Usuario Anónimo'}
+                  </p>
                   <p className="mt-4 text-sm leading-6 text-gray-700 dark:text-slate-100">
                     {testimonial.content || testimonial.learning_text}
                   </p>
