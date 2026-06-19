@@ -33,8 +33,6 @@ const cprPlaylist = [
   { id: 'calm-down', name: 'Calm Down - Rema ft. Selena Gomez', bpm: 107, src: '/audio/calm-down.mp3' },
   { id: 'dynamite', name: 'Dynamite - BTS', bpm: 114, src: '/audio/dynamite.mp3' },
   { id: 'uptown-funk', name: 'Uptown Funk - Bruno Mars', bpm: 115, src: '/audio/uptown-funk.mp3' },
-  { id: 'flowers', name: 'Flowers - Miley Cyrus', bpm: 118, src: '/audio/flowers.mp3' },
-  { id: 'circles', name: 'Circles - Post Malone', bpm: 120, src: '/audio/circles.mp3' },
   { id: 'sorry', name: 'Sorry - Justin Bieber', bpm: 100, src: '/audio/sorry.mp3' },
 ];
 
