@@ -8,60 +8,63 @@ import VideoTutorialModal from '../common/VideoTutorialModal';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
-const MAX_PRESSURE = 120;
+const MAX_PRESSURE = 100;
 const BLEEDING_START_PERCENT = 100;
+const IDEAL_PRESSURE_MIN = 65;
+const IDEAL_PRESSURE_MAX = 85;
+const CRITICAL_TISSUE_DAMAGE = 100;
 
 const cases = [
   {
+    bleedRate: 'alta',
+    description: 'Sangrado muy fuerte en el brazo. Hay que aplicar tension suficiente para detenerlo.',
     id: 'arm_amputation_machinery',
+    pressureGain: 12,
     title: 'Amputacion de brazo por maquinaria',
-    description: 'Sangrado muy fuerte en el brazo. Hay que apretar lo suficiente para detenerlo.',
-    controlThreshold: 78,
-    bleedRate: 'alta',
   },
   {
-    id: 'leg_glass_laceration',
-    title: 'Laceracion profunda en pierna por cristal',
+    bleedRate: 'media',
     description: 'Corte profundo en pierna con sangrado constante de perdida media.',
-    controlThreshold: 56,
-    bleedRate: 'media',
+    id: 'leg_glass_laceration',
+    pressureGain: 10,
+    title: 'Laceracion profunda en pierna por cristal',
   },
   {
-    id: 'forearm_stab_wound',
-    title: 'Herida punzocortante en antebrazo',
-    description: 'Herida profunda en antebrazo; el sangrado no se detiene solo.',
-    controlThreshold: 48,
     bleedRate: 'moderada',
+    description: 'Herida profunda en antebrazo; el sangrado no se detiene solo.',
+    id: 'forearm_stab_wound',
+    pressureGain: 9,
+    title: 'Herida punzocortante en antebrazo',
   },
   {
-    id: 'thigh_gunshot_arterial',
-    title: 'Herida por arma de fuego en muslo',
-    description: 'Sangrado a chorros en el muslo: este caso necesita mucha presion.',
-    controlThreshold: 88,
     bleedRate: 'muy alta',
+    description: 'Sangrado a chorros en el muslo: requiere tension rapida y sostenida.',
+    id: 'thigh_gunshot_arterial',
+    pressureGain: 13,
+    title: 'Herida por arma de fuego en muslo',
   },
   {
-    id: 'forearm_chainsaw_deep_cut',
-    title: 'Corte profundo por motosierra en antebrazo',
-    description: 'Corte irregular y profundo con mucha sangre y tejido expuesto.',
-    controlThreshold: 74,
     bleedRate: 'alta',
+    description: 'Corte irregular y profundo con mucha sangre y tejido expuesto.',
+    id: 'forearm_chainsaw_deep_cut',
+    pressureGain: 12,
+    title: 'Corte profundo por motosierra en antebrazo',
   },
   {
-    id: 'calf_dog_bite_severe',
-    title: 'Mordedura grave de perro en pantorrilla',
-    description: 'Desgarro profundo en pantorrilla con sangrado que sigue saliendo.',
-    controlThreshold: 58,
     bleedRate: 'media',
+    description: 'Desgarro profundo en pantorrilla con sangrado que sigue saliendo.',
+    id: 'calf_dog_bite_severe',
+    pressureGain: 10,
+    title: 'Mordedura grave de perro en pantorrilla',
   },
 ];
 
 const notes = [
   'Un torniquete se usa cuando una extremidad sangra tanto que la presion directa no basta.',
-  'La meta no es apretar por apretar: es detener el sangrado visible con la menor presion necesaria.',
+  'La meta es detener el sangrado visible con tension sostenida y controlada.',
   'Anotar la hora importa porque el equipo medico necesita saber cuanto tiempo lleva puesto.',
   'Aunque controles el sangrado, en la vida real hay que llamar a emergencias cuanto antes.',
-  'Si falta presion, la sangre sigue saliendo; si te pasas demasiado, puedes danar nervios y tejidos.',
+  'El torniquete debe colocarse 5-7 cm arriba de la herida y nunca encima de una articulacion.',
 ];
 
 function pickCase() {
@@ -70,22 +73,6 @@ function pickCase() {
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
-}
-
-function getControlEfficiency(pressure, caseData) {
-  if (pressure < caseData.controlThreshold * 0.55) {
-    return 0;
-  }
-
-  if (pressure < caseData.controlThreshold) {
-    return Math.round(clamp((pressure / caseData.controlThreshold) * 70, 0, 70));
-  }
-
-  if (pressure > 112) {
-    return 72;
-  }
-
-  return Math.round(clamp(78 + ((pressure - caseData.controlThreshold) / 34) * 22, 78, 100));
 }
 
 function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeResponse }) {
@@ -106,20 +93,37 @@ export default function TourniquetCode() {
   const [caseData, setCaseData] = useState(() => pickCase());
   const [showBriefing, setShowBriefing] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
-  const [pressure, setPressure] = useState(0);
+  const [pressureApplied, setPressureApplied] = useState(0);
   const [activeBleeding, setActiveBleeding] = useState(BLEEDING_START_PERCENT);
-  const [isTwisting, setIsTwisting] = useState(false);
+  const [tissueDamage, setTissueDamage] = useState(0);
   const [errorsCount, setErrorsCount] = useState(0);
-  const [feedback, setFeedback] = useState('Coloca el torniquete arriba de la herida y gira la varilla para reducir el sangrado.');
+  const [feedback, setFeedback] = useState('Aplica presion repetidamente hasta que el sangrado llegue a 0%.');
   const [results, setResults] = useState(null);
   const [saveState, setSaveState] = useState('idle');
   const [saveError, setSaveError] = useState('');
   const samplesRef = useRef([]);
   const startTimeRef = useRef(Date.now());
-  const lastWarningRef = useRef('none');
+  const lastErrorRef = useRef(0);
+  const pressureRef = useRef(0);
+  const tissueDamageRef = useRef(0);
+  const activeBleedingRef = useRef(BLEEDING_START_PERCENT);
+  const finishTriggeredRef = useRef(false);
 
-  const controlEfficiency = getControlEfficiency(pressure, caseData);
+  const gameStarted = !showBriefing && !showTutorial;
+  const gameOver = Boolean(results);
   const controlPercent = Math.round(100 - activeBleeding);
+  const pressureBarClass =
+    pressureApplied > IDEAL_PRESSURE_MAX
+      ? 'bg-red-600 animate-pulse'
+      : pressureApplied >= IDEAL_PRESSURE_MIN
+        ? 'bg-teal-500'
+        : 'bg-gray-400';
+  const pressureStatus =
+    pressureApplied > IDEAL_PRESSURE_MAX
+      ? 'Peligro: afloja un poco'
+      : pressureApplied >= IDEAL_PRESSURE_MIN
+        ? 'Presion optima: controlando sangrado'
+        : 'Presion insuficiente';
 
   const persistSession = useCallback(
     async (nextResults) => {
@@ -142,8 +146,9 @@ export default function TourniquetCode() {
         score: nextResults.score,
         telemetry: {
           case_id: caseData.id,
-          control_threshold: caseData.controlThreshold,
-          objective: 'reduce_active_bleeding_to_zero',
+          objective: 'active_bleeding_100_to_0',
+          critical_tissue_damage: CRITICAL_TISSUE_DAMAGE,
+          ideal_pressure_range: [IDEAL_PRESSURE_MIN, IDEAL_PRESSURE_MAX],
           samples: samplesRef.current,
         },
       });
@@ -156,169 +161,218 @@ export default function TourniquetCode() {
 
       setSaveState('saved');
     },
-    [caseData, user?.id]
+    [caseData.id, user?.id]
   );
 
-  const finishGame = useCallback(() => {
+  const finishGame = useCallback((options = {}) => {
     const samples = samplesRef.current;
     const first = samples.slice(0, Math.max(1, Math.floor(samples.length / 3)));
     const last = samples.slice(Math.max(0, samples.length - Math.max(1, Math.floor(samples.length / 3))));
-    const average = (items) =>
+    const averageControl = (items) =>
       items.length
         ? Math.round(items.reduce((sum, sample) => sum + sample.control_percent, 0) / items.length)
         : 0;
-    const initialPrecision = average(first);
-    const finalPrecision = average(last);
+    const initialPrecision = averageControl(first);
+    const finalPrecision = averageControl(last);
     const completionTimeSeconds = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000));
     const timeResponse = Math.round(clamp(100 - completionTimeSeconds * 2, 20, 100));
+    const finalTissueDamage = options.tissueDamage ?? tissueDamage;
     const nextResults = {
+      criticalError: Boolean(options.criticalError),
       completionTimeSeconds,
       errorsCount,
       finalPrecision,
       initialPrecision,
-      note: notes[Math.floor(Math.random() * notes.length)],
-      score: calculateUniversalScore({
-        knowledgeDecision: 100,
-        mechanicalPrecision: finalPrecision,
-        timeResponse,
-      }),
+      note: options.note ?? notes[Math.floor(Math.random() * notes.length)],
+      score: options.criticalError
+        ? Math.min(
+            25,
+            calculateUniversalScore({
+              knowledgeDecision: 20,
+              mechanicalPrecision: Math.max(0, finalPrecision - finalTissueDamage),
+              timeResponse: 0,
+            })
+          )
+        : calculateUniversalScore({
+            knowledgeDecision: 100,
+            mechanicalPrecision: Math.max(0, finalPrecision - finalTissueDamage * 0.25),
+            timeResponse,
+          }),
+      tissueDamage: Math.round(finalTissueDamage),
       timeResponse,
     };
 
     setResults(nextResults);
+    setFeedback(options.criticalError ? 'Error critico por exceso de presion.' : 'Hemorragia controlada.');
     persistSession(nextResults);
-  }, [errorsCount, persistSession]);
+  }, [errorsCount, persistSession, tissueDamage]);
 
-  const startTwisting = useCallback(() => {
-    if (!showBriefing && !showTutorial && !results) {
-      setIsTwisting(true);
+  const applyPressure = useCallback(() => {
+    if (!gameStarted || gameOver) {
+      return;
     }
-  }, [results, showBriefing, showTutorial]);
 
-  const stopTwisting = useCallback(() => {
-    setIsTwisting(false);
-  }, []);
+    setPressureApplied((currentPressure) => {
+      const nextPressure = clamp(currentPressure + caseData.pressureGain, 0, MAX_PRESSURE);
+      if (nextPressure > IDEAL_PRESSURE_MAX) {
+        setFeedback('Peligro: exceso de presion. Afloja un poco para evitar dano al tejido o nervios.');
+      } else if (nextPressure >= IDEAL_PRESSURE_MIN) {
+        setFeedback('Presion optima: controlando sangrado.');
+      } else {
+        setFeedback('Aun falta presion: el sangrado sigue activo.');
+      }
+      return nextPressure;
+    });
+  }, [caseData.pressureGain, gameOver, gameStarted]);
 
   useEffect(() => {
-    if (showBriefing || showTutorial || results) {
+    pressureRef.current = pressureApplied;
+  }, [pressureApplied]);
+
+  useEffect(() => {
+    tissueDamageRef.current = tissueDamage;
+  }, [tissueDamage]);
+
+  useEffect(() => {
+    activeBleedingRef.current = activeBleeding;
+  }, [activeBleeding]);
+
+  useEffect(() => {
+    if (!gameStarted || gameOver) {
       return undefined;
     }
 
     const interval = window.setInterval(() => {
-      setPressure((current) => {
-        const next = clamp(current + (isTwisting ? 2.8 : -0.9), 0, MAX_PRESSURE);
-        return next;
-      });
-    }, 100);
+      setPressureApplied((currentPressure) => clamp(currentPressure - 4, 0, MAX_PRESSURE));
+    }, 140);
 
     return () => window.clearInterval(interval);
-  }, [isTwisting, results, showBriefing, showTutorial]);
+  }, [gameOver, gameStarted]);
 
   useEffect(() => {
-    if (showBriefing || showTutorial || results) {
+    if (!gameStarted || gameOver) {
       return undefined;
     }
 
     const interval = window.setInterval(() => {
-      const efficiency = getControlEfficiency(pressure, caseData);
-      setActiveBleeding((currentBleeding) => {
-        const delta = isTwisting ? efficiency / 18 : -1.2;
-        const nextBleeding = clamp(currentBleeding - delta, 0, BLEEDING_START_PERCENT);
-        const nextControlPercent = Math.round(100 - nextBleeding);
+      const currentPressure = pressureRef.current;
+      const isIdeal = currentPressure >= IDEAL_PRESSURE_MIN && currentPressure <= IDEAL_PRESSURE_MAX;
+      const isExcessive = currentPressure > IDEAL_PRESSURE_MAX;
+      const zone = isExcessive ? 'excessive' : isIdeal ? 'ideal' : 'insufficient';
 
-        samplesRef.current.push({
-          active_bleeding: Math.round(nextBleeding),
-          control_efficiency: efficiency,
-          control_percent: nextControlPercent,
-          elapsed_ms: Date.now() - startTimeRef.current,
-          pressure: Math.round(pressure),
+      if (isIdeal) {
+        setActiveBleeding((previousBleeding) => {
+          const nextBleeding = Math.max(0, previousBleeding - 5);
+          activeBleedingRef.current = nextBleeding;
+          samplesRef.current.push({
+            active_bleeding: Math.round(nextBleeding),
+            control_percent: Math.round(100 - nextBleeding),
+            elapsed_ms: Date.now() - startTimeRef.current,
+            pressure_applied: Math.round(currentPressure),
+            tissue_damage: Math.round(tissueDamageRef.current),
+            zone,
+          });
+          return nextBleeding;
         });
+        setFeedback('Presion optima: controlando sangrado.');
+        return;
+      }
 
-        if (nextBleeding <= 0) {
-          window.clearInterval(interval);
-          finishGame();
-        }
+      if (isExcessive) {
+        setTissueDamage((previousDamage) => {
+          const nextDamage = Math.min(CRITICAL_TISSUE_DAMAGE, previousDamage + 10);
+          tissueDamageRef.current = nextDamage;
+          samplesRef.current.push({
+            active_bleeding: Math.round(activeBleedingRef.current),
+            control_percent: Math.round(100 - activeBleedingRef.current),
+            elapsed_ms: Date.now() - startTimeRef.current,
+            pressure_applied: Math.round(currentPressure),
+            tissue_damage: Math.round(nextDamage),
+            zone,
+          });
+          return nextDamage;
+        });
+        setFeedback('Peligro: exceso de presion. Afloja un poco.');
+        return;
+      }
 
-        return nextBleeding;
+      samplesRef.current.push({
+        active_bleeding: Math.round(activeBleedingRef.current),
+        control_percent: Math.round(100 - activeBleedingRef.current),
+        elapsed_ms: Date.now() - startTimeRef.current,
+        pressure_applied: Math.round(currentPressure),
+        tissue_damage: Math.round(tissueDamageRef.current),
+        zone,
       });
 
-      if (pressure < caseData.controlThreshold * 0.55) {
-        setFeedback('Falta tension: el sangrado sigue activo.');
-        if (pressure > 10 && lastWarningRef.current !== 'low') {
-          setErrorsCount((count) => count + 1);
-          lastWarningRef.current = 'low';
-        }
-        return;
+      if (Date.now() - lastErrorRef.current > 1800) {
+        setErrorsCount((count) => count + 1);
+        lastErrorRef.current = Date.now();
       }
-
-      if (pressure > 112) {
-        setFeedback('Demasiada tension: controla el sangrado, pero puedes lastimar nervios y musculo.');
-        if (lastWarningRef.current !== 'high') {
-          setErrorsCount((count) => count + 1);
-          lastWarningRef.current = 'high';
-        }
-        return;
-      }
-
-      setFeedback('Buen control: el sangrado esta bajando. Mantén la varilla hasta llegar a 0%.');
-      lastWarningRef.current = 'controlled';
-    }, 100);
+      setFeedback('Falta presion sostenida: el sangrado no baja.');
+    }, 500);
 
     return () => window.clearInterval(interval);
-  }, [caseData, finishGame, isTwisting, pressure, results, showBriefing, showTutorial]);
+  }, [gameOver, gameStarted]);
 
   useEffect(() => {
-    function handleKeyDown(event) {
-      const isSpaceKey = event.code === 'Space' || event.key === ' ';
-      const isGameActive = !showBriefing && !results;
-
-      if (!isSpaceKey || event.repeat || !isGameActive) {
-        return;
-      }
-
-      event.preventDefault();
-      if (!showBriefing && showTutorial && !results) {
-        dismissTutorial();
-        return;
-      }
-
-      startTwisting();
+    if (!gameStarted || gameOver || finishTriggeredRef.current || activeBleeding > 0) {
+      return;
     }
 
-    function handleKeyUp(event) {
-      const isSpaceKey = event.code === 'Space' || event.key === ' ';
-      const isGameActive = !showBriefing && !results;
+    finishTriggeredRef.current = true;
+    finishGame();
+  }, [activeBleeding, finishGame, gameOver, gameStarted]);
 
-      if (!isSpaceKey || !isGameActive) {
-        return;
-      }
-
-      event.preventDefault();
-      stopTwisting();
+  useEffect(() => {
+    if (!gameStarted || gameOver || finishTriggeredRef.current || tissueDamage < CRITICAL_TISSUE_DAMAGE) {
+      return;
     }
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    finishTriggeredRef.current = true;
+    finishGame({
+      criticalError: true,
+      note: 'Error Critico: Has causado dano permanente por exceso de presion.',
+      tissueDamage,
+    });
+  }, [finishGame, gameOver, gameStarted, tissueDamage]);
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.code === 'Space' || event.key === ' ') {
+        event.preventDefault();
+        applyPressure();
+      }
     };
-  }, [results, showBriefing, showTutorial, startTwisting, stopTwisting]);
+
+    if (gameStarted && !gameOver) {
+      window.addEventListener('keydown', handleKeyDown, { passive: false });
+    }
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [applyPressure, gameOver, gameStarted]);
 
   function startSimulation() {
     scrollToGameTop();
     samplesRef.current = [];
-    setPressure(0);
+    pressureRef.current = 0;
+    tissueDamageRef.current = 0;
+    activeBleedingRef.current = BLEEDING_START_PERCENT;
+    finishTriggeredRef.current = false;
+    setPressureApplied(0);
     setActiveBleeding(BLEEDING_START_PERCENT);
+    setTissueDamage(0);
     setErrorsCount(0);
-    setFeedback('Coloca el torniquete arriba de la herida y gira la varilla para reducir el sangrado.');
+    setFeedback('Aplica presion repetidamente hasta que el sangrado llegue a 0%.');
     setShowBriefing(false);
     setShowTutorial(true);
   }
 
-  function dismissTutorial() {
+  function dismissTutorial(event) {
+    event?.preventDefault();
+    event?.stopPropagation();
     startTimeRef.current = Date.now();
+    lastErrorRef.current = Date.now();
     setShowTutorial(false);
   }
 
@@ -327,24 +381,25 @@ export default function TourniquetCode() {
     setResults(null);
     setShowBriefing(true);
     setShowTutorial(false);
-    setPressure(0);
+    setPressureApplied(0);
     setActiveBleeding(BLEEDING_START_PERCENT);
-    setIsTwisting(false);
+    setTissueDamage(0);
     setErrorsCount(0);
+    setFeedback('Aplica presion repetidamente hasta que el sangrado llegue a 0%.');
     setSaveState('idle');
     setSaveError('');
-    lastWarningRef.current = 'none';
+    samplesRef.current = [];
+    pressureRef.current = 0;
+    tissueDamageRef.current = 0;
+    activeBleedingRef.current = BLEEDING_START_PERCENT;
+    finishTriggeredRef.current = false;
+    lastErrorRef.current = 0;
   }
-
-  const angle = -130 + (pressure / MAX_PRESSURE) * 260;
-  const pressurePercent = (pressure / MAX_PRESSURE) * 100;
-  const estimatedZoneStartPercent = (caseData.controlThreshold / MAX_PRESSURE) * 100;
-  const estimatedZoneWidthPercent = ((112 - caseData.controlThreshold) / MAX_PRESSURE) * 100;
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
-        <header className="flex items-center justify-between">
+        <header className="flex items-center justify-between gap-3">
           <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
@@ -358,30 +413,28 @@ export default function TourniquetCode() {
         {showBriefing ? (
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
-          <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_340px]">
             {showTutorial ? (
               <button
                 aria-label="Cerrar tutorial de Codigo Torniquete"
                 className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
                 onClick={dismissTutorial}
-                onPointerDown={(event) => {
-                  event.preventDefault();
-                  dismissTutorial();
-                }}
+                onPointerDown={dismissTutorial}
                 type="button"
               >
                 <span className="animate-bounce text-6xl" aria-hidden="true">
                   👇
                 </span>
                 <span className="mt-4 max-w-sm rounded-lg border border-rose-300/40 bg-rose-500/20 p-4 text-base font-bold text-white shadow-2xl">
-                  Mantén presionado para girar la varilla hasta que el sangrado llegue a 0%.
+                  Mantén la presion entre 65% y 85%. Si pasas de 85%, sube el dano al tejido.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
-                  En celular mantén el dedo. En computadora usa la barra espaciadora.
+                  En celular toca el boton. En computadora usa barra espaciadora.
                 </span>
               </button>
             ) : null}
-            <section className="rounded-lg border border-white/10 bg-white/5 p-6">
+
+            <section className="rounded-lg border border-white/10 bg-white/5 p-4 md:p-6">
               <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} perdida</p>
               <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
               <p className="mt-3 text-slate-300">{caseData.description}</p>
@@ -389,84 +442,77 @@ export default function TourniquetCode() {
                 Coloca el torniquete 5-7 cm arriba de la herida. Nunca sobre una articulacion.
               </div>
 
-              <div className="mt-8 flex justify-center">
-                <div className="relative h-72 w-72 max-w-full rounded-full border border-white/10 bg-slate-900 shadow-2xl shadow-rose-950/30 sm:h-80 sm:w-80">
-                  <svg className="h-full w-full" viewBox="0 0 320 320">
-                    <circle cx="160" cy="160" fill="none" r="120" stroke="rgba(255,255,255,0.08)" strokeWidth="22" />
-                    <path d={describeArc(160, 160, 120, -130, 130)} fill="none" stroke="rgba(244,63,94,0.65)" strokeLinecap="round" strokeWidth="18" />
-                  </svg>
-                  <motion.div
-                    animate={{ rotate: angle }}
-                    className="absolute left-1/2 top-1/2 h-1.5 w-32 origin-left rounded-full bg-white shadow-lg"
-                    transition={{ type: 'spring', stiffness: 90, damping: 18 }}
-                  />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <Gauge aria-hidden="true" className="h-9 w-9 text-rose-200" />
-                    <p className="mt-2 text-5xl font-bold">{Math.round(pressure)}</p>
-                    <p className="text-sm text-slate-400">presion simulada</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 rounded-lg border border-white/10 bg-slate-900 p-4">
-                <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
+              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-4">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
                   <span>Sangrado activo</span>
                   <span>{Math.round(activeBleeding)}%</span>
                 </div>
-                <div className="relative h-8 overflow-hidden rounded-full bg-emerald-400/20">
-                  <div
-                    className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-red-600 to-rose-400"
-                    style={{
-                      width: `${activeBleeding}%`,
-                    }}
+                <div className="mt-3 h-9 overflow-hidden rounded-full bg-emerald-400/20">
+                  <motion.div
+                    animate={{ width: `${activeBleeding}%` }}
+                    className="h-full rounded-full bg-gradient-to-r from-red-700 to-rose-500"
+                    transition={{ type: 'spring', stiffness: 100, damping: 18 }}
                   />
                 </div>
                 <div className="mt-2 flex justify-between text-xs text-slate-400">
                   <span>Controlado 0%</span>
                   <span>Activo 100%</span>
                 </div>
-                <div className="mt-5">
-                  <div className="mb-2 flex justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
-                    <span>Tension aplicada</span>
-                    <span>{Math.round(pressure)}</span>
-                  </div>
-                  <div className="relative h-4 overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className="absolute top-0 h-full rounded-full bg-emerald-400/40 ring-1 ring-emerald-200/70"
-                      style={{
-                        left: `${estimatedZoneStartPercent}%`,
-                        width: `${estimatedZoneWidthPercent}%`,
-                      }}
-                    />
-                    <motion.div
-                      animate={{ width: `${pressurePercent}%` }}
-                      className="h-full rounded-full bg-rose-500"
-                      transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-                    />
-                  </div>
-                  <p className="mt-2 text-xs leading-5 text-slate-400">
-                    Franja verde estimada: zona donde normalmente empieza a bajar el sangrado sin excederte.
-                  </p>
+              </div>
+
+              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-4">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
+                  <span>Dano tisular</span>
+                  <span>{Math.round(tissueDamage)}%</span>
                 </div>
+                <div className="mt-3 h-8 overflow-hidden rounded-full bg-white/10">
+                  <motion.div
+                    animate={{ width: `${tissueDamage}%` }}
+                    className="h-full rounded-full bg-red-600"
+                    transition={{ type: 'spring', stiffness: 130, damping: 18 }}
+                  />
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-400">
+                  El dano aumenta si mantienes la presion por encima de {IDEAL_PRESSURE_MAX}%.
+                </p>
+              </div>
+
+              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-4 shadow-2xl shadow-rose-950/20">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
+                  <span>Barra de tension</span>
+                  <span>{Math.round(pressureApplied)}%</span>
+                </div>
+                <div className="mt-3 h-10 overflow-hidden rounded-full bg-white/10">
+                  <motion.div
+                    animate={{ width: `${pressureApplied}%` }}
+                    className={`h-full rounded-full ${pressureBarClass}`}
+                    transition={{ type: 'spring', stiffness: 130, damping: 18 }}
+                  />
+                </div>
+                <p className={`mt-2 text-sm font-bold ${
+                  pressureApplied > IDEAL_PRESSURE_MAX
+                    ? 'text-red-200'
+                    : pressureApplied >= IDEAL_PRESSURE_MIN
+                      ? 'text-teal-200'
+                      : 'text-slate-300'
+                }`}>
+                  {pressureStatus}
+                </p>
               </div>
 
               <button
-                className="mt-8 h-14 w-full touch-none select-none rounded-md bg-rose-600 text-sm font-bold text-white transition hover:bg-rose-700 active:bg-rose-800"
-                onMouseDown={startTwisting}
-                onMouseLeave={stopTwisting}
-                onMouseUp={stopTwisting}
-                onTouchCancel={stopTwisting}
-                onTouchEnd={(event) => {
-                  event.preventDefault();
-                  stopTwisting();
-                }}
+                className="mt-6 flex h-14 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md bg-rose-600 text-sm font-bold text-white transition hover:bg-rose-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={showTutorial}
+                onClick={applyPressure}
                 onTouchStart={(event) => {
                   event.preventDefault();
-                  startTwisting();
+                  applyPressure();
                 }}
+                style={{ touchAction: 'manipulation' }}
                 type="button"
               >
-                Mantener: Girar Varilla (Espacio)
+                <Gauge aria-hidden="true" className="h-5 w-5" />
+                Aplicar Presion
               </button>
             </section>
 
@@ -476,15 +522,15 @@ export default function TourniquetCode() {
                 <Metric label="Control" value={`${controlPercent}%`} />
                 <Metric label="Errores" value={errorsCount} />
                 <Metric label="Sangrado" value={`${Math.round(activeBleeding)}%`} />
-                <Metric label="Zona estimada" value={`${caseData.controlThreshold}-112`} />
-                <Metric label="Eficiencia" value={`${controlEfficiency}%`} />
+                <Metric label="Presion" value={`${Math.round(pressureApplied)}%`} />
+                <Metric label="Dano" value={`${Math.round(tissueDamage)}%`} />
               </div>
               <div className={`mt-5 rounded-md border p-4 text-sm font-semibold ${
-                activeBleeding <= 30
+                pressureApplied > IDEAL_PRESSURE_MAX
+                  ? 'border-red-200 bg-red-50 text-red-800'
+                  : pressureApplied >= IDEAL_PRESSURE_MIN
                   ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-                  : pressure > 112
-                    ? 'border-red-200 bg-red-50 text-red-800'
-                    : 'border-amber-200 bg-amber-50 text-amber-800'
+                  : 'border-amber-200 bg-amber-50 text-amber-800'
               }`}>
                 {feedback}
               </div>
@@ -509,29 +555,27 @@ export default function TourniquetCode() {
 function Briefing({ caseData, onStart }) {
   return (
     <section className="grid flex-1 place-items-center py-10">
-      <div className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white">
+      <div className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Briefing medico</p>
         <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
         <p className="mt-3 text-slate-700 dark:text-slate-300">{caseData.description}</p>
         <div className="mt-3 rounded-md border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-900 dark:border-rose-300/30 dark:bg-rose-400/10 dark:text-rose-100">
           <h2 className="font-bold">Instrucciones</h2>
           <p className="mt-2 leading-6">
-            En computadora: mantén presionada la barra espaciadora o el boton
-            para girar la varilla. En celular: manten el dedo sobre Aplicar
-            Presion. El objetivo es bajar el Sangrado Activo de 100% a 0%.
-            Si falta tension sigue sangrando; si te excedes puedes lastimar nervios y musculo.
+            En computadora: presiona repetidamente la barra espaciadora o el boton.
+            En celular: toca Aplicar Presion. La zona ideal es 65% a 85%:
+            ahi el sangrado baja rapido. Si pasas de 85%, el sangrado puede
+            detenerse, pero sube el dano al tejido y nervios.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-900 dark:border-rose-300/30 dark:bg-rose-400/10 dark:text-rose-100">
           Coloca el torniquete 5-7 cm arriba de la herida y nunca encima de una articulacion.
-          La franja verde es una guia estimada de tension util; el objetivo real es que el sangrado llegue a 0%.
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
           <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide Inicio vs Final</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            Inicio es cuanto controlaste el sangrado en el primer tercio de la
-            partida. Final es el control del ultimo tercio. La meta clinica del
-            simulador es llegar a hemorragia controlada: 0% de sangrado activo.
+            Inicio es el control del sangrado durante el primer tercio de la partida.
+            Final es el control durante el ultimo tercio. La meta es hemorragia controlada: 0% de sangrado activo.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -558,13 +602,20 @@ function Metric({ label, value }) {
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
+      <motion.section
+        animate={{ opacity: 1, y: 0 }}
+        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
+        initial={{ opacity: 0, y: 18 }}
+      >
         <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Retroalimentacion clinica</p>
-        <h2 className="mt-1 text-2xl font-bold">Sangrado controlado</h2>
+        <h2 className="mt-1 text-2xl font-bold">
+          {results.criticalError ? 'Error critico por exceso de presion' : 'Hemorragia controlada'}
+        </h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Inicial" value={`${results.initialPrecision}%`} />
           <Metric label="Final" value={`${results.finalPrecision}%`} />
           <Metric label="Score" value={results.score} />
+          <Metric label="Dano tisular" value={`${results.tissueDamage}%`} />
         </div>
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -584,19 +635,4 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       </motion.section>
     </div>
   );
-}
-
-function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians),
-  };
-}
-
-function describeArc(x, y, radius, startAngle, endAngle) {
-  const start = polarToCartesian(x, y, radius, endAngle);
-  const end = polarToCartesian(x, y, radius, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-  return ['M', start.x, start.y, 'A', radius, radius, 0, largeArcFlag, 0, end.x, end.y].join(' ');
 }

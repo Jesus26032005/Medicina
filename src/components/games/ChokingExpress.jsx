@@ -10,54 +10,31 @@ import { supabase } from '../../lib/supabaseClient';
 
 const REQUIRED_HITS = 5;
 
-const cases = [
-  {
-    id: 'partial_obstruction_coughing',
-    title: 'Obstruccion parcial: puede toser',
-    description: 'La persona tose fuerte, puede emitir sonidos y todavia mueve aire.',
-    recommendation: 'Recomendacion: no hagas Heimlich. Anima a toser, vigila de cerca y llama a emergencias si deja de respirar bien.',
-    targetLabel: 'Animar a toser y vigilar',
-    greenMin: 0,
-    greenMax: 0,
-    force: 'evaluacion',
-    obstructionType: 'partial',
-    criticalWrong: 'Error critico: si la persona tose o habla, no se hacen compresiones. Se anima a toser, se vigila y se llama a emergencias si empeora.',
-  },
-  {
-    id: 'adult_food_standard',
-    title: 'Adulto atragantado con comida',
-    description: 'La persona esta despierta, pero no puede hablar, toser ni respirar bien.',
-    recommendation: 'Recomendacion: si no puede hablar, toser ni respirar, llama a emergencias e inicia compresiones abdominales.',
-    targetLabel: 'Compresion Abdominal (Boca del estomago)',
+const contexts = ['restaurante', 'comedor de casa', 'calle', 'parque'];
+
+const patientTypes = {
+  adulto_promedio: {
+    label: 'adulto promedio',
+    subject: 'un adulto',
+    force: 'abdominal',
     greenMin: 38,
     greenMax: 62,
-    force: 'estandar',
-    obstructionType: 'severe',
-    criticalWrong: 'Error: apunta a la boca del estomago. La presion ahi ayuda a que el aire empuje el objeto como un corcho.',
+    targetLabel: 'Compresiones Abdominales (boca del estomago)',
+  },
+};
+
+const obstructionLevels = ['partial', 'complete'];
+
+const actionOptions = [
+  {
+    id: 'apply_heimlich',
+    label: 'Aplicar Heimlich',
+    className: 'border-cyan-300/30 bg-cyan-400/15 text-cyan-100 hover:bg-cyan-400/25',
   },
   {
-    id: 'pregnant_or_obese',
-    title: 'Mujer embarazada u obeso',
-    description: 'Aqui no conviene apretar el abdomen: puede ser inseguro o no servir.',
-    recommendation: 'Recomendacion: en embarazo u obesidad usa compresiones toracicas en el pecho, no en el abdomen.',
-    targetLabel: 'Compresion Toracica (Pecho)',
-    greenMin: 66,
-    greenMax: 90,
-    force: 'toracica',
-    obstructionType: 'severe',
-    criticalWrong: 'Error critico: en embarazo u obesidad se presiona el pecho, no el abdomen.',
-  },
-  {
-    id: 'small_child',
-    title: 'Nino pequeno',
-    description: 'En un nino se usa menos fuerza, pero la zona correcta sigue importando mucho.',
-    recommendation: 'Recomendacion: usa menos fuerza que en adulto y coloca la presion en la boca del estomago.',
-    targetLabel: 'Compresion Abdominal (Boca del estomago)',
-    greenMin: 36,
-    greenMax: 62,
-    force: 'reducida',
-    obstructionType: 'severe',
-    criticalWrong: 'Error: usa menos fuerza y apunta a la boca del estomago; fuera de ahi puedes lastimar y no ayudar.',
+    id: 'do_not_apply',
+    label: 'No aplicar (Animar a toser)',
+    className: 'border-emerald-300/30 bg-emerald-400/15 text-emerald-100 hover:bg-emerald-400/25',
   },
 ];
 
@@ -69,8 +46,62 @@ const notes = [
   'Si la persona se desmaya, la situacion cambia: hay que activar emergencias de inmediato.',
 ];
 
-function pickCase() {
-  return cases[Math.floor(Math.random() * cases.length)];
+function pickRandom(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function getCorrectAction(obstructionLevel) {
+  return obstructionLevel === 'partial' ? 'do_not_apply' : 'apply_heimlich';
+}
+
+function buildDescription(context, patientType, obstructionLevel) {
+  const patient = patientTypes[patientType];
+
+  if (obstructionLevel === 'partial') {
+    return `En un ${context}, ${patient.subject} empieza a atragantarse, pero tose fuerte, puede emitir sonidos y todavia entra algo de aire.`;
+  }
+
+  return `En un ${context}, ${patient.subject} se levanta asustado, se lleva las manos al cuello, no emite ningun sonido y se ve desesperado.`;
+}
+
+function buildRecommendation(obstructionLevel) {
+  if (obstructionLevel === 'partial') {
+    return 'Recomendacion AHA/Cruz Roja: si puede toser o hablar, anima a toser, observa de cerca y llama a emergencias si empeora.';
+  }
+
+  return 'Recomendacion: si no puede hablar, toser ni respirar, llama a emergencias e inicia compresiones abdominales.';
+}
+
+function buildWrongFeedback(caseData) {
+  if (caseData.obstructionLevel === 'partial') {
+    return 'Error Critico: Si la persona puede toser o emitir sonido, el aire aun pasa. Hacer Heimlich puede empeorar la obstruccion.';
+  }
+
+  return 'Error: si no puede hablar, toser ni respirar, esperar cuesta tiempo vital. Debes aplicar la maniobra.';
+}
+
+function generateCase() {
+  const context = pickRandom(contexts);
+  const patientType = 'adulto_promedio';
+  const obstructionLevel = pickRandom(obstructionLevels);
+  const patient = patientTypes[patientType];
+  const correctAction = getCorrectAction(obstructionLevel);
+
+  return {
+    context,
+    correctAction,
+    description: buildDescription(context, patientType, obstructionLevel),
+    force: patient.force,
+    greenMax: patient.greenMax,
+    greenMin: patient.greenMin,
+    id: `${context}_${patientType}_${obstructionLevel}_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+    obstructionLevel,
+    patientLabel: patient.label,
+    patientType,
+    recommendation: buildRecommendation(obstructionLevel),
+    targetLabel: patient.targetLabel,
+    title: `${patient.label}: ${obstructionLevel === 'partial' ? 'obstruccion parcial' : 'obstruccion completa'}`,
+  };
 }
 
 function clamp(value, min, max) {
@@ -104,7 +135,7 @@ function scrollToGameTop() {
 export default function ChokingExpress() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [caseData, setCaseData] = useState(() => pickCase());
+  const [caseData, setCaseData] = useState(() => generateCase());
   const [showBriefing, setShowBriefing] = useState(true);
   const [showTutorial, setShowTutorial] = useState(true);
   const [assessmentPhase, setAssessmentPhase] = useState('pending');
@@ -145,10 +176,14 @@ export default function ChokingExpress() {
         score: nextResults.score,
         telemetry: {
           assessment_choice: nextResults.assessmentChoice,
+          correct_action: caseData.correctAction,
           critical_error: nextResults.criticalError,
           case_id: caseData.id,
+          context: caseData.context,
           force: caseData.force,
           green_zone: [caseData.greenMin, caseData.greenMax],
+          obstruction_level: caseData.obstructionLevel,
+          patient_type: caseData.patientType,
           samples: samplesRef.current,
           target_label: caseData.targetLabel,
         },
@@ -264,7 +299,7 @@ export default function ChokingExpress() {
       setFeedback(`Acierto ${nextHits}/${REQUIRED_HITS}: ${caseData.targetLabel}.`);
     } else {
       setErrorsCount(nextErrors);
-      setFeedback(caseData.criticalWrong);
+      setFeedback(`Fuera de la zona correcta. Objetivo: ${caseData.targetLabel}.`);
     }
 
     if (nextHits >= REQUIRED_HITS) {
@@ -290,9 +325,10 @@ export default function ChokingExpress() {
 
     setAssessmentChoice(choice);
 
-    if (caseData.obstructionType === 'partial') {
-      if (choice === 'partial') {
-        setDecisionScore(100);
+    if (choice === caseData.correctAction) {
+      setDecisionScore(100);
+
+      if (caseData.obstructionLevel === 'partial') {
         setFeedback('Correcto: si puede toser o hablar, se anima a toser y se vigila. No se comprime.');
         finishGame(0, 0, {
           assessmentChoice: choice,
@@ -300,38 +336,30 @@ export default function ChokingExpress() {
           initialPrecision: 100,
           knowledgeDecision: 100,
           mechanicalPrecision: 100,
-          note: 'Buena decision: una obstruccion parcial se maneja animando a toser, vigilando y pidiendo ayuda si empeora.',
+          note: 'Buena decision: una obstruccion parcial se maneja animando a toser, observando y pidiendo ayuda si empeora.',
           timeResponse: 100,
         });
         return;
       }
 
-      setDecisionScore(0);
-      setFeedback(caseData.criticalWrong);
-      finishGame(0, 1, {
-        assessmentChoice: choice,
-        criticalError: true,
-        finalPrecision: 0,
-        initialPrecision: 0,
-        knowledgeDecision: 0,
-        mechanicalPrecision: 0,
-        note: caseData.criticalWrong,
-        timeResponse: 0,
-      });
-      return;
-    }
-
-    if (choice === 'severe') {
-      setDecisionScore(100);
-      setFeedback(`Correcto: no puede hablar ni respirar bien. Objetivo: ${caseData.targetLabel}.`);
+      setFeedback(`Correcto: aplica Heimlich y ejecuta ${caseData.targetLabel}.`);
       setAssessmentPhase('ready');
       return;
     }
 
+    const wrongFeedback = buildWrongFeedback(caseData);
     setDecisionScore(0);
-    setErrorsCount((count) => count + 1);
-    setFeedback('Cuidado: este caso no puede hablar ni toser bien. Se necesita actuar con la maniobra correcta.');
-    setAssessmentPhase('ready');
+    setFeedback(wrongFeedback);
+    finishGame(0, 1, {
+      assessmentChoice: choice,
+      criticalError: true,
+      finalPrecision: 0,
+      initialPrecision: 0,
+      knowledgeDecision: 0,
+      mechanicalPrecision: 0,
+      note: wrongFeedback,
+      timeResponse: 0,
+    });
   }
 
   useEffect(() => {
@@ -376,7 +404,7 @@ export default function ChokingExpress() {
   }
 
   function resetGame() {
-    setCaseData(pickCase());
+    setCaseData(generateCase());
     setResults(null);
     setShowBriefing(true);
     setShowTutorial(true);
@@ -415,9 +443,14 @@ export default function ChokingExpress() {
                 <button
                   aria-label="Cerrar tutorial e iniciar practica"
                   className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm transition"
-                  onClick={beginInteractiveRun}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    beginInteractiveRun();
+                  }}
                   onPointerDown={(event) => {
                     event.preventDefault();
+                    event.stopPropagation();
                     beginInteractiveRun();
                   }}
                   type="button"
@@ -444,23 +477,20 @@ export default function ChokingExpress() {
                     {caseData.recommendation}
                   </div>
                   <p className="mt-4 rounded-md border border-amber-300/30 bg-amber-300/10 p-3 text-sm font-semibold text-amber-100">
-                    Antes de comprimir, decide si la obstruccion es parcial o grave.
+                    Antes de comprimir, elige la primera accion correcta segun el protocolo.
                   </p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <button
-                      className="min-h-14 touch-manipulation select-none rounded-md border border-emerald-300/30 bg-emerald-400/15 px-4 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/25"
-                      onClick={() => handleAssessment('partial')}
-                      type="button"
-                    >
-                      ¿La persona tose/habla?
-                    </button>
-                    <button
-                      className="min-h-14 touch-manipulation select-none rounded-md border border-red-300/30 bg-red-400/15 px-4 text-sm font-bold text-red-100 transition hover:bg-red-400/25"
-                      onClick={() => handleAssessment('severe')}
-                      type="button"
-                    >
-                      No respira / se agarra el cuello
-                    </button>
+                    {actionOptions.map((option) => (
+                      <button
+                        className={`min-h-14 touch-manipulation select-none rounded-md border px-4 py-3 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${option.className}`}
+                        disabled={showTutorial}
+                        key={option.id}
+                        onClick={() => handleAssessment(option.id)}
+                        type="button"
+                      >
+                        {option.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               ) : (
@@ -497,7 +527,7 @@ export default function ChokingExpress() {
                             lastSuccess ? 'border-emerald-500 bg-emerald-300/60' : 'border-cyan-500 bg-cyan-300/40'
                           }`}
                           style={{
-                            bottom: caseData.id === 'pregnant_or_obese' ? '62%' : '38%',
+                            bottom: caseData.correctAction === 'chest_compressions' || caseData.correctAction === 'infant_back_blows' ? '62%' : '38%',
                           }}
                         />
                       </div>
@@ -506,6 +536,7 @@ export default function ChokingExpress() {
 
                   <button
                     className="mt-3 min-h-[48px] w-full touch-manipulation select-none rounded-md bg-cyan-600 text-sm font-bold text-white transition hover:bg-cyan-700 active:scale-[0.99] md:mt-8 md:h-14"
+                    disabled={showTutorial}
                     onClick={applyCompression}
                     onTouchStart={(event) => {
                       event.preventDefault();
@@ -562,11 +593,11 @@ function Briefing({ caseData, onStart }) {
         <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
           <h2 className="font-bold">Instrucciones</h2>
           <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-            Primero decide si la persona todavia puede toser o hablar. Si puede
-            hacerlo, anima a toser y vigila. Si no respira bien o se agarra el
-            cuello, inicia la maniobra: en computadora presiona espacio o el
-            boton cuando el indicador pase por la zona verde; en celular toca
-            Aplicar Compresion.
+            Primero elige entre dos acciones: aplicar Heimlich o no aplicarlo y
+            animar a toser. Si la persona tose o hace sonidos, no comprimas. Si
+            no emite sonido y se agarra el cuello, aplica Heimlich. Despues, en
+            computadora presiona espacio o el boton cuando el indicador pase por
+            la zona verde; en celular toca Aplicar Compresion.
           </p>
         </div>
         <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 p-3 text-sm font-semibold text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">

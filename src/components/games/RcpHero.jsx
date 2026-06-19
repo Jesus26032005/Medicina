@@ -399,24 +399,29 @@ export default function RcpHero() {
   }, [beatIntervalMs, gameDurationMs, isRunning]);
 
   useEffect(() => {
-    function handleKeyDown(event) {
-      const isSpaceKey = event.code === 'Space' || event.key === ' ';
-      const isGameActive = !showBriefing && !results;
-
-      if (!isSpaceKey || event.repeat || !isGameActive) {
+    const gameStarted = !showBriefing;
+    const gameOver = Boolean(results);
+    const handleKeyDown = (event) => {
+      if (event.code !== 'Space' && event.key !== ' ') {
         return;
       }
 
       event.preventDefault();
+      if (event.repeat) {
+        return;
+      }
+
       if (showTutorial && !showBriefing && !isRunning && !results) {
         startGame();
         return;
       }
 
       recordCompression();
-    }
+    };
 
-    window.addEventListener('keydown', handleKeyDown);
+    if (gameStarted && !gameOver) {
+      window.addEventListener('keydown', handleKeyDown, { passive: false });
+    }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -524,7 +529,11 @@ export default function RcpHero() {
             <button
               aria-label="Cerrar tutorial e iniciar RCP Hero"
               className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
-              onClick={startGame}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                startGame();
+              }}
               type="button"
             >
               <span className="animate-pulse text-6xl" aria-hidden="true">
@@ -671,7 +680,7 @@ export default function RcpHero() {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <button
                 className="flex h-12 items-center gap-2 rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-600"
-                disabled={isRunning}
+                disabled={isRunning || showTutorial}
                 onClick={startGame}
                 type="button"
               >
@@ -684,7 +693,7 @@ export default function RcpHero() {
               </button>
               <button
                 className="flex h-12 items-center gap-2 rounded-md border border-cyan-300/30 bg-cyan-300/10 px-5 text-sm font-bold text-cyan-100 transition hover:bg-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={!isRunning}
+                disabled={!isRunning || showTutorial}
                 onClick={recordCompression}
                 type="button"
               >
@@ -693,6 +702,7 @@ export default function RcpHero() {
               </button>
               <button
                 className="flex h-12 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-5 text-sm font-bold text-slate-100 transition hover:bg-white/10"
+                disabled={showTutorial}
                 onClick={() => setIsMuted((value) => !value)}
                 type="button"
               >

@@ -661,7 +661,11 @@ export default function BurnLab() {
               <button
                 aria-label="Cerrar tutorial de Burn Lab"
                 className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
-                onClick={dismissTutorial}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  dismissTutorial();
+                }}
                 type="button"
               >
                 <span className="animate-bounce text-6xl" aria-hidden="true">
@@ -713,7 +717,7 @@ export default function BurnLab() {
                           ? 'border-cyan-300 bg-cyan-400/20 text-cyan-50'
                           : 'border-white/10 bg-white/5 text-slate-200 hover:bg-white/10'
                       }`}
-                      disabled={severityLocked}
+                      disabled={severityLocked || showTutorial}
                       key={option.key}
                       onClick={() => selectSeverity(option.key)}
                       type="button"
@@ -722,6 +726,16 @@ export default function BurnLab() {
                       <span className="mt-1 block text-xs leading-5 text-slate-300">{option.description}</span>
                     </button>
                   ))}
+                </div>
+                <div
+                  className={`mt-4 rounded-md border p-4 ${
+                    alert.includes('Error')
+                      ? 'border-red-200 bg-red-50 text-red-800 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-100'
+                      : 'border-cyan-200 bg-cyan-50 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100'
+                  }`}
+                >
+                  <p className="text-sm font-bold">Respuesta clinica</p>
+                  <p className="mt-2 text-sm leading-6">{alert}</p>
                 </div>
               </div>
 
@@ -772,7 +786,8 @@ export default function BurnLab() {
                               ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500'
                               : 'border-slate-200 bg-white text-slate-900 hover:border-cyan-300 hover:bg-cyan-50 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:hover:bg-cyan-400/10'
                           }`}
-                          draggable={!used}
+                          disabled={used || showTutorial}
+                          draggable={!used && !showTutorial}
                           key={toolId}
                           onClick={() => applyTool(toolId)}
                           onDragStart={(event) => handleDragStart(event, toolId)}
@@ -802,19 +817,10 @@ export default function BurnLab() {
                 <Metric label="Precision" value={`${precision}%`} />
                 <Metric label="Gravedad" value={selectedSeverity ? severityLabels[selectedSeverity] : 'Pendiente'} />
               </div>
-              <div
-                className={`mt-5 rounded-md border p-4 ${
-                  alert.includes('Error')
-                    ? 'border-red-200 bg-red-50 text-red-800 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-100'
-                    : 'border-cyan-200 bg-cyan-50 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100'
-                }`}
-              >
-                <p className="text-sm font-bold">Respuesta clinica</p>
-                <p className="mt-2 text-sm leading-6">{alert}</p>
-              </div>
               <div className="mt-5 grid gap-3">
                 <button
                   className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md bg-cyan-600 px-4 text-sm font-semibold text-white transition hover:bg-cyan-700"
+                  disabled={showTutorial}
                   onClick={showHint}
                   type="button"
                 >
@@ -823,6 +829,7 @@ export default function BurnLab() {
                 </button>
                 <button
                   className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-100 dark:hover:bg-white/10"
+                  disabled={showTutorial}
                   onClick={() => resetGame()}
                   type="button"
                 >

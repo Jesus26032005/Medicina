@@ -463,7 +463,11 @@ export default function TacticalTriage() {
               <button
                 aria-label="Cerrar tutorial de triage tactico"
                 className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
-                onClick={dismissTutorial}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  dismissTutorial();
+                }}
                 type="button"
               >
                 <span className="animate-bounce text-6xl" aria-hidden="true">
@@ -478,6 +482,14 @@ export default function TacticalTriage() {
               </button>
             ) : null}
             <section className="rounded-lg border border-red-400/20 bg-white/5 p-6 shadow-2xl shadow-red-950/20">
+              <div className="mb-5 rounded-lg border border-red-300/25 bg-red-400/10 p-4">
+                <p className="text-sm font-black uppercase tracking-wide text-red-200">
+                  Triage: Clasificacion rapida de prioridad medica
+                </p>
+                <p className="mt-1 text-sm leading-6 text-slate-300">
+                  Decide quien necesita ayuda inmediata cuando hay varias victimas.
+                </p>
+              </div>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-red-300">
@@ -509,7 +521,7 @@ export default function TacticalTriage() {
                 {triageOptions.map((option) => (
                   <button
                     className={`min-h-20 w-full touch-manipulation select-none rounded-lg px-5 py-4 text-left text-white shadow-lg transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-24 ${option.colorClass}`}
-                    disabled={isLocked}
+                    disabled={isLocked || showTutorial}
                     key={option.key}
                     onClick={() => classifyPatient(option.key)}
                     type="button"
@@ -529,6 +541,7 @@ export default function TacticalTriage() {
                   {feedback}
                   <button
                     className="mt-4 flex h-12 w-full touch-manipulation select-none items-center justify-center rounded-md bg-white px-4 text-sm font-bold text-slate-950 transition hover:bg-slate-100 sm:w-auto"
+                    disabled={showTutorial}
                     onClick={() => goNext()}
                     type="button"
                   >
