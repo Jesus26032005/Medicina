@@ -12,33 +12,51 @@ const REQUIRED_HITS = 5;
 
 const cases = [
   {
+    id: 'partial_obstruction_coughing',
+    title: 'Obstruccion parcial: puede toser',
+    description: 'La persona tose fuerte, puede emitir sonidos y todavia mueve aire.',
+    recommendation: 'Recomendacion: no hagas Heimlich. Anima a toser, vigila de cerca y llama a emergencias si deja de respirar bien.',
+    targetLabel: 'Animar a toser y vigilar',
+    greenMin: 0,
+    greenMax: 0,
+    force: 'evaluacion',
+    obstructionType: 'partial',
+    criticalWrong: 'Error critico: si la persona tose o habla, no se hacen compresiones. Se anima a toser, se vigila y se llama a emergencias si empeora.',
+  },
+  {
     id: 'adult_food_standard',
     title: 'Adulto atragantado con comida',
     description: 'La persona esta despierta, pero no puede hablar, toser ni respirar bien.',
+    recommendation: 'Recomendacion: si no puede hablar, toser ni respirar, llama a emergencias e inicia compresiones abdominales.',
     targetLabel: 'Compresion Abdominal (Boca del estomago)',
     greenMin: 38,
     greenMax: 62,
     force: 'estandar',
+    obstructionType: 'severe',
     criticalWrong: 'Error: apunta a la boca del estomago. La presion ahi ayuda a que el aire empuje el objeto como un corcho.',
   },
   {
     id: 'pregnant_or_obese',
     title: 'Mujer embarazada u obeso',
     description: 'Aqui no conviene apretar el abdomen: puede ser inseguro o no servir.',
+    recommendation: 'Recomendacion: en embarazo u obesidad usa compresiones toracicas en el pecho, no en el abdomen.',
     targetLabel: 'Compresion Toracica (Pecho)',
     greenMin: 66,
     greenMax: 90,
     force: 'toracica',
+    obstructionType: 'severe',
     criticalWrong: 'Error critico: en embarazo u obesidad se presiona el pecho, no el abdomen.',
   },
   {
     id: 'small_child',
     title: 'Nino pequeno',
     description: 'En un nino se usa menos fuerza, pero la zona correcta sigue importando mucho.',
+    recommendation: 'Recomendacion: usa menos fuerza que en adulto y coloca la presion en la boca del estomago.',
     targetLabel: 'Compresion Abdominal (Boca del estomago)',
     greenMin: 36,
     greenMax: 62,
     force: 'reducida',
+    obstructionType: 'severe',
     criticalWrong: 'Error: usa menos fuerza y apunta a la boca del estomago; fuera de ahi puedes lastimar y no ayudar.',
   },
 ];
@@ -71,9 +89,10 @@ function getAverage(items) {
     : 0;
 }
 
-function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount) {
-  const improvementBonus = Math.max(0, finalPrecision - initialPrecision) * 0.5;
-  return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
+function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeResponse }) {
+  return Math.round(
+    clamp(knowledgeDecision * 0.4 + mechanicalPrecision * 0.4 + timeResponse * 0.2, 0, 100)
+  );
 }
 
 function scrollToGameTop() {
@@ -88,6 +107,9 @@ export default function ChokingExpress() {
   const [caseData, setCaseData] = useState(() => pickCase());
   const [showBriefing, setShowBriefing] = useState(true);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [assessmentPhase, setAssessmentPhase] = useState('pending');
+  const [assessmentChoice, setAssessmentChoice] = useState('');
+  const [decisionScore, setDecisionScore] = useState(0);
   const [hits, setHits] = useState(0);
   const [errorsCount, setErrorsCount] = useState(0);
   const [lastPrecision, setLastPrecision] = useState(0);
@@ -122,6 +144,8 @@ export default function ChokingExpress() {
         errors_count: nextResults.errorsCount,
         score: nextResults.score,
         telemetry: {
+          assessment_choice: nextResults.assessmentChoice,
+          critical_error: nextResults.criticalError,
           case_id: caseData.id,
           force: caseData.force,
           green_zone: [caseData.greenMin, caseData.greenMax],
@@ -142,26 +166,39 @@ export default function ChokingExpress() {
   );
 
   const finishGame = useCallback(
-    (finalHits, finalErrors) => {
+    (finalHits, finalErrors, options = {}) => {
       const samples = samplesRef.current;
       const chunkSize = Math.max(1, Math.floor(samples.length / 3));
       const first = samples.slice(0, chunkSize);
       const last = samples.slice(Math.max(0, samples.length - chunkSize));
-      const initialPrecision = getAverage(first);
-      const finalPrecision = getAverage(last);
+      const completionTimeSeconds = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000));
+      const initialPrecision = options.initialPrecision ?? getAverage(first);
+      const finalPrecision = options.finalPrecision ?? getAverage(last);
+      const knowledgeDecision = options.knowledgeDecision ?? decisionScore;
+      const mechanicalPrecision = options.mechanicalPrecision ?? finalPrecision;
+      const timeResponse = options.timeResponse ?? clamp(100 - completionTimeSeconds * 3, 0, 100);
       const nextResults = {
-        completionTimeSeconds: Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000)),
+        assessmentChoice: options.assessmentChoice ?? assessmentChoice,
+        completionTimeSeconds,
+        criticalError: Boolean(options.criticalError),
         errorsCount: finalErrors,
         finalPrecision,
         initialPrecision,
-        note: notes[Math.floor(Math.random() * notes.length)],
-        score: calculateNormalizedScore(initialPrecision, finalPrecision, finalErrors),
+        knowledgeDecision,
+        mechanicalPrecision,
+        note: options.note ?? notes[Math.floor(Math.random() * notes.length)],
+        score: calculateUniversalScore({
+          knowledgeDecision,
+          mechanicalPrecision,
+          timeResponse,
+        }),
+        timeResponse,
       };
 
       setResults(nextResults);
       persistSession(nextResults);
     },
-    [persistSession]
+    [assessmentChoice, decisionScore, persistSession]
   );
 
   const getIndicatorPosition = useCallback(() => {
@@ -202,7 +239,7 @@ export default function ChokingExpress() {
   }, []);
 
   const applyCompression = useCallback(() => {
-    if (results || showBriefing || showTutorial) {
+    if (results || showBriefing || showTutorial || assessmentPhase !== 'ready') {
       return;
     }
 
@@ -241,13 +278,68 @@ export default function ChokingExpress() {
     hits,
     isIndicatorInsideTarget,
     results,
+    assessmentPhase,
     showBriefing,
     showTutorial,
   ]);
 
+  function handleAssessment(choice) {
+    if (results || showBriefing || showTutorial || assessmentPhase !== 'pending') {
+      return;
+    }
+
+    setAssessmentChoice(choice);
+
+    if (caseData.obstructionType === 'partial') {
+      if (choice === 'partial') {
+        setDecisionScore(100);
+        setFeedback('Correcto: si puede toser o hablar, se anima a toser y se vigila. No se comprime.');
+        finishGame(0, 0, {
+          assessmentChoice: choice,
+          finalPrecision: 100,
+          initialPrecision: 100,
+          knowledgeDecision: 100,
+          mechanicalPrecision: 100,
+          note: 'Buena decision: una obstruccion parcial se maneja animando a toser, vigilando y pidiendo ayuda si empeora.',
+          timeResponse: 100,
+        });
+        return;
+      }
+
+      setDecisionScore(0);
+      setFeedback(caseData.criticalWrong);
+      finishGame(0, 1, {
+        assessmentChoice: choice,
+        criticalError: true,
+        finalPrecision: 0,
+        initialPrecision: 0,
+        knowledgeDecision: 0,
+        mechanicalPrecision: 0,
+        note: caseData.criticalWrong,
+        timeResponse: 0,
+      });
+      return;
+    }
+
+    if (choice === 'severe') {
+      setDecisionScore(100);
+      setFeedback(`Correcto: no puede hablar ni respirar bien. Objetivo: ${caseData.targetLabel}.`);
+      setAssessmentPhase('ready');
+      return;
+    }
+
+    setDecisionScore(0);
+    setErrorsCount((count) => count + 1);
+    setFeedback('Cuidado: este caso no puede hablar ni toser bien. Se necesita actuar con la maniobra correcta.');
+    setAssessmentPhase('ready');
+  }
+
   useEffect(() => {
     function handleKeyDown(event) {
-      if (event.code !== 'Space' || event.repeat) {
+      const isSpaceKey = event.code === 'Space' || event.key === ' ';
+      const isGameActive = !showBriefing && !results;
+
+      if (!isSpaceKey || event.repeat || !isGameActive) {
         return;
       }
 
@@ -275,7 +367,10 @@ export default function ChokingExpress() {
     setErrorsCount(0);
     setLastPrecision(0);
     setLastSuccess(false);
-    setFeedback(`Objetivo: ${caseData.targetLabel}.`);
+    setAssessmentPhase('pending');
+    setAssessmentChoice('');
+    setDecisionScore(0);
+    setFeedback('Primero evalua si la obstruccion es parcial o grave.');
     setShowTutorial(true);
     setShowBriefing(false);
   }
@@ -289,9 +384,12 @@ export default function ChokingExpress() {
     setErrorsCount(0);
     setLastPrecision(0);
     setLastSuccess(false);
+    setAssessmentPhase('pending');
+    setAssessmentChoice('');
+    setDecisionScore(0);
     setSaveState('idle');
     setSaveError('');
-    setFeedback('Sincroniza el indicador con la zona verde.');
+    setFeedback('Primero evalua si la obstruccion es parcial o grave.');
   }
 
   return (
@@ -311,8 +409,8 @@ export default function ChokingExpress() {
         {showBriefing ? (
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
-          <div className="grid flex-1 items-center gap-8 py-4 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <section className="relative flex h-[calc(100dvh-120px)] flex-col justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4 md:h-auto md:p-6">
+          <div className="grid flex-1 items-center gap-6 py-4 md:gap-8 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <section className="relative flex h-[calc(100dvh-120px)] flex-col justify-center overflow-y-auto overscroll-contain rounded-lg border border-white/10 bg-white/5 p-3 md:h-auto md:overflow-hidden md:p-6">
               {showTutorial ? (
                 <button
                   aria-label="Cerrar tutorial e iniciar practica"
@@ -335,52 +433,91 @@ export default function ChokingExpress() {
                   </span>
                 </button>
               ) : null}
-              <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">{caseData.force}</p>
-              <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
-              <p className="mt-3 text-slate-300">{caseData.description}</p>
-              <p className="mt-4 rounded-md border border-cyan-300/20 bg-cyan-300/10 p-3 text-sm font-bold text-cyan-100">
-                Objetivo: {caseData.targetLabel}
-              </p>
-
-              <div className="mt-4 flex w-full flex-row items-center justify-center gap-8 overflow-hidden md:mt-8">
-                <div ref={trackRef} className="relative h-64 w-16 overflow-hidden rounded-full border border-white/10 bg-slate-900 md:h-96 md:w-24">
-                  <div
-                    ref={targetRef}
-                    className="absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
-                    style={{
-                      bottom: `${caseData.greenMin}%`,
-                      height: `${caseData.greenMax - caseData.greenMin}%`,
-                    }}
-                  />
-                  <div
-                    className="heimlich-indicator absolute left-1/2 top-0 h-5 w-14 rounded-full bg-cyan-300 shadow-lg shadow-cyan-400/50 md:h-6 md:w-20"
-                    ref={indicatorRef}
-                  />
-                </div>
-
-                <div className="flex flex-col justify-center">
-                  <div className="relative h-40 w-32 rounded-full bg-amber-100 md:h-80 md:w-56">
-                    <div className="absolute left-1/2 top-5 h-10 w-10 -translate-x-1/2 rounded-full bg-amber-200 md:top-10 md:h-20 md:w-20" />
-                    <div className="absolute bottom-4 left-1/2 h-28 w-24 -translate-x-1/2 rounded-t-full bg-amber-200 md:bottom-8 md:h-56 md:w-40" />
-                    <div
-                      className={`absolute left-1/2 h-9 w-24 -translate-x-1/2 rounded-full border-4 md:h-14 md:w-36 ${
-                        lastSuccess ? 'border-emerald-500 bg-emerald-300/60' : 'border-cyan-500 bg-cyan-300/40'
-                      }`}
-                      style={{
-                        bottom: caseData.id === 'pregnant_or_obese' ? '62%' : '38%',
-                      }}
-                    />
+              {assessmentPhase === 'pending' ? (
+                <div className="mx-auto w-full max-w-xl rounded-lg border border-cyan-300/20 bg-slate-900/80 p-5 text-center">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
+                    Evaluacion inicial
+                  </p>
+                  <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
+                  <p className="mt-3 text-slate-300">{caseData.description}</p>
+                  <div className="mt-4 rounded-md border border-cyan-300/30 bg-cyan-300/10 p-3 text-sm font-semibold leading-6 text-cyan-100">
+                    {caseData.recommendation}
+                  </div>
+                  <p className="mt-4 rounded-md border border-amber-300/30 bg-amber-300/10 p-3 text-sm font-semibold text-amber-100">
+                    Antes de comprimir, decide si la obstruccion es parcial o grave.
+                  </p>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <button
+                      className="min-h-14 touch-manipulation select-none rounded-md border border-emerald-300/30 bg-emerald-400/15 px-4 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/25"
+                      onClick={() => handleAssessment('partial')}
+                      type="button"
+                    >
+                      ¿La persona tose/habla?
+                    </button>
+                    <button
+                      className="min-h-14 touch-manipulation select-none rounded-md border border-red-300/30 bg-red-400/15 px-4 text-sm font-bold text-red-100 transition hover:bg-red-400/25"
+                      onClick={() => handleAssessment('severe')}
+                      type="button"
+                    >
+                      No respira / se agarra el cuello
+                    </button>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">{caseData.force}</p>
+                  <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
+                  <p className="mt-3 text-slate-300">{caseData.description}</p>
+                  <p className="mt-4 rounded-md border border-cyan-300/20 bg-cyan-300/10 p-3 text-sm font-bold text-cyan-100">
+                    Objetivo: {caseData.targetLabel}
+                  </p>
 
-              <button
-                className="mt-4 min-h-[48px] w-full touch-manipulation select-none rounded-md bg-cyan-600 text-sm font-bold text-white transition hover:bg-cyan-700 active:scale-[0.99] md:mt-8 md:h-14"
-                onClick={applyCompression}
-                type="button"
-              >
-                Aplicar Compresion
-              </button>
+                  <div className="mx-auto mt-4 flex w-full max-w-md flex-row items-center justify-evenly gap-4 overflow-hidden md:mt-8 md:max-w-none md:gap-8">
+                    <div ref={trackRef} className="relative h-56 w-14 shrink-0 overflow-hidden rounded-full border border-white/10 bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
+                      <div
+                        ref={targetRef}
+                        className="absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
+                        style={{
+                          bottom: `${caseData.greenMin}%`,
+                          height: `${caseData.greenMax - caseData.greenMin}%`,
+                        }}
+                      />
+                      <div
+                        className="heimlich-indicator absolute left-1/2 top-0 h-5 w-14 rounded-full bg-cyan-300 shadow-lg shadow-cyan-400/50 md:h-6 md:w-20"
+                        ref={indicatorRef}
+                      />
+                    </div>
+
+                    <div className="flex shrink-0 flex-col justify-center">
+                      <div className="relative h-36 w-28 rounded-full bg-amber-100 sm:h-40 sm:w-32 md:h-80 md:w-56">
+                        <div className="absolute left-1/2 top-4 h-9 w-9 -translate-x-1/2 rounded-full bg-amber-200 sm:top-5 sm:h-10 sm:w-10 md:top-10 md:h-20 md:w-20" />
+                        <div className="absolute bottom-3 left-1/2 h-24 w-20 -translate-x-1/2 rounded-t-full bg-amber-200 sm:bottom-4 sm:h-28 sm:w-24 md:bottom-8 md:h-56 md:w-40" />
+                        <div
+                          className={`absolute left-1/2 h-8 w-20 -translate-x-1/2 rounded-full border-4 sm:h-9 sm:w-24 md:h-14 md:w-36 ${
+                            lastSuccess ? 'border-emerald-500 bg-emerald-300/60' : 'border-cyan-500 bg-cyan-300/40'
+                          }`}
+                          style={{
+                            bottom: caseData.id === 'pregnant_or_obese' ? '62%' : '38%',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    className="mt-3 min-h-[48px] w-full touch-manipulation select-none rounded-md bg-cyan-600 text-sm font-bold text-white transition hover:bg-cyan-700 active:scale-[0.99] md:mt-8 md:h-14"
+                    onClick={applyCompression}
+                    onTouchStart={(event) => {
+                      event.preventDefault();
+                      applyCompression();
+                    }}
+                    style={{ touchAction: 'manipulation' }}
+                    type="button"
+                  >
+                    Aplicar Compresion
+                  </button>
+                </>
+              )}
             </section>
 
             <aside className="rounded-lg border border-white/10 bg-white p-5 text-slate-950 dark:bg-slate-900 dark:text-white">
@@ -389,7 +526,7 @@ export default function ChokingExpress() {
                 <Metric label="Aciertos" value={`${hits}/${REQUIRED_HITS}`} />
                 <Metric label="Errores" value={errorsCount} />
                 <Metric label="Ultima precision" value={`${lastPrecision}%`} />
-                <Metric label="Zona" value={caseData.targetLabel} />
+                <Metric label="Decision" value={decisionScore ? 'Correcta' : assessmentChoice ? 'Revisar' : 'Pendiente'} />
               </div>
               <div className={`mt-5 rounded-md border p-4 text-sm font-semibold ${lastSuccess ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
                 {feedback}
@@ -419,13 +556,17 @@ function Briefing({ caseData, onStart }) {
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Briefing medico</p>
         <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
         <p className="mt-3 text-slate-700 dark:text-slate-300">{caseData.description}</p>
+        <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold leading-6 text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
+          {caseData.recommendation}
+        </div>
         <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
           <h2 className="font-bold">Instrucciones</h2>
           <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-            En computadora: presiona la barra espaciadora o el boton cuando el
-            indicador pase por la zona verde. En celular: toca Aplicar
-            Compresion. Lo importante es escoger bien la zona para que el aire
-            empuje el objeto hacia afuera como un corcho.
+            Primero decide si la persona todavia puede toser o hablar. Si puede
+            hacerlo, anima a toser y vigila. Si no respira bien o se agarra el
+            cuello, inicia la maniobra: en computadora presiona espacio o el
+            boton cuando el indicador pase por la zona verde; en celular toca
+            Aplicar Compresion.
           </p>
         </div>
         <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 p-3 text-sm font-semibold text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
@@ -469,10 +610,15 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Retroalimentacion clinica</p>
-        <h2 className="mt-1 text-2xl font-bold">Ya puede respirar mejor</h2>
+        <h2 className="mt-1 text-2xl font-bold">
+          {results.criticalError ? 'Decision critica revisada' : 'Practica completada'}
+        </h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Inicial" value={`${results.initialPrecision}%`} />
           <Metric label="Final" value={`${results.finalPrecision}%`} />
+          <Metric label="Decision" value={`${results.knowledgeDecision}%`} />
+          <Metric label="Mecanica" value={`${results.mechanicalPrecision}%`} />
+          <Metric label="Tiempo" value={`${results.timeResponse}%`} />
           <Metric label="Score" value={results.score} />
         </div>
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>

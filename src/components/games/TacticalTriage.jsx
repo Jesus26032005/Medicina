@@ -43,152 +43,6 @@ const triageOptions = [
   },
 ];
 
-const clinicalCases = [
-  {
-    answer: 'green',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 1,
-    explanation: 'Paso 1 START: si puede caminar, se clasifica VERDE. Dolor o gritos no cambian la prioridad si camina.',
-    obeysCommands: true,
-    radialPulse: true,
-    respirations: 24,
-    scenario: 'Mujer joven camina hacia el punto de reunion, grita por dolor en el brazo y responde preguntas.',
-    title: 'Camina y grita de dolor',
-    walks: true,
-  },
-  {
-    answer: 'green',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 1,
-    explanation: 'Paso 1 START: quien camina va a VERDE para despejar la escena y dejar recursos a quienes no caminan.',
-    obeysCommands: true,
-    radialPulse: true,
-    respirations: 22,
-    scenario: 'Hombre camina con ayuda minima, tiene raspones en la cara y puede decir su nombre.',
-    title: 'Ambulante con heridas menores',
-    walks: true,
-  },
-  {
-    answer: 'black',
-    airwayOpened: true,
-    breathingAfterAirway: false,
-    capillaryRefillSeconds: null,
-    explanation: 'Paso 2 START: si no respira, se abre la via aerea. Si aun asi no respira, se clasifica NEGRO.',
-    obeysCommands: false,
-    radialPulse: false,
-    respirations: 0,
-    scenario: 'No camina, esta inmovil y no respira. Abres la via aerea y sigue sin respirar.',
-    title: 'No respira tras abrir via aerea',
-    walks: false,
-  },
-  {
-    answer: 'black',
-    airwayOpened: true,
-    breathingAfterAirway: false,
-    capillaryRefillSeconds: null,
-    explanation: 'Paso 2 START: ausencia de respiracion despues de abrir via aerea corresponde a NEGRO.',
-    obeysCommands: false,
-    radialPulse: false,
-    respirations: 0,
-    scenario: 'Adulto atrapado, no camina, no respira; tras maniobra de apertura de via aerea no inicia respiracion.',
-    title: 'Apnea persistente',
-    walks: false,
-  },
-  {
-    answer: 'red',
-    airwayOpened: true,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 2,
-    explanation: 'Paso 2 START: si no respiraba y vuelve a respirar despues de abrir la via aerea, se clasifica ROJO.',
-    obeysCommands: false,
-    radialPulse: true,
-    respirations: 12,
-    scenario: 'No camina. No respiraba al inicio, abres la via aerea y empieza a respirar a 12 rpm.',
-    title: 'Respira tras abrir via aerea',
-    walks: false,
-  },
-  {
-    answer: 'red',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 1,
-    explanation: 'Paso 3 START: si no camina y respira mas de 30 rpm, se clasifica ROJO.',
-    obeysCommands: true,
-    radialPulse: true,
-    respirations: 34,
-    scenario: 'Mujer no camina, respira a 34 rpm, tiene pulso radial y puede apretar tu mano.',
-    title: 'Respiracion mayor a 30 rpm',
-    walks: false,
-  },
-  {
-    answer: 'red',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 3,
-    explanation: 'Paso 4 START: si no hay pulso radial (pulso en la muñeca) o el llenado capilar (tiempo en que la sangre vuelve a la piel) es mayor a 2 segundos, se clasifica ROJO.',
-    obeysCommands: true,
-    radialPulse: false,
-    respirations: 24,
-    scenario: 'Hombre, no camina, respira a 24 rpm, no tiene pulso radial, esta consciente.',
-    title: 'Sin pulso radial',
-    walks: false,
-  },
-  {
-    answer: 'red',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 4,
-    explanation: 'Paso 4 START: llenado capilar (tiempo en que la sangre vuelve a la piel) mayor a 2 segundos indica mala circulacion. Clasificacion ROJO.',
-    obeysCommands: true,
-    radialPulse: true,
-    respirations: 26,
-    scenario: 'No camina, respira a 26 rpm, tiene pulso radial debil, llenado capilar de 4 segundos y obedece.',
-    title: 'Llenado capilar lento',
-    walks: false,
-  },
-  {
-    answer: 'red',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 1,
-    explanation: 'Paso 5 START: si no obedece ordenes simples o balbucea, se clasifica ROJO.',
-    obeysCommands: false,
-    radialPulse: true,
-    respirations: 22,
-    scenario: 'No camina, respira a 22 rpm, tiene pulso radial, pero balbucea y no aprieta tu mano.',
-    title: 'No obedece ordenes',
-    walks: false,
-  },
-  {
-    answer: 'yellow',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 1,
-    explanation: 'Paso 5 START: si no camina, respira menor o igual a 30, tiene buena circulacion y obedece, es AMARILLO.',
-    obeysCommands: true,
-    radialPulse: true,
-    respirations: 18,
-    scenario: 'No camina por dolor de pierna, respira a 18 rpm, pulso radial presente, llenado capilar 1 segundo y obedece.',
-    title: 'Diferido estable',
-    walks: false,
-  },
-  {
-    answer: 'yellow',
-    airwayOpened: false,
-    breathingAfterAirway: true,
-    capillaryRefillSeconds: 2,
-    explanation: 'Paso 5 START: no camina, pero respira <=30, la sangre circula bien y obedece. Clasificacion AMARILLO.',
-    obeysCommands: true,
-    radialPulse: true,
-    respirations: 28,
-    scenario: 'No puede levantarse, respira 28 rpm, pulso radial presente, llenado capilar 2 segundos y aprieta la mano.',
-    title: 'No ambulante perfundido',
-    walks: false,
-  },
-];
-
 const notes = [
   'START busca decisiones rapidas: caminar, respirar, circulacion y estado mental.',
   'En incidentes con muchas victimas, clasificar rapido ayuda a usar mejor los recursos disponibles.',
@@ -224,13 +78,119 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function shuffle(items) {
-  return [...items].sort(() => Math.random() - 0.5);
+function randomItem(items) {
+  return items[Math.floor(Math.random() * items.length)];
 }
 
-function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount) {
-  const improvementBonus = Math.max(0, finalPrecision - initialPrecision) * 0.5;
-  return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
+function chance(probability) {
+  return Math.random() < probability;
+}
+
+function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeResponse }) {
+  return Math.round(
+    clamp(knowledgeDecision * 0.4 + mechanicalPrecision * 0.4 + timeResponse * 0.2, 0, 100)
+  );
+}
+
+function generatePatient(index) {
+  const canWalk = chance(0.22);
+  const noInitialBreathing = !canWalk && chance(0.18);
+  const breathesAfterAirway = noInitialBreathing ? chance(0.45) : true;
+  const respiratoryRate = noInitialBreathing
+    ? breathesAfterAirway
+      ? randomItem([10, 12, 16])
+      : 0
+    : canWalk
+      ? randomItem([18, 20, 22, 24])
+      : randomItem([18, 22, 26, 28, 32, 36, 40]);
+  const capillaryRefill = respiratoryRate === 0 ? null : randomItem([1, 2, 3, 4]);
+  const radialPulse = capillaryRefill !== null && capillaryRefill <= 2 && chance(0.82);
+  const mentalStatus = canWalk || chance(0.68) ? 'follows' : randomItem(['confused', 'unconscious']);
+  const mechanism = randomItem([
+    'explosion con varias victimas',
+    'choque vehicular multiple',
+    'colapso de estructura',
+    'incendio en zona industrial',
+    'accidente en transporte publico',
+  ]);
+  const title = canWalk
+    ? `Paciente ${index}: ambulante`
+    : respiratoryRate === 0
+      ? `Paciente ${index}: no respira`
+      : `Paciente ${index}: no puede caminar`;
+  const scenarioParts = [
+    `${title} tras ${mechanism}.`,
+    canWalk ? 'Camina hacia ti con dolor.' : 'Permanece en el suelo y no puede caminar.',
+    respiratoryRate === 0
+      ? breathesAfterAirway
+        ? 'No respiraba al inicio; al abrir la via aerea vuelve a respirar.'
+        : 'No respiraba al inicio; abres la via aerea y sigue sin respirar.'
+      : `Respira a ${respiratoryRate} rpm.`,
+    capillaryRefill === null
+      ? 'Llenado capilar no valorable.'
+      : `Llenado capilar (tiempo en que la sangre vuelve a la piel): ${capillaryRefill}s.`,
+    radialPulse ? 'Tiene pulso radial en la muñeca.' : 'No se palpa pulso radial claro.',
+    mentalStatus === 'follows'
+      ? 'Obedece la orden simple de apretar tu mano.'
+      : mentalStatus === 'confused'
+        ? 'Balbucea y no sigue una orden simple.'
+        : 'Esta inconsciente y no responde ordenes simples.',
+  ];
+
+  return {
+    airwayOpened: noInitialBreathing,
+    breathesAfterAirway,
+    breathingAfterAirway: breathesAfterAirway,
+    canWalk,
+    capillaryRefill,
+    capillaryRefillSeconds: capillaryRefill,
+    explanation: getStartExplanation({
+      canWalk,
+      breathesAfterAirway,
+      respiratoryRate,
+      capillaryRefill,
+      radialPulse,
+      mentalStatus,
+    }),
+    mentalStatus,
+    obeysCommands: mentalStatus === 'follows',
+    radialPulse,
+    respiratoryRate,
+    respirations: respiratoryRate,
+    scenario: scenarioParts.join(' '),
+    title,
+    walks: canWalk,
+  };
+}
+
+function generatePatients() {
+  return Array.from({ length: PATIENTS_PER_GAME }, (_, index) => generatePatient(index + 1));
+}
+
+function getStartExplanation(patient) {
+  if (patient.canWalk) {
+    return 'Paso 1 START: si puede caminar, se clasifica VERDE para despejar la escena y atender primero a quien no camina.';
+  }
+
+  if (patient.respiratoryRate === 0) {
+    return patient.breathesAfterAirway
+      ? 'Paso 2 START: si no respiraba y vuelve a respirar al abrir la via aerea, se clasifica ROJO.'
+      : 'Paso 2 START: si no respira incluso despues de abrir la via aerea, se clasifica NEGRO.';
+  }
+
+  if (patient.respiratoryRate > 30) {
+    return 'Paso 3 START: si no camina y respira mas de 30 veces por minuto, se clasifica ROJO.';
+  }
+
+  if (!patient.radialPulse || patient.capillaryRefill > 2) {
+    return 'Paso 4 START: si no hay pulso radial o el llenado capilar tarda mas de 2 segundos, la circulacion falla y se clasifica ROJO.';
+  }
+
+  if (patient.mentalStatus !== 'follows') {
+    return 'Paso 5 START: si no obedece ordenes simples, se clasifica ROJO.';
+  }
+
+  return 'Paso 5 START: si no camina, respira a 30 o menos, tiene buena circulacion y obedece ordenes, se clasifica AMARILLO.';
 }
 
 function scrollToGameTop() {
@@ -240,23 +200,23 @@ function scrollToGameTop() {
 }
 
 function getStartCategory(patient) {
-  if (patient.walks) {
+  if (patient.canWalk) {
     return 'green';
   }
 
-  if (patient.respirations === 0) {
-    return patient.breathingAfterAirway ? 'red' : 'black';
+  if (patient.respiratoryRate === 0) {
+    return patient.breathesAfterAirway ? 'red' : 'black';
   }
 
-  if (patient.respirations > 30) {
+  if (patient.respiratoryRate > 30) {
     return 'red';
   }
 
-  if (!patient.radialPulse || patient.capillaryRefillSeconds > 2) {
+  if (!patient.radialPulse || patient.capillaryRefill > 2) {
     return 'red';
   }
 
-  if (!patient.obeysCommands) {
+  if (patient.mentalStatus !== 'follows') {
     return 'red';
   }
 
@@ -272,7 +232,7 @@ function getAverage(items) {
 export default function TacticalTriage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [patients, setPatients] = useState(() => shuffle(clinicalCases).slice(0, PATIENTS_PER_GAME));
+  const [patients, setPatients] = useState(() => generatePatients());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(SECONDS_PER_PATIENT);
   const [answers, setAnswers] = useState([]);
@@ -310,6 +270,7 @@ export default function TacticalTriage() {
         score: nextResults.score,
         telemetry: {
           answers: finalAnswers,
+          generator: 'procedural_start',
           protocol: 'START',
           total_patients: PATIENTS_PER_GAME,
         },
@@ -317,7 +278,11 @@ export default function TacticalTriage() {
 
       if (error) {
         setSaveState('error');
-        setSaveError(error.message);
+        setSaveError(
+          error.message?.includes('game_sessions_game_key_check')
+            ? 'El expediente aun no acepta el modulo Triage. Actualiza la regla de juegos permitidos en la base de datos.'
+            : 'No se pudo registrar el resultado. Intenta de nuevo en unos momentos.'
+        );
         return;
       }
 
@@ -333,6 +298,13 @@ export default function TacticalTriage() {
       const initialPrecision = getAverage(first);
       const finalPrecision = getAverage(last);
       const finalErrors = finalAnswers.filter((answer) => !answer.correct).length;
+      const timeResponse = finalAnswers.length
+        ? Math.round(
+            finalAnswers.reduce((sum, answer) => sum + answer.time_left_seconds, 0) /
+              (finalAnswers.length * SECONDS_PER_PATIENT) *
+              100
+          )
+        : 0;
       const nextResults = {
         completionTimeSeconds: Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000)),
         correctCount: finalAnswers.filter((answer) => answer.correct).length,
@@ -340,7 +312,12 @@ export default function TacticalTriage() {
         finalPrecision,
         initialPrecision,
         note: notes[Math.floor(Math.random() * notes.length)],
-        score: calculateNormalizedScore(initialPrecision, finalPrecision, finalErrors),
+        score: calculateUniversalScore({
+          knowledgeDecision: finalPrecision,
+          mechanicalPrecision: finalPrecision,
+          timeResponse,
+        }),
+        timeResponse,
       };
 
       setResults(nextResults);
@@ -376,6 +353,14 @@ export default function TacticalTriage() {
         correct,
         expected: expectedCategory,
         patient_id: currentPatient.title,
+        patient_variables: {
+          breathesAfterAirway: currentPatient.breathesAfterAirway,
+          canWalk: currentPatient.canWalk,
+          capillaryRefill: currentPatient.capillaryRefill,
+          mentalStatus: currentPatient.mentalStatus,
+          radialPulse: currentPatient.radialPulse,
+          respiratoryRate: currentPatient.respiratoryRate,
+        },
         precision: correct ? 100 : 0,
         selected: timedOut ? 'timeout' : selectedKey,
         time_left_seconds: secondsLeft,
@@ -443,7 +428,7 @@ export default function TacticalTriage() {
   }
 
   function resetGame() {
-    setPatients(shuffle(clinicalCases).slice(0, PATIENTS_PER_GAME));
+    setPatients(generatePatients());
     setCurrentIndex(0);
     setSecondsLeft(SECONDS_PER_PATIENT);
     setAnswers([]);

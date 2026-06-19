@@ -21,6 +21,7 @@ import { supabase } from '../../lib/supabaseClient';
 
 const SUCCESS_WINDOW_MS = 100;
 const PRECISION_WINDOW_MS = 250;
+const MIN_INTERVAL_BETWEEN_PRESSES_MS = 250;
 const durationOptions = [
   { label: 'Modo Practica (30s)', value: 30000 },
   { label: 'Modo Estandar (60s)', value: 60000 },
@@ -61,9 +62,10 @@ function precisionFromDelta(absDelta) {
   return roundMetric(clamp(100 - (absDelta / PRECISION_WINDOW_MS) * 100, 0, 100));
 }
 
-function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount) {
-  const improvementBonus = Math.max(0, finalPrecision - initialPrecision) * 0.5;
-  return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
+function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeResponse }) {
+  return Math.round(
+    clamp(knowledgeDecision * 0.4 + mechanicalPrecision * 0.4 + timeResponse * 0.2, 0, 100)
+  );
 }
 
 function scrollToGameTop() {
@@ -92,7 +94,7 @@ function getBeatWindowAverage(beatScores, startMs, endMs, durationMs, beatInterv
   return roundMetric(total / selectedScores.length);
 }
 
-function buildResults(attempts, durationMs, beatIntervalMs) {
+function buildResults(attempts, durationMs, beatIntervalMs, targetBPM, spamAttempts) {
   const beatScores = new Map();
   let failedPresses = 0;
 
@@ -109,7 +111,11 @@ function buildResults(attempts, durationMs, beatIntervalMs) {
   const totalBeats = getTotalBeats(durationMs, beatIntervalMs);
   const successfulHits = beatScores.size;
   const missedBeats = totalBeats - successfulHits;
-  const errorsCount = failedPresses + missedBeats;
+  const errorsCount = failedPresses + missedBeats + spamAttempts;
+  const averageBPM = attempts.length
+    ? roundMetric((attempts.length / durationMs) * 60000)
+    : 0;
+  const bpmAdherence = roundMetric(clamp(100 - Math.abs(averageBPM - targetBPM) * 5, 0, 100));
   const initialPrecision = getBeatWindowAverage(
     beatScores,
     0,
@@ -125,12 +131,20 @@ function buildResults(attempts, durationMs, beatIntervalMs) {
     beatIntervalMs
   );
   return {
+    averageBPM,
+    bpmAdherence,
     errorsCount,
     failedPresses,
     finalPrecision,
     initialPrecision,
+    mechanicalPrecision: roundMetric(clamp(finalPrecision - spamAttempts * 2, 0, 100)),
     missedBeats,
-    score: calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount),
+    score: calculateUniversalScore({
+      knowledgeDecision: 100,
+      mechanicalPrecision: clamp(finalPrecision - spamAttempts * 2, 0, 100),
+      timeResponse: bpmAdherence,
+    }),
+    spamAttempts,
     successfulHits,
     totalBeats,
   };
@@ -159,6 +173,8 @@ export default function RcpHero() {
   const attemptsRef = useRef([]);
   const finishedRef = useRef(false);
   const lastBeatRef = useRef(-1);
+  const lastCompressionTimeRef = useRef(0);
+  const spamAttemptsRef = useRef(0);
   const audioRef = useRef(null);
 
   const selectedTrack = cprPlaylist.find((track) => track.id === selectedTrackId) ?? cprPlaylist[0];
@@ -239,10 +255,14 @@ export default function RcpHero() {
           duration_ms: durationMs,
           duration_seconds: durationMs / 1000,
           success_window_ms: SUCCESS_WINDOW_MS,
+          min_interval_between_presses_ms: MIN_INTERVAL_BETWEEN_PRESSES_MS,
           total_beats: nextResults.totalBeats,
           successful_hits: nextResults.successfulHits,
           missed_beats: nextResults.missedBeats,
           failed_presses: nextResults.failedPresses,
+          spam_attempts: nextResults.spamAttempts,
+          average_bpm: nextResults.averageBPM,
+          bpm_adherence: nextResults.bpmAdherence,
           soundtrack,
         },
       });
@@ -272,12 +292,18 @@ export default function RcpHero() {
 
     const finalAttempts = attemptsRef.current;
     const soundtrack = selectedTrack;
-    const nextResults = buildResults(finalAttempts, gameDurationMs, beatIntervalMs);
+    const nextResults = buildResults(
+      finalAttempts,
+      gameDurationMs,
+      beatIntervalMs,
+      targetBPM,
+      spamAttemptsRef.current
+    );
     setResults({
       ...nextResults,
       note: medicalNotes[Math.floor(Math.random() * medicalNotes.length)],
     });
-    setLastFeedback('Sesion completada. Revisa tus Retroalimentacion clinica.');
+    setLastFeedback('Sesion completada. Revisa tu retroalimentacion clinica.');
     persistSession(nextResults, finalAttempts, soundtrack, gameDurationMs, targetBPM, beatIntervalMs);
   }, [beatIntervalMs, gameDurationMs, persistSession, selectedTrack, stopTrack, targetBPM]);
 
@@ -318,6 +344,19 @@ export default function RcpHero() {
 
     const now = performance.now();
     const elapsed = now - startTimeRef.current;
+    const intervalSinceLastPress = lastCompressionTimeRef.current
+      ? now - lastCompressionTimeRef.current
+      : Number.POSITIVE_INFINITY;
+
+    if (intervalSinceLastPress < MIN_INTERVAL_BETWEEN_PRESSES_MS) {
+      spamAttemptsRef.current += 1;
+      setFeedbackTone('error');
+      setFeedbackFlashKey((key) => key + 1);
+      setLastFeedback('Demasiado rapido: esa pulsacion se marco como spam y no cuenta.');
+      return;
+    }
+
+    lastCompressionTimeRef.current = now;
     if (audioRef.current?.paused) {
       audioRef.current.play().catch(() => {});
     }
@@ -361,7 +400,10 @@ export default function RcpHero() {
 
   useEffect(() => {
     function handleKeyDown(event) {
-      if (event.code !== 'Space' || event.repeat) {
+      const isSpaceKey = event.code === 'Space' || event.key === ' ';
+      const isGameActive = !showBriefing && !results;
+
+      if (!isSpaceKey || event.repeat || !isGameActive) {
         return;
       }
 
@@ -384,6 +426,8 @@ export default function RcpHero() {
   async function startGame() {
     scrollToGameTop();
     attemptsRef.current = [];
+    spamAttemptsRef.current = 0;
+    lastCompressionTimeRef.current = 0;
     finishedRef.current = false;
     lastBeatRef.current = -1;
     setAttempts([]);
@@ -404,6 +448,8 @@ export default function RcpHero() {
   function showGameTutorial() {
     scrollToGameTop();
     attemptsRef.current = [];
+    spamAttemptsRef.current = 0;
+    lastCompressionTimeRef.current = 0;
     finishedRef.current = false;
     lastBeatRef.current = -1;
     setAttempts([]);
@@ -422,6 +468,8 @@ export default function RcpHero() {
 
   function resetToBriefing() {
     attemptsRef.current = [];
+    spamAttemptsRef.current = 0;
+    lastCompressionTimeRef.current = 0;
     finishedRef.current = false;
     lastBeatRef.current = -1;
     setAttempts([]);
@@ -666,6 +714,7 @@ export default function RcpHero() {
               <Metric label="BPM" value={targetBPM} />
               <Metric label="Latido" value={currentBeat + 1} />
               <Metric label="Pulsaciones" value={attempts.length} />
+              <Metric label="Spam" value={spamAttemptsRef.current} />
               <Metric label="Precision media" value={`${averagePrecision}%`} />
             </div>
             <div className="mt-5 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-4">
@@ -734,6 +783,13 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
             A los 2 minutos los brazos empiezan a cansarse. Mantener el ritmo
             de la cancion elegida, dentro del rango 100-120 BPM, muestra si tu
             ritmo aguanta cuando la adrenalina y la fatiga aparecen.
+          </p>
+        </div>
+        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-300/30 dark:bg-amber-400/10">
+          <h2 className="font-bold text-amber-950 dark:text-amber-100">Nota Clinica</h2>
+          <p className="mt-2 text-sm leading-6 text-amber-900 dark:text-amber-100">
+            Este ejercicio mide el ritmo de compresiones. No evalua la
+            profundidad ni el retroceso toracico fisico real.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
@@ -838,7 +894,10 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Precision inicial" value={`${results.initialPrecision}%`} />
           <Metric label="Precision final" value={`${results.finalPrecision}%`} />
+          <Metric label="Ritmo promedio" value={`${results.averageBPM} BPM`} />
           <Metric label="Fallos" value={results.errorsCount} />
+          <Metric label="Spam" value={results.spamAttempts} />
+          <Metric label="Score" value={results.score} />
         </div>
 
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">

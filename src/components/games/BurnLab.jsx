@@ -97,10 +97,33 @@ const toolDefinitions = {
 
 const clinicalCases = [
   {
+    id: 'solar_first_degree',
+    title: 'Solar: quemadura leve de 1er grado',
+    mechanism: 'Exposicion solar prolongada en hombros sin ampollas.',
+    woundDescription: 'Piel enrojecida, seca, caliente y dolorosa al tacto; no hay ampollas ni zonas abiertas.',
+    visual: 'thermal',
+    severity: 'first',
+    severityExplanation: 'La piel roja, seca y dolorosa sin ampollas suele corresponder a 1er grado.',
+    hint: 'Enfria la piel y evita productos irritantes; si aparecen ampollas, ya no seria leve.',
+    correctTools: {
+      cool_water: 'Correcto: enfriar con agua fresca ayuda a bajar dolor y calor residual.',
+      sterile_gauze: 'Correcto: cubrir suavemente protege si hay roce, sin apretar.',
+      call_emergency: 'Correcto: si es extensa, hay mareo o empeora, se debe pedir valoracion.',
+    },
+    incorrectTools: {
+      ice: 'Error: el hielo puede quemar la piel por frio y empeorar el dolor.',
+      butter: 'Error: la grasa atrapa calor y ensucia la zona.',
+      toothpaste: 'Error: la pasta irrita y no es un tratamiento limpio.',
+    },
+  },
+  {
     id: 'thermal_boiling_water',
     title: 'Termica: agua hirviendo',
     mechanism: 'Escaldadura en antebrazo por agua a alta temperatura.',
+    woundDescription: 'Piel muy roja, brillante, con ampollas intactas y dolor intenso despues del contacto con agua hirviendo.',
     visual: 'thermal',
+    severity: 'second',
+    severityExplanation: 'La presencia de ampollas indica una quemadura de 2do grado.',
     hint: 'Enfria poco a poco y cubre limpio. Nada de remedios grasosos.',
     correctTools: {
       cool_water: 'Correcto: el agua fresca baja el calor que sigue danando la piel.',
@@ -117,7 +140,10 @@ const clinicalCases = [
     id: 'thermal_direct_fire',
     title: 'Termica: fuego directo',
     mechanism: 'Llama directa en manga de ropa con quemadura irregular.',
+    woundDescription: 'Zona roja con ampollas y dolor fuerte alrededor de la manga quemada; la piel aun esta sensible.',
     visual: 'thermal',
+    severity: 'second',
+    severityExplanation: 'Ampollas y dolor intenso sugieren 2do grado; si fuera correosa o sin dolor central, pensariamos en 3er grado.',
     hint: 'Primero detén lo que quema; luego enfria y cubre limpio.',
     correctTools: {
       stop_burning: 'Correcto: apagar la fuente evita que la piel siga recibiendo calor.',
@@ -134,7 +160,10 @@ const clinicalCases = [
     id: 'chemical_liquid_acid',
     title: 'Quimica liquida: acido clorhidrico',
     mechanism: 'Salpicadura liquida acida en piel y ropa.',
+    woundDescription: 'Piel enrojecida, humeda, con ardor intenso y pequenas ampollas bajo la zona mojada con quimico.',
     visual: 'chemical',
+    severity: 'second',
+    severityExplanation: 'Ampollas, humedad y dolor intenso por corrosivo apuntan a 2do grado hasta que un profesional valore profundidad.',
     hint: 'Si es liquido corrosivo, quita lo contaminado y enjuaga con mucha agua.',
     correctTools: {
       remove_clothing: 'Correcto: la ropa mojada con quimico sigue quemando si se queda pegada.',
@@ -151,7 +180,10 @@ const clinicalCases = [
     id: 'chemical_powder_quicklime',
     title: 'Quimica en polvo: cal viva',
     mechanism: 'Polvo alcalino reactivo sobre antebrazo.',
+    woundDescription: 'Polvo blanco adherido, piel muy irritada y dolorosa, con zonas rojizas que pueden formar ampollas.',
     visual: 'chemical',
+    severity: 'second',
+    severityExplanation: 'Dolor, irritacion intensa y posible ampolla sugieren 2do grado; primero se retira el polvo en seco.',
     hint: 'Si es polvo que reacciona con agua, primero retiralo en seco.',
     correctTools: {
       brush_powder: 'Correcto: quitar el polvo en seco evita activar mas reaccion.',
@@ -168,7 +200,10 @@ const clinicalCases = [
     id: 'electrical_high_voltage',
     title: 'Electrica: alto voltaje',
     mechanism: 'Marca de entrada y salida electrica; el peligro puede estar por dentro.',
+    woundDescription: 'Punto oscuro de entrada, textura seca/correosa y dolor menor en el centro pese al dano visible.',
     visual: 'electrical',
+    severity: 'third',
+    severityExplanation: 'La piel correosa, oscura o con poca sensibilidad central sugiere dano profundo de 3er grado.',
     hint: 'Aqui lo peligroso puede estar por dentro: llama emergencias y revisa respiracion.',
     correctTools: {
       call_emergency: 'Correcto: con electricidad fuerte, el corazon puede estar en riesgo aunque la piel se vea pequena.',
@@ -185,7 +220,10 @@ const clinicalCases = [
     id: 'friction_motorcycle',
     title: 'Friccion: caida de motocicleta',
     mechanism: 'Abrasiones extensas con contaminacion por asfalto.',
+    woundDescription: 'Piel raspada, roja, humeda, con zonas abiertas superficiales y dolor intenso por friccion.',
     visual: 'friction',
+    severity: 'second',
+    severityExplanation: 'Cuando la friccion abre la piel y deja superficie humeda/dolorosa, se maneja como 2do grado superficial.',
     hint: 'Piensa en enfriar, limpiar suavemente y cubrir sin productos contaminantes.',
     correctTools: {
       cool_water: 'Correcto: el agua ayuda a enfriar y retirar suciedad superficial.',
@@ -202,7 +240,10 @@ const clinicalCases = [
     id: 'cold_liquid_nitrogen',
     title: 'Congelamiento: nitrogeno liquido',
     mechanism: 'Quemadura por frio extremo con piel palida y rigida.',
+    woundDescription: 'Piel palida, rigida, con dolor y posible ampollamiento al recalentarse.',
     visual: 'cold',
+    severity: 'second',
+    severityExplanation: 'Las lesiones por frio con rigidez y ampollas se tratan como dano parcial profundo, compatible con 2do grado.',
     hint: 'No frotes ni uses hielo; recalienta de forma controlada.',
     correctTools: {
       warm_water: 'Correcto: el recalentamiento gradual con agua tibia protege tejido congelado.',
@@ -219,7 +260,10 @@ const clinicalCases = [
     id: 'solar_second_degree',
     title: 'Solar: quemadura grave de 2do grado',
     mechanism: 'Ampollas extensas tras exposicion solar prolongada.',
+    woundDescription: 'Piel muy roja con ampollas extensas, dolor intenso y sensibilidad al roce.',
     visual: 'thermal',
+    severity: 'second',
+    severityExplanation: 'Las ampollas extensas son el dato clave de 2do grado.',
     hint: 'Enfria, cubre y deriva si hay ampollas extensas o compromiso sistemico.',
     correctTools: {
       cool_water: 'Correcto: enfriar alivia dolor y reduce calor residual.',
@@ -236,7 +280,10 @@ const clinicalCases = [
     id: 'hot_tar',
     title: 'Alquitran caliente',
     mechanism: 'Material caliente adherido a piel.',
+    woundDescription: 'Material negro pegado, zonas blanquecinas o carbonizadas alrededor y dolor irregular.',
     visual: 'tar',
+    severity: 'third',
+    severityExplanation: 'El material adherido caliente puede causar dano profundo; piel blanquecina, correosa o carbonizada sugiere 3er grado.',
     hint: 'Enfria el material, pero no lo arranques de la piel.',
     correctTools: {
       cool_water: 'Correcto: enfriar solidifica y baja la temperatura del alquitran.',
@@ -253,7 +300,10 @@ const clinicalCases = [
     id: 'smoke_inhalation_airway',
     title: 'Inhalacion de humo / vias aereas',
     mechanism: 'Quemadura facial con tos, hollin y ronquera.',
+    woundDescription: 'Cara con hollin, cejas chamuscadas, ronquera y tos; aunque la piel no parezca grande, la via aerea puede inflamarse.',
     visual: 'airway',
+    severity: 'third',
+    severityExplanation: 'Humo, hollin y ronquera son datos de alarma: la prioridad es via aerea y se considera grave.',
     hint: 'Si respiro humo, lo urgente puede ser que la garganta se cierre, no solo la piel.',
     correctTools: {
       airway_assessment: 'Correcto: ronquera y hollin son pistas de que respirar puede ponerse dificil.',
@@ -276,6 +326,30 @@ const burnNotes = [
   'Si hubo humo, tos o ronquera, lo urgente puede ser respirar, no solo la piel.',
 ];
 
+const severityOptions = [
+  {
+    key: 'first',
+    label: '1er grado',
+    description: 'Roja, dolorosa, sin ampollas profundas.',
+  },
+  {
+    key: 'second',
+    label: '2do grado',
+    description: 'Ampollas o piel abierta superficial.',
+  },
+  {
+    key: 'third',
+    label: '3er grado',
+    description: 'Profunda, carbonizada, electrica o via aerea comprometida.',
+  },
+];
+
+const severityLabels = {
+  first: '1er grado',
+  second: '2do grado',
+  third: '3er grado',
+};
+
 function getRandomItem(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -284,9 +358,10 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function calculateNormalizedScore(initialPrecision, finalPrecision, errorsCount) {
-  const improvementBonus = Math.max(0, finalPrecision - initialPrecision) * 0.5;
-  return Math.round(clamp(finalPrecision - errorsCount * 2 + improvementBonus, 0, 100));
+function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeResponse }) {
+  return Math.round(
+    clamp(knowledgeDecision * 0.4 + mechanicalPrecision * 0.4 + timeResponse * 0.2, 0, 100)
+  );
 }
 
 function scrollToGameTop() {
@@ -318,6 +393,8 @@ export default function BurnLab() {
   const [saveError, setSaveError] = useState('');
   const [showBriefing, setShowBriefing] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [selectedSeverity, setSelectedSeverity] = useState('');
+  const [severityLocked, setSeverityLocked] = useState(false);
   const startTimeRef = useRef(Date.now());
 
   const caseTools = useMemo(() => buildToolList(caseData), [caseData]);
@@ -355,6 +432,11 @@ export default function BurnLab() {
           correct_tools: correctToolIds,
           mechanism: caseData.mechanism,
           missed_tools: correctToolIds.filter((toolId) => !usedTools.includes(toolId)),
+          severity_correct: nextResults.severityCorrect,
+          severity_expected: caseData.severity,
+          severity_explanation: caseData.severityExplanation,
+          severity_selected: selectedSeverity || null,
+          wound_description: caseData.woundDescription,
           wrong_tools: finalActions
             .filter((action) => !action.correct)
             .map((action) => action.tool_id),
@@ -369,7 +451,7 @@ export default function BurnLab() {
 
       setSaveState('saved');
     },
-    [caseData, correctToolIds, usedTools, user?.id]
+    [caseData, correctToolIds, selectedSeverity, usedTools, user?.id]
   );
 
   const finishGame = useCallback(
@@ -378,25 +460,63 @@ export default function BurnLab() {
         correctToolIds.includes(toolId)
       ).length;
       const nextPrecision = Math.round((nextCorrectApplied / correctToolIds.length) * 100);
-      const nextScore = calculateNormalizedScore(0, nextPrecision, nextErrorsCount);
+      const severityCorrect = selectedSeverity === caseData.severity;
+      const severityScore = severityCorrect ? 100 : selectedSeverity ? 0 : 40;
+      const completionTimeSeconds = Math.max(
+        1,
+        Math.round((Date.now() - startTimeRef.current) / 1000)
+      );
+      const timeResponse = Math.round(clamp(100 - completionTimeSeconds * 2, 20, 100));
+      const nextScore = calculateUniversalScore({
+        knowledgeDecision: severityScore,
+        mechanicalPrecision: nextPrecision,
+        timeResponse,
+      });
       const nextResults = {
         caseTitle: caseData.title,
-        completionTimeSeconds: Math.max(
-          1,
-          Math.round((Date.now() - startTimeRef.current) / 1000)
-        ),
+        completionTimeSeconds,
         correctApplied: nextCorrectApplied,
         errorsCount: nextErrorsCount,
         note: getRandomItem(burnNotes),
         precision: nextPrecision,
         score: nextScore,
+        severityCorrect,
+        severityExpected: caseData.severity,
+        severityFeedback: severityCorrect
+          ? `Clasificaste bien la gravedad: ${severityLabels[caseData.severity]}.`
+          : `Gravedad a revisar: ${caseData.severityExplanation}`,
+        severitySelected: selectedSeverity || 'sin_clasificar',
+        timeResponse,
       };
 
       setResults(nextResults);
       persistSession(nextResults, nextActions);
     },
-    [caseData.title, correctToolIds, persistSession]
+    [caseData.severity, caseData.severityExplanation, caseData.title, correctToolIds, persistSession, selectedSeverity]
   );
+
+  function selectSeverity(severityKey) {
+    if (severityLocked || results || showTutorial) {
+      return;
+    }
+
+    const isCorrect = severityKey === caseData.severity;
+    setSelectedSeverity(severityKey);
+    setSeverityLocked(true);
+    setAlert(
+      isCorrect
+        ? `Clasificacion correcta: ${severityLabels[severityKey]}. Ahora aplica las acciones seguras.`
+        : `Clasificacion incorrecta. ${caseData.severityExplanation}`
+    );
+
+    if (!isCorrect) {
+      setErrorsCount((count) => count + 1);
+      setShakeKey((key) => key + 1);
+      if (navigator.vibrate) {
+        navigator.vibrate(120);
+      }
+    }
+  }
 
   function applyTool(toolId) {
     if (results || showTutorial || usedTools.includes(toolId)) {
@@ -405,9 +525,14 @@ export default function BurnLab() {
 
     const tool = getTool(toolId);
     const isCorrect = Boolean(caseData.correctTools[toolId]);
-    const feedback = caseData.correctTools[toolId] ?? caseData.incorrectTools[toolId];
+    const baseFeedback = caseData.correctTools[toolId] ?? caseData.incorrectTools[toolId];
+    const chemicalSafetyNote =
+      caseData.visual === 'chemical'
+        ? ' Recuerda consultar la etiqueta o SDS del quimico si esta disponible, sin retrasar la irrigacion.'
+        : '';
+    const feedback = `${baseFeedback}${chemicalSafetyNote}`;
 
-    if (!tool || !feedback) {
+    if (!tool || !baseFeedback) {
       return;
     }
 
@@ -418,7 +543,16 @@ export default function BurnLab() {
       correctToolIds.includes(nextToolId)
     ).length;
     const nextPrecision = Math.round((nextCorrectApplied / correctToolIds.length) * 100);
-    const nextScore = calculateNormalizedScore(0, nextPrecision, nextErrorsCount);
+    const severityCorrect = selectedSeverity === caseData.severity;
+    const severityScore = severityCorrect ? 100 : selectedSeverity ? 0 : 40;
+    const timeResponse = Math.round(
+      clamp(100 - Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000)) * 2, 20, 100)
+    );
+    const nextScore = calculateUniversalScore({
+      knowledgeDecision: severityScore,
+      mechanicalPrecision: nextPrecision,
+      timeResponse,
+    });
     const action = {
       correct: isCorrect,
       feedback,
@@ -476,6 +610,8 @@ export default function BurnLab() {
     setSaveError('');
     setShowBriefing(true);
     setShowTutorial(false);
+    setSelectedSeverity('');
+    setSeverityLocked(false);
   }
 
   function startSimulation() {
@@ -547,6 +683,47 @@ export default function BurnLab() {
                 {caseData.title}
               </h1>
               <p className="mt-4 max-w-2xl text-slate-300">{caseData.mechanism}</p>
+              <div className="mt-4 max-w-2xl rounded-lg border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+                <span className="font-bold">Aspecto de la quemadura: </span>
+                {caseData.woundDescription}
+              </div>
+              <div className="mt-5 rounded-lg border border-cyan-300/20 bg-slate-900/80 p-4">
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h2 className="font-bold text-cyan-100">Clasifica la gravedad</h2>
+                    <p className="mt-1 text-sm text-slate-400">
+                      Primero decide la profundidad probable; luego aplica el tratamiento.
+                    </p>
+                  </div>
+                  {selectedSeverity ? (
+                    <span className={`rounded-md px-3 py-2 text-sm font-bold ${
+                      selectedSeverity === caseData.severity
+                        ? 'bg-emerald-400/15 text-emerald-100'
+                        : 'bg-rose-400/15 text-rose-100'
+                    }`}>
+                      {severityLabels[selectedSeverity]}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+                  {severityOptions.map((option) => (
+                    <button
+                      className={`min-h-12 w-full touch-manipulation select-none rounded-md border p-3 text-left text-sm transition ${
+                        selectedSeverity === option.key
+                          ? 'border-cyan-300 bg-cyan-400/20 text-cyan-50'
+                          : 'border-white/10 bg-white/5 text-slate-200 hover:bg-white/10'
+                      }`}
+                      disabled={severityLocked}
+                      key={option.key}
+                      onClick={() => selectSeverity(option.key)}
+                      type="button"
+                    >
+                      <span className="block font-black">{option.label}</span>
+                      <span className="mt-1 block text-xs leading-5 text-slate-300">{option.description}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
                 <motion.div
@@ -623,6 +800,7 @@ export default function BurnLab() {
                 <Metric label="Fallos" value={errorsCount} />
                 <Metric label="Correctos" value={`${correctApplied}/${correctToolIds.length}`} />
                 <Metric label="Precision" value={`${precision}%`} />
+                <Metric label="Gravedad" value={selectedSeverity ? severityLabels[selectedSeverity] : 'Pendiente'} />
               </div>
               <div
                 className={`mt-5 rounded-md border p-4 ${
@@ -724,24 +902,27 @@ function Briefing({ caseData, onStart }) {
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
             <h2 className="font-bold">Que paso</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">{caseData.mechanism}</p>
+            <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 p-3 text-sm leading-6 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
+              <span className="font-bold">Aspecto: </span>
+              {caseData.woundDescription}
+            </p>
           </div>
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
             <h2 className="font-bold">Instrucciones</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
               En computadora: haz clic en la herramienta y aplicala al caso. En
               celular: toca cada opcion de la bandeja medica. Elige solo lo que
-              enfria, limpia o protege; evita mitos que atrapan calor, ensucian
-              o activan reacciones raras.
+              clasifica la gravedad y luego lo que enfria, limpia o protege;
+              evita mitos que atrapan calor, ensucian o activan reacciones raras.
             </p>
           </div>
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide Inicio vs Final</h2>
+          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide el resultado</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            Inicio parte en 0 porque todavia no has elegido ningun tratamiento.
-            Final es el porcentaje de acciones correctas aplicadas al caso. El
-            score final queda entre 0 y 100, penalizando mitos o elecciones
-            peligrosas.
+            El score final queda entre 0 y 100. Combina clasificar la gravedad,
+            aplicar acciones correctas y responder sin tardar demasiado. Los
+            mitos o elecciones peligrosas bajan el resultado.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -797,6 +978,16 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <Metric label="Precision final" value={`${results.precision}%`} />
           <Metric label="Fallos" value={results.errorsCount} />
           <Metric label="Tiempo" value={`${results.completionTimeSeconds}s`} />
+          <Metric label="Gravedad" value={severityLabels[results.severitySelected] ?? 'Sin clasificar'} />
+        </div>
+
+        <div className={`mt-4 rounded-md border p-4 text-sm ${
+          results.severityCorrect
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
+            : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100'
+        }`}>
+          <p className="font-bold">Clasificacion de gravedad</p>
+          <p className="mt-2 leading-6">{results.severityFeedback}</p>
         </div>
 
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
