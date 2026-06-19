@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, BookOpen, Save } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
 import VideoTutorialModal from '../common/VideoTutorialModal';
+import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -612,6 +613,7 @@ function Briefing({ caseData, onStart }) {
           </p>
         </div>
         <MedicalDisclaimer />
+        <ClinicalEvidenceDisclosure moduleKey="choking_express" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button
             className="h-12 touch-manipulation select-none rounded-md bg-cyan-600 px-5 text-sm font-bold text-white transition hover:bg-cyan-700"
@@ -640,7 +642,10 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Retroalimentacion clinica</p>
+        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
+          <BookOpen aria-hidden="true" className="h-4 w-4" />
+          Retroalimentacion clinica
+        </p>
         <h2 className="mt-1 text-2xl font-bold">
           {results.criticalError ? 'Decision critica revisada' : 'Practica completada'}
         </h2>

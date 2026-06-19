@@ -4,6 +4,7 @@ import {
   Activity,
   ArrowLeft,
   BadgeCheck,
+  BookOpen,
   Brush,
   Droplets,
   Flame,
@@ -21,6 +22,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
 import VideoTutorialModal from '../common/VideoTutorialModal';
+import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -933,6 +935,7 @@ function Briefing({ caseData, onStart }) {
           </p>
         </div>
         <MedicalDisclaimer />
+        <ClinicalEvidenceDisclosure moduleKey="burn_lab" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button
             className="flex h-12 w-full items-center justify-center rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700 sm:w-auto"
@@ -970,7 +973,8 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">
+            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700">
+              <BookOpen aria-hidden="true" className="h-4 w-4" />
               Retroalimentacion clinica
             </p>
             <h2 className="mt-1 text-2xl font-bold">{results.caseTitle}</h2>

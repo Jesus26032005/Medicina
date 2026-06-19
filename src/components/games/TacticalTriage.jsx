@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
+  BookOpen,
   Save,
   Siren,
   Timer,
@@ -10,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
 import VideoTutorialModal from '../common/VideoTutorialModal';
+import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -632,6 +634,7 @@ function Briefing({ onStart }) {
           </div>
         </div>
         <MedicalDisclaimer />
+        <ClinicalEvidenceDisclosure moduleKey="tactical_triage" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button className="h-12 w-full touch-manipulation select-none rounded-md bg-red-600 px-5 text-sm font-bold text-white transition hover:bg-red-700 sm:w-auto" onClick={onStart} type="button">
             Entendido, Iniciar Simulacion
@@ -660,7 +663,10 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
         initial={{ opacity: 0, y: 18 }}
       >
-        <p className="text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Retroalimentacion clinica</p>
+        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">
+          <BookOpen aria-hidden="true" className="h-4 w-4" />
+          Retroalimentacion clinica
+        </p>
         <h2 className="mt-1 text-2xl font-bold">Triage completado</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <ResultMetric label="Inicial" value={`${results.initialPrecision}%`} />

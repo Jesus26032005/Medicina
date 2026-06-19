@@ -141,9 +141,9 @@ Las guias de reanimacion recomiendan compresiones toracicas de alta calidad con 
 ## Fuentes y Videos de Referencia
 
 - American Heart Association - High Quality CPR: https://cpr.heart.org/en/resuscitation-science/high-quality-cpr
-- American Heart Association - What is CPR: https://cpr.heart.org/en/resources/what-is-cpr
+- American Heart Association - CPR and ECC Guidelines: https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines
 - American Red Cross - CPR Steps: https://www.redcross.org/take-a-class/cpr/performing-cpr/cpr-steps
-- Manual MSD - RCP en adultos: https://www.msdmanuals.com/es/professional/cuidados-cr%C3%ADticos/paro-card%C3%ADaco-y-reanimaci%C3%B3n-cardiopulmonar-rcp/reanimaci%C3%B3n-cardiopulmonar-rcp-en-adultos
+- NIH/PubMed - Stayin' Alive mental metronome study: https://pubmed.ncbi.nlm.nih.gov/22445896/
 - Video tutorial usado en la app: https://www.youtube.com/watch?v=O1AOt_s1NzM
 
 ---
@@ -211,10 +211,9 @@ La maniobra de desobstruccion depende del reconocimiento correcto. Si la victima
 
 ## Fuentes y Videos de Referencia
 
-- Cruz Roja Americana - Choking First Aid: https://www.redcross.org/take-a-class/first-aid/performing-first-aid/choking-first-aid
-- Mayo Clinic - Choking First Aid: https://www.mayoclinic.org/first-aid/first-aid-choking/basics/art-20056637
-- Hospital Privado - Maniobra Heimlich: https://hospitalprivado.com.ar/programa-de-prevencion/maniobra-de-heimlich.html
-- iLERNA - Maniobra de Heimlich en casos especiales: https://www.ilerna.es/blog/maniobra-de-heimlich-especiales
+- AHA / American Red Cross - 2024 First Aid Guidelines: https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines
+- American Red Cross - Learn First Aid: https://www.redcross.org/take-a-class/resources/learn-first-aid
+- American Red Cross - First Aid Training: https://www.redcross.org/take-a-class/first-aid/first-aid-training
 - Video tutorial usado en la app: https://www.youtube.com/watch?v=lsrrkUnf_JM
 
 ---
@@ -293,8 +292,7 @@ START prioriza decisiones rapidas en incidentes con multiples victimas. La regla
 
 ## Fuentes y Videos de Referencia
 
-- CEMP - Protocolo START: https://www.cemp.es/noticias/triage-start/
-- Revista Medica - Triage Prehospitalario: https://revistamedica.com/triage-start-prehospitalario/
+- HHS REMM - START Adult Triage Algorithm: https://remm.hhs.gov/startadult.htm
 - Video tutorial usado en la app: https://www.youtube.com/watch?v=_B4y6W59WNQ
 
 ---
@@ -383,10 +381,8 @@ El torniquete se ensena como herramienta para hemorragia grave en extremidades c
 
 ## Fuentes y Videos de Referencia
 
-- Stop The Bleed: https://www.stopthebleed.org
-- American College of Surgeons - Stop The Bleed: https://www.facs.org/quality-programs/trauma/education/stop-the-bleed/
-- SAMUR Madrid - Control de Hemorragias: https://servpub.madrid.es/manualsamur/data/606_02.html
-- Elsevier - Control de Hemorragia Externa: https://www.elsevier.es/es-revista-prehospital-emergency-care-edicion-espanola--44-articulo-control-hemorragia-externa-combate-X1888402409460652
+- ACS Stop the Bleed - Get Trained: https://www.stopthebleed.org/get-trained/
+- American College of Surgeons - Trauma Programs: https://www.facs.org/quality-programs/trauma/
 - Video tutorial usado en la app: https://www.youtube.com/watch?v=llgVqL8HyiI
 
 ---
@@ -469,11 +465,9 @@ El manejo inicial de quemaduras depende del agente causal y profundidad aparente
 
 ## Fuentes y Videos de Referencia
 
-- INSST - NTP 524 Quemaduras: https://www.insst.es/documentacion/colecciones-tecnicas/ntp-notas-tecnicas-de-prevencion/15-serie-ntp-numeros-506-a-540-ano-2000/ntp-524-primeros-auxilios-quemaduras
-- SECIP - Protocolo de Quemados: https://secip.com/images/uploads/2020/11/Protocolo-de-Quemados-SECIP.pdf
-- Universidad Complutense - Tratamiento de Quemaduras: https://www.ucm.es/data/cont/docs/420-2014-02-07-TRATAMIENTO-QUEMADURAS-15-Dic-2013.pdf
-- Mayo Clinic - Chemical Burns First Aid: https://www.mayoclinic.org/first-aid/first-aid-chemical-burns/basics/art-20056667
-- MedlinePlus - Quemaduras, atencion posterior: https://medlineplus.gov/spanish/ency/patientinstructions/000662.htm
+- AHA / American Red Cross - 2024 First Aid Guidelines: https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines
+- World Health Organization - Burns fact sheet: https://www.who.int/news-room/fact-sheets/detail/burns
+- NIH/PubMed - Burn first aid cooling evidence: https://pubmed.ncbi.nlm.nih.gov/34916091/
 - Video tutorial usado en la app: https://www.youtube.com/watch?v=cECkv6xUuTY
 
 ---

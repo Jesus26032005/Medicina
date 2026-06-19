@@ -7,107 +7,87 @@ const bibliography = [
   {
     title: 'RCP Hero',
     description:
-      'Esta simulacion utiliza 110 BPM debido a que las guias internacionales recomiendan compresiones toracicas entre 100 y 120 por minuto.',
+      "Basado en las guias de la American Heart Association para RCP y Atencion Cardiovascular de Emergencia, con enfasis en compresiones toracicas de alta calidad dentro del rango 100-120 por minuto. Justificacion de Memoria Muscular: El entrenamiento con metronomos auditivos o canciones con un tempo de 100 a 120 BPM (como Stayin' Alive) esta comprobado clinicamente para mejorar la retencion de la frecuencia de compresion toracica adecuada.",
     links: [
+      {
+        label: 'American Heart Association - CPR and ECC Guidelines',
+        url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines',
+      },
       {
         label: 'American Heart Association - High Quality CPR',
         url: 'https://cpr.heart.org/en/resuscitation-science/high-quality-cpr',
-      },
-      {
-        label: 'American Heart Association - What is CPR',
-        url: 'https://cpr.heart.org/en/resources/what-is-cpr',
       },
       {
         label: 'American Red Cross - CPR Steps',
         url: 'https://www.redcross.org/take-a-class/cpr/performing-cpr/cpr-steps',
       },
       {
-        label: 'MSD Manual - RCP en adultos',
-        url: 'https://www.msdmanuals.com/es/professional/cuidados-cr%C3%ADticos/paro-card%C3%ADaco-y-reanimaci%C3%B3n-cardiopulmonar-rcp/reanimaci%C3%B3n-cardiopulmonar-rcp-en-adultos',
+        label: "NIH/PubMed - Stayin' Alive mental metronome study",
+        url: 'https://pubmed.ncbi.nlm.nih.gov/22445896/',
       },
     ],
   },
   {
     title: 'Laboratorio de Quemaduras',
     description:
-      'El simulador ensena enfriamiento con agua corriente, evita el uso de hielo y contempla protocolos diferenciados para quemaduras termicas, quimicas y electricas.',
+      'Sustentado en lineamientos institucionales de primeros auxilios, epidemiologia de la OMS y literatura academica indexada para enfriamiento, irrigacion y manejo inicial de quemaduras.',
     links: [
       {
-        label: 'INSST - NTP 524 Quemaduras',
-        url: 'https://www.insst.es/documentacion/colecciones-tecnicas/ntp-notas-tecnicas-de-prevencion/15-serie-ntp-numeros-506-a-540-ano-2000/ntp-524-primeros-auxilios-quemaduras',
+        label: 'AHA / American Red Cross - 2024 First Aid Guidelines',
+        url: 'https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines',
       },
       {
-        label: 'SECIP - Protocolo de Quemados',
-        url: 'https://secip.com/images/uploads/2020/11/Protocolo-de-Quemados-SECIP.pdf',
+        label: 'World Health Organization - Burns fact sheet',
+        url: 'https://www.who.int/news-room/fact-sheets/detail/burns',
       },
       {
-        label: 'Universidad Complutense - Tratamiento de Quemaduras',
-        url: 'https://www.ucm.es/data/cont/docs/420-2014-02-07-TRATAMIENTO-QUEMADURAS-15-Dic-2013.pdf',
-      },
-      {
-        label: 'Mayo Clinic - Chemical Burns First Aid',
-        url: 'https://www.mayoclinic.org/first-aid/first-aid-chemical-burns/basics/art-20056667',
+        label: 'NIH/PubMed - Burn first aid cooling evidence',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/34916091/',
       },
     ],
   },
   {
     title: 'Ahogo Express (Heimlich)',
     description:
-      'La simulacion diferencia entre adultos, ninos y pacientes embarazados u obesos, empleando compresiones toracicas cuando las abdominales no son recomendadas.',
+      'Basado en guias institucionales de primeros auxilios para diferenciar obstruccion parcial y completa y entrenar decisiones iniciales de desobstruccion.',
     links: [
       {
-        label: 'Hospital Privado - Maniobra Heimlich',
-        url: 'https://hospitalprivado.com.ar/programa-de-prevencion/maniobra-de-heimlich.html',
+        label: 'AHA / American Red Cross - 2024 First Aid Guidelines',
+        url: 'https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines',
       },
       {
-        label: 'iLERNA - Casos especiales Heimlich',
-        url: 'https://www.ilerna.es/blog/maniobra-de-heimlich-especiales',
+        label: 'American Red Cross - Learn First Aid',
+        url: 'https://www.redcross.org/take-a-class/resources/learn-first-aid',
       },
       {
-        label: 'Cruz Roja Americana - Primeros Auxilios y Atragantamiento',
-        url: 'https://www.redcross.org/take-a-class/first-aid/performing-first-aid/choking-first-aid',
-      },
-      {
-        label: 'Mayo Clinic - Choking First Aid',
-        url: 'https://www.mayoclinic.org/first-aid/first-aid-choking/basics/art-20056637',
+        label: 'American Red Cross - First Aid Training',
+        url: 'https://www.redcross.org/take-a-class/first-aid/first-aid-training',
       },
     ],
   },
   {
     title: 'Codigo Torniquete',
     description:
-      'Disclaimer clinico: los rangos numericos mostrados en el simulador representan una abstraccion educativa para modelar el control de hemorragias y no deben interpretarse como valores clinicos reales.',
+      'Respaldado por el Consenso de Hartford, Stop the Bleed y materiales institucionales del American College of Surgeons para control de hemorragia externa potencialmente mortal.',
     links: [
       {
-        label: 'SAMUR Madrid - Control de Hemorragias',
-        url: 'https://servpub.madrid.es/manualsamur/data/606_02.html',
+        label: 'ACS Stop the Bleed - Get Trained',
+        url: 'https://www.stopthebleed.org/get-trained/',
       },
       {
-        label: 'Elsevier - Control de Hemorragia Externa',
-        url: 'https://www.elsevier.es/es-revista-prehospital-emergency-care-edicion-espanola--44-articulo-control-hemorragia-externa-combate-X1888402409460652',
-      },
-      {
-        label: 'Stop The Bleed',
-        url: 'https://www.stopthebleed.org',
-      },
-      {
-        label: 'American College of Surgeons - Stop The Bleed',
-        url: 'https://www.facs.org/quality-programs/trauma/education/stop-the-bleed/',
+        label: 'American College of Surgeons - Trauma Programs',
+        url: 'https://www.facs.org/quality-programs/trauma/',
       },
     ],
   },
   {
     title: 'Triage Tactico (Protocolo START)',
     description:
-      'El simulador utiliza el algoritmo START (Simple Triage and Rapid Treatment) para la clasificacion de multiples victimas.',
+      'Basado en literatura academica indexada sobre triage de incidentes con multiples victimas y el algoritmo START.',
     links: [
       {
-        label: 'CEMP - Protocolo START',
-        url: 'https://www.cemp.es/noticias/triage-start/',
-      },
-      {
-        label: 'Revista Medica - Triage Prehospitalario',
-        url: 'https://revistamedica.com/triage-start-prehospitalario/',
+        label: 'HHS REMM - START Adult Triage Algorithm',
+        url: 'https://remm.hhs.gov/startadult.htm',
       },
     ],
   },

@@ -24,6 +24,7 @@ import {
 } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
+import { LAST_MEDICAL_REVIEW } from '../common/Footer';
 import ThemeToggle from '../common/ThemeToggle';
 
 const games = [
@@ -463,6 +464,10 @@ Reglas:
             terminas cada intento, para ver si la practica de verdad esta
             ayudando.
           </p>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
+            <ShieldCheck aria-hidden="true" className="h-4 w-4" />
+            Fecha de ultima revision medica clinica: {LAST_MEDICAL_REVIEW}
+          </div>
         </div>
 
         <section className="rounded-lg border border-cyan-200 bg-cyan-50 p-5 shadow-sm dark:border-cyan-300/20 dark:bg-cyan-300/10">

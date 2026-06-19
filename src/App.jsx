@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 import AuthPage from './components/auth/AuthPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import Footer from './components/common/Footer';
 import MedicalBackingPage from './components/common/MedicalBackingPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import GlobalEvidence from './components/dashboard/GlobalEvidence';
@@ -74,29 +75,34 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AuthProvider>
-        <Routes>
-          <Route element={<Navigate replace to="/login" />} path="/" />
-          <Route element={<AuthPage />} path="/login" />
-          <Route element={<GlobalEvidence />} path="/evidencia" />
-          <Route element={<MedicalBackingPage />} path="/respaldo-medico" />
-          <Route
-            element={
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-            path="/dashboard"
-          />
-          <Route
-            element={
-              <ProtectedRoute>
-                <GameRouter />
-              </ProtectedRoute>
-            }
-            path="/games/:gameKey"
-          />
-          <Route element={<Navigate replace to="/login" />} path="*" />
-        </Routes>
+        <div className="flex min-h-screen flex-col overflow-x-hidden">
+          <div className="flex-1">
+            <Routes>
+              <Route element={<Navigate replace to="/login" />} path="/" />
+              <Route element={<AuthPage />} path="/login" />
+              <Route element={<GlobalEvidence />} path="/evidencia" />
+              <Route element={<MedicalBackingPage />} path="/respaldo-medico" />
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <UserDashboard />
+                  </ProtectedRoute>
+                }
+                path="/dashboard"
+              />
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <GameRouter />
+                  </ProtectedRoute>
+                }
+                path="/games/:gameKey"
+              />
+              <Route element={<Navigate replace to="/login" />} path="*" />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </AuthProvider>
     </BrowserRouter>
   );
