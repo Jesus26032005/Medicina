@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background: #020617;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer base {
+  button,
+  a {
+    @apply touch-manipulation transition-all duration-300;
+  }
+
+  button {
+    @apply select-none;
+  }
+}
+
+@keyframes heimlich-qte-sweep {
+  0% {
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    transform: translate(-50%, calc(520px - 1.5rem));
+  }
+
+  100% {
+    transform: translate(-50%, 0);
+  }
+}
+
+.heimlich-indicator {
+  animation: heimlich-qte-sweep 3s linear infinite;
+  transform: translate(-50%, 0);
+  will-change: transform;
+}
