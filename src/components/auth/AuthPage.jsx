@@ -71,7 +71,7 @@ export default function AuthPage() {
         }
 
         setSuccessMessage(
-          'Registro creado. Si quieres entrar sin confirmar correo, desactiva la confirmacion de email en Supabase Auth.'
+          'Registro creado. Ya puedes intentar iniciar sesion.'
         );
       } else {
         await login({ email, password });
@@ -81,7 +81,7 @@ export default function AuthPage() {
       const message = error.message ?? 'No se pudo completar la autenticacion.';
       setErrorMessage(
         message.toLowerCase().includes('email not confirmed')
-          ? 'El correo aun no esta confirmado. Para permitir acceso directo, desactiva Confirm email en Supabase Auth.'
+          ? 'No se pudo iniciar sesion con ese correo por ahora.'
           : message
       );
     } finally {
