@@ -63,10 +63,31 @@ function precisionFromDelta(absDelta) {
   return roundMetric(clamp(100 - (absDelta / PRECISION_WINDOW_MS) * 100, 0, 100));
 }
 
-function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeResponse }) {
-  return Math.round(
-    clamp(knowledgeDecision * 0.4 + mechanicalPrecision * 0.4 + timeResponse * 0.2, 0, 100)
-  );
+function getRcpRhythmScore(averageBPM) {
+  if (averageBPM < 80 || averageBPM > 140) {
+    return 0;
+  }
+
+  if (averageBPM >= 100 && averageBPM <= 120) {
+    return 100;
+  }
+
+  if (averageBPM < 100) {
+    return roundMetric(((averageBPM - 80) / 20) * 100);
+  }
+
+  return roundMetric(((140 - averageBPM) / 20) * 100);
+}
+
+function calculateRcpScore({ mechanicalPrecision, rhythmScore, errorsCount, totalBeats }) {
+  if (mechanicalPrecision <= 0) {
+    return 0;
+  }
+
+  const rawScore = mechanicalPrecision * 0.65 + rhythmScore * 0.35;
+  const errorPenalty = totalBeats ? clamp((errorsCount / totalBeats) * 35, 0, 35) : 0;
+
+  return Math.round(clamp(rawScore - errorPenalty, 0, 100));
 }
 
 function scrollToGameTop() {
@@ -136,7 +157,7 @@ function buildResults(attempts, durationMs, beatIntervalMs, targetBPM, spamAttem
   const averageBPM = attempts.length
     ? roundMetric((attempts.length / durationMs) * 60000)
     : 0;
-  const bpmAdherence = roundMetric(clamp(100 - Math.abs(averageBPM - targetBPM) * 5, 0, 100));
+  const bpmAdherence = getRcpRhythmScore(averageBPM);
   const initialPrecision = getBeatWindowAverage(
     beatScores,
     0,
@@ -151,6 +172,7 @@ function buildResults(attempts, durationMs, beatIntervalMs, targetBPM, spamAttem
     durationMs,
     beatIntervalMs
   );
+  const mechanicalPrecision = roundMetric(clamp(finalPrecision - spamAttempts * 2, 0, 100));
   return {
     averageBPM,
     bpmAdherence,
@@ -159,12 +181,13 @@ function buildResults(attempts, durationMs, beatIntervalMs, targetBPM, spamAttem
     finalPrecision,
     inactive: false,
     initialPrecision,
-    mechanicalPrecision: roundMetric(clamp(finalPrecision - spamAttempts * 2, 0, 100)),
+    mechanicalPrecision,
     missedBeats,
-    score: calculateUniversalScore({
-      knowledgeDecision: 100,
-      mechanicalPrecision: clamp(finalPrecision - spamAttempts * 2, 0, 100),
-      timeResponse: bpmAdherence,
+    score: calculateRcpScore({
+      errorsCount,
+      mechanicalPrecision,
+      rhythmScore: bpmAdherence,
+      totalBeats,
     }),
     spamAttempts,
     successfulHits,
