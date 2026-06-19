@@ -153,7 +153,7 @@ Responde solo JSON valido con esta forma:
 {"allowed":true,"reason":"mensaje corto"}
 
 Reglas:
-- allowed debe ser false si hay insultos, groserias, acoso, odio, contenido sexual, violencia gratuita, mala opinion de la web, inyecciones sql o contenido de codigo, cosas como memes tales como '67', cosas graciosas o mas configuraciones.
+- allowed debe ser false si hay insultos, groserias, acoso, odio, contenido sexual, violencia gratuita, mala opinion de la web, inyecciones sql o contenido de codigo, cosas como memes tales como 67, cosas graciosas o mas configuraciones.
 - allowed debe ser true si es una opinion sencilla, positiva, neutral o critica respetuosa.
 - reason debe ser amable, en espanol y maximo una oracion.
 
