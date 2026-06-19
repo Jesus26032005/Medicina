@@ -75,6 +75,7 @@ export default function App() {
       <ScrollToTop />
       <AuthProvider>
         <Routes>
+          <Route element={<Navigate replace to="/login" />} path="/" />
           <Route element={<AuthPage />} path="/login" />
           <Route element={<GlobalEvidence />} path="/evidencia" />
           <Route element={<MedicalBackingPage />} path="/respaldo-medico" />
@@ -94,7 +95,7 @@ export default function App() {
             }
             path="/games/:gameKey"
           />
-          <Route element={<Navigate replace to="/evidencia" />} path="*" />
+          <Route element={<Navigate replace to="/login" />} path="*" />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
