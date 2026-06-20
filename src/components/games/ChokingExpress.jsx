@@ -422,7 +422,7 @@ export default function ChokingExpress() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between">
           <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
@@ -439,7 +439,7 @@ export default function ChokingExpress() {
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
           <div className="grid flex-1 items-center gap-6 py-4 md:gap-8 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <section className="relative flex h-[calc(100dvh-120px)] flex-col justify-center overflow-y-auto overscroll-contain rounded-lg border border-white/10 bg-white/5 p-3 md:h-auto md:overflow-hidden md:p-6">
+            <section className="isolate relative flex h-[calc(100dvh-120px)] translate-z-0 transform-gpu flex-col justify-center overflow-y-auto overscroll-none rounded-lg border border-white/10 bg-white/5 p-3 md:h-auto md:overflow-visible md:p-6">
               {showTutorial ? (
                 <button
                   aria-label="Cerrar tutorial e iniciar practica"
@@ -459,7 +459,7 @@ export default function ChokingExpress() {
                   <span className="animate-bounce text-5xl" aria-hidden="true">
                     👇
                   </span>
-                  <span className="mt-4 max-w-xs rounded-lg border border-cyan-300/30 bg-cyan-300/15 p-4 text-base font-bold text-cyan-50 shadow-2xl">
+                  <span className="mt-4 max-w-xs translate-z-0 transform-gpu rounded-lg border border-cyan-300/30 bg-cyan-300/15 p-4 text-base font-bold text-cyan-50 shadow-2xl">
                     Toca aqui para iniciar. Despues presiona el boton o usa la barra espaciadora cuando el indicador llegue a la zona verde.
                   </span>
                   <span className="mt-3 text-sm text-slate-200">
@@ -468,7 +468,7 @@ export default function ChokingExpress() {
                 </button>
               ) : null}
               {assessmentPhase === 'pending' ? (
-                <div className="mx-auto w-full max-w-xl rounded-lg border border-cyan-300/20 bg-slate-900/80 p-5 text-center">
+                <div className="isolate mx-auto w-full max-w-xl translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-900/95 p-5 text-center">
                   <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
                     Evaluacion inicial
                   </p>
@@ -503,8 +503,8 @@ export default function ChokingExpress() {
                     Objetivo: {caseData.targetLabel}
                   </p>
 
-                  <div className="mx-auto mt-4 flex w-full max-w-md flex-row items-center justify-evenly gap-4 overflow-hidden md:mt-8 md:max-w-none md:gap-8">
-                    <div ref={trackRef} className="relative h-56 w-14 shrink-0 overflow-hidden rounded-full border border-white/10 bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
+                  <div className="isolate mx-auto mt-4 flex w-full max-w-md translate-z-0 transform-gpu flex-row items-center justify-evenly gap-4 overflow-hidden md:mt-8 md:max-w-none md:gap-8">
+                    <div ref={trackRef} className="relative h-56 w-14 shrink-0 translate-z-0 transform-gpu overflow-hidden rounded-full border border-white/10 bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
                       <div
                         ref={targetRef}
                         className="absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
@@ -552,7 +552,7 @@ export default function ChokingExpress() {
               )}
             </section>
 
-            <aside className="rounded-lg border border-white/10 bg-white p-5 text-slate-950 dark:bg-slate-900 dark:text-white">
+            <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white p-5 text-slate-950 dark:bg-slate-900 dark:text-white">
               <h2 className="font-bold">Telemetria</h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <Metric label="Aciertos" value={`${hits}/${REQUIRED_HITS}`} />
@@ -584,7 +584,7 @@ export default function ChokingExpress() {
 function Briefing({ caseData, onStart }) {
   return (
     <section className="grid flex-1 place-items-center py-10">
-      <div className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white">
+      <div className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white">
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Briefing medico</p>
         <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
         <p className="mt-3 text-slate-700 dark:text-slate-300">{caseData.description}</p>
@@ -610,6 +610,15 @@ function Briefing({ caseData, onStart }) {
             Inicio es el promedio de precision del primer tercio de compresiones
             intentadas. Final es el promedio del ultimo tercio. Asi se evalua si
             reconoces mejor la zona correcta conforme avanza el caso.
+          </p>
+        </div>
+        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Como se calcula el score</h2>
+          <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
+            El score va de 0 a 100: 40% decision inicial, 40% precision al
+            aplicar la compresion en la zona correcta y 20% rapidez. Si aplicas
+            Heimlich cuando la persona todavia tose, se marca error critico y el
+            score cae a 0.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -641,7 +650,7 @@ function Metric({ label, value }) {
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section animate={{ opacity: 1, y: 0 }} className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
+      <motion.section animate={{ opacity: 1, y: 0 }} className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
           <BookOpen aria-hidden="true" className="h-4 w-4" />
           Retroalimentacion clinica

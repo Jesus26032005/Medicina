@@ -542,7 +542,7 @@ export default function RcpHero() {
 
   return (
     <main
-      className="min-h-screen bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           'linear-gradient(rgba(34,197,94,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.08) 1px, transparent 1px)',
@@ -609,7 +609,7 @@ export default function RcpHero() {
               margen de exito es de +/- {SUCCESS_WINDOW_MS} ms por latido.
             </p>
 
-            <div className="mt-6 w-full max-w-2xl rounded-lg border border-emerald-400/20 bg-black/70 p-3 text-left shadow-2xl shadow-emerald-950/30">
+            <div className="isolate mt-6 w-full max-w-2xl translate-z-0 transform-gpu rounded-lg border border-emerald-400/20 bg-black/70 p-3 text-left shadow-2xl shadow-emerald-950/30">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-emerald-300">
                 <span className="flex items-center gap-2">
                   <Music aria-hidden="true" className="h-4 w-4" />
@@ -630,7 +630,7 @@ export default function RcpHero() {
                     ? { boxShadow: '0 0 0 8px rgba(239,68,68,0.35)' }
                     : { boxShadow: '0 25px 70px rgba(136,19,55,0.4)' }
               }
-              className={`relative mt-10 flex h-72 w-72 items-center justify-center rounded-full border shadow-2xl ${
+              className={`isolate relative mt-10 flex h-72 w-72 translate-z-0 transform-gpu items-center justify-center rounded-full border shadow-2xl ${
                 feedbackTone === 'success'
                   ? 'border-emerald-300/50 bg-emerald-500/10'
                   : feedbackTone === 'error'
@@ -674,7 +674,7 @@ export default function RcpHero() {
               </motion.div>
             </motion.div>
 
-            <div className="mt-8 w-full max-w-2xl overflow-hidden rounded-lg border border-emerald-400/20 bg-black/50 p-4 shadow-2xl shadow-emerald-950/30">
+            <div className="isolate mt-8 w-full max-w-2xl translate-z-0 transform-gpu overflow-hidden rounded-lg border border-emerald-400/20 bg-black/50 p-4 shadow-2xl shadow-emerald-950/30">
               <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-emerald-300">
                 <span>ECG Rhythm Sync</span>
                 <span>{currentBeat + 1} / {getTotalBeats(gameDurationMs, beatIntervalMs)} latidos</span>
@@ -765,7 +765,7 @@ export default function RcpHero() {
             </div>
           </section>
 
-          <aside className="rounded-lg border border-emerald-400/20 bg-black/80 p-5 text-emerald-50 shadow-2xl shadow-emerald-950/30">
+          <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-emerald-400/20 bg-black/80 p-5 text-emerald-50 shadow-2xl shadow-emerald-950/30">
             <h2 className="text-lg font-bold text-emerald-300">Telemetria en vivo</h2>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Metric label="Tiempo" value={`${secondsLeft}s`} />
@@ -809,7 +809,7 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
     <section className="grid flex-1 place-items-center py-10">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-slate-900 dark:text-white"
+        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-slate-900 dark:text-white"
         initial={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.22 }}
       >
@@ -901,6 +901,15 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
             elegida. Asi vemos si tu ritmo mejora o se mantiene con la practica.
           </p>
         </div>
+        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Como se calcula el score</h2>
+          <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
+            El score va de 0 a 100 y depende solo de tu ejecucion: 65% precision
+            al caer cerca del latido ideal y 35% ritmo promedio cercano a
+            100-120 BPM. Los fallos, clics fuera de tiempo o pulsaciones tipo
+            spam restan puntos.
+          </p>
+        </div>
         <MedicalDisclaimer />
         <ClinicalEvidenceDisclosure moduleKey="rcp_hero" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
@@ -934,7 +943,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
+        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         transition={{ duration: 0.2 }}
       >

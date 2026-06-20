@@ -587,7 +587,7 @@ export default function TacticalTriage() {
 
   return (
     <main
-      className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           'radial-gradient(circle at 18% 18%, rgba(249,115,22,0.13), transparent 28%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',
@@ -609,7 +609,7 @@ export default function TacticalTriage() {
         {showBriefing ? (
           <Briefing onStart={startSimulation} />
         ) : (
-          <div className="relative grid flex-1 items-start gap-6 py-6 md:gap-8 md:py-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-stretch gap-6 py-6 md:gap-8 md:py-8">
             {showTutorial ? (
               <button
                 aria-label="Cerrar tutorial de Manchester Triage"
@@ -624,7 +624,7 @@ export default function TacticalTriage() {
                 <span className="animate-bounce text-6xl" aria-hidden="true">
                   👇
                 </span>
-                <span className="mt-4 max-w-sm rounded-lg border border-orange-300/40 bg-orange-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                <span className="mt-4 max-w-sm translate-z-0 transform-gpu rounded-lg border border-orange-300/40 bg-orange-500/20 p-4 text-base font-bold text-white shadow-2xl">
                   Lee los discriminadores clinicos y selecciona la prioridad Manchester correcta.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
@@ -632,7 +632,7 @@ export default function TacticalTriage() {
                 </span>
               </button>
             ) : null}
-            <section className="rounded-lg border border-orange-400/20 bg-slate-900/80 p-4 shadow-2xl shadow-orange-950/20 backdrop-blur md:p-6">
+            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-orange-400/20 bg-slate-900/95 p-4 shadow-2xl shadow-orange-950/20 md:p-6">
               <div className="mb-5 flex flex-col gap-4 rounded-lg border border-orange-300/25 bg-orange-400/10 p-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-orange-200">
@@ -653,7 +653,7 @@ export default function TacticalTriage() {
                     <Siren aria-hidden="true" className="h-4 w-4" />
                     Paciente {currentIndex + 1} de {PATIENTS_PER_GAME}
                   </p>
-                  <h1 className="mt-2 text-2xl font-bold md:text-3xl">{currentPatient.title}</h1>
+                  <h1 className="mt-2 break-words text-2xl font-bold leading-tight md:text-3xl">{currentPatient.title}</h1>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg border border-yellow-300/30 bg-yellow-300/10 px-4 py-3 text-yellow-100">
                   <Timer aria-hidden="true" className="h-5 w-5" />
@@ -661,7 +661,7 @@ export default function TacticalTriage() {
                 </div>
               </div>
 
-              <div className="mt-6 rounded-lg border border-cyan-300/20 bg-slate-950/80 p-4 shadow-inner md:p-5">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-950/90 p-4 shadow-inner md:p-5">
                 <p className="text-sm font-semibold uppercase tracking-wide text-slate-400">Tarjeta clinica</p>
                 <p className="mt-3 text-lg font-semibold leading-7 text-white">{currentPatient.scenario}</p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -674,10 +674,10 @@ export default function TacticalTriage() {
                 </div>
               </div>
 
-              <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+              <div className="isolate mt-6 grid w-full grid-cols-1 gap-3 overflow-y-auto overscroll-none sm:grid-cols-2 lg:grid-cols-5">
                 {triageOptions.map((option) => (
                   <button
-                    className={`min-h-[76px] w-full touch-manipulation select-none rounded-lg border px-4 py-4 text-left text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-24 ${option.colorClass}`}
+                    className={`min-h-[76px] w-full translate-z-0 transform-gpu touch-manipulation select-none rounded-lg border px-4 py-4 text-left text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-24 lg:px-3 ${option.colorClass}`}
                     disabled={isLocked || showTutorial}
                     key={option.key}
                     onClick={() => classifyPatient(option.key)}
@@ -709,9 +709,9 @@ export default function TacticalTriage() {
               ) : null}
             </section>
 
-            <aside className="rounded-lg border border-slate-700 bg-slate-900/90 p-5 text-white shadow-2xl shadow-black/20">
+            <aside className="isolate w-full translate-z-0 transform-gpu rounded-lg border border-slate-700 bg-slate-900/95 p-5 text-white shadow-2xl shadow-black/20">
               <h2 className="font-bold">Telemetria MTS</h2>
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
                 <ClinicalMetric label="Correctos" value={`${correctCount}/${answers.length}`} />
                 <ClinicalMetric label="Errores" value={errorsCount} />
                 <ClinicalMetric label="Pendientes" value={PATIENTS_PER_GAME - answers.length} />
@@ -744,7 +744,7 @@ function Briefing({ onStart }) {
     <section className="grid flex-1 place-items-center py-10">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-6"
+        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-6"
         initial={{ opacity: 0, y: 16 }}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">
@@ -775,6 +775,26 @@ function Briefing({ onStart }) {
         <div className="mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 dark:border-yellow-300/30 dark:bg-yellow-400/10 dark:text-yellow-100">
           Tendras {SECONDS_PER_PATIENT} segundos por paciente. Si el tiempo se
           acaba, cuenta como error y se explica el discriminador MTS esperado.
+        </div>
+        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
+          <h2 className="font-bold">Como clasificar rapido</h2>
+          <p className="mt-2">
+            Primero descarta ROJO: inconsciente, paro, respiracion critica o
+            hemorragia exanguinante. Luego busca NARANJA: dolor severo,
+            dificultad respiratoria severa, dolor toracico de alto riesgo o
+            hemorragia mayor controlable. AMARILLO es urgente, pero estable:
+            dolor moderado, fiebre o dificultad respiratoria moderada. VERDE es
+            problema menor con sintomas tolerables. AZUL es solicitud sin
+            sintomas agudos.
+          </p>
+        </div>
+        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
+          <h2 className="font-bold">Como se calcula el score</h2>
+          <p className="mt-2">
+            El score va de 0 a 100: 40% decision clinica, 40% precision de
+            clasificacion y 20% tiempo restante. Cada paciente correcto suma
+            precision; cada error o tiempo agotado baja el promedio final.
+          </p>
         </div>
         <div className="mt-4 rounded-md border border-slate-700 bg-slate-950/70 p-4">
           <h2 className="font-bold">Niveles MTS</h2>
@@ -825,7 +845,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-8"
+        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-8"
         initial={{ opacity: 0, y: 18 }}
       >
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-300">

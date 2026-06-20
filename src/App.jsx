@@ -75,7 +75,7 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AuthProvider>
-        <div className="flex min-h-screen flex-col overflow-x-hidden">
+        <div className="isolate flex min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu flex-col overflow-x-hidden">
           <div className="flex-1">
             <Routes>
               <Route element={<Navigate replace to="/login" />} path="/" />

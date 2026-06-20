@@ -635,7 +635,7 @@ export default function BurnLab() {
 
   return (
     <main
-      className="min-h-screen bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           'radial-gradient(circle at 20% 20%, rgba(14,165,233,0.12), transparent 26%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',
@@ -675,7 +675,7 @@ export default function BurnLab() {
                 <span className="animate-bounce text-6xl" aria-hidden="true">
                   👇
                 </span>
-                <span className="mt-4 max-w-sm rounded-lg border border-cyan-300/40 bg-cyan-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                <span className="mt-4 max-w-sm translate-z-0 transform-gpu rounded-lg border border-cyan-300/40 bg-cyan-500/20 p-4 text-base font-bold text-white shadow-2xl">
                   Lee el caso y selecciona la accion medica correcta.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
@@ -691,11 +691,11 @@ export default function BurnLab() {
                 {caseData.title}
               </h1>
               <p className="mt-4 max-w-2xl text-slate-300">{caseData.mechanism}</p>
-              <div className="mt-4 max-w-2xl rounded-lg border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+              <div className="isolate mt-4 max-w-2xl translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
                 <span className="font-bold">Aspecto de la quemadura: </span>
                 {caseData.woundDescription}
               </div>
-              <div className="mt-5 rounded-lg border border-cyan-300/20 bg-slate-900/80 p-4">
+              <div className="isolate mt-5 translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-900/95 p-4">
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div>
                     <h2 className="font-bold text-cyan-100">Clasifica la gravedad</h2>
@@ -757,7 +757,7 @@ export default function BurnLab() {
                         }
                       : { x: 0 }
                   }
-                  className="relative flex min-h-[440px] flex-col items-center justify-center overflow-hidden rounded-lg border border-cyan-300/20 bg-slate-900/80 p-6 shadow-2xl shadow-cyan-950/30"
+                  className="isolate relative flex min-h-[440px] translate-z-0 transform-gpu flex-col items-center justify-center overflow-hidden rounded-lg border border-cyan-300/20 bg-slate-900/95 p-6 shadow-2xl shadow-cyan-950/30"
                   key={`${caseData.id}-${shakeKey}`}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
@@ -775,9 +775,9 @@ export default function BurnLab() {
                   </p>
                 </motion.div>
 
-                <div className="rounded-lg border border-cyan-300/20 bg-white p-4 text-slate-950 shadow-2xl shadow-cyan-950/20 dark:bg-slate-900 dark:text-white">
+                <div className="isolate translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-white p-4 text-slate-950 shadow-2xl shadow-cyan-950/20 dark:bg-slate-900 dark:text-white">
                   <h2 className="font-bold">Bandeja de instrumental</h2>
-                  <div className="mt-4 grid gap-3">
+                  <div className="isolate mt-4 grid max-h-[70dvh] gap-3 overflow-y-auto overscroll-none pr-1">
                     {caseTools.map((toolId) => {
                       const tool = getTool(toolId);
                       const ToolIcon = tool.icon;
@@ -785,7 +785,7 @@ export default function BurnLab() {
 
                       return (
                         <button
-                          className={`flex cursor-grab items-center justify-between gap-3 rounded-md border px-3 py-3 text-left text-sm font-semibold transition ${
+                          className={`flex translate-z-0 transform-gpu cursor-grab items-center justify-between gap-3 rounded-md border px-3 py-3 text-left text-sm font-semibold transition ${
                             used
                               ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500'
                               : 'border-slate-200 bg-white text-slate-900 hover:border-cyan-300 hover:bg-cyan-50 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:hover:bg-cyan-400/10'
@@ -824,7 +824,7 @@ export default function BurnLab() {
               </div>
             </section>
 
-            <aside className="rounded-lg border border-white/10 bg-white p-5 text-slate-950 shadow-2xl shadow-black/20 dark:bg-slate-900 dark:text-white">
+            <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white p-5 text-slate-950 shadow-2xl shadow-black/20 dark:bg-slate-900 dark:text-white">
               <h2 className="text-lg font-bold">Telemetria del caso</h2>
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <Metric label="Score" value={score} />
@@ -913,7 +913,7 @@ function Briefing({ caseData, onStart }) {
     <section className="grid flex-1 place-items-center py-10">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-slate-900 dark:text-white"
+        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-slate-900 dark:text-white"
         initial={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.22 }}
       >
@@ -943,9 +943,10 @@ function Briefing({ caseData, onStart }) {
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
           <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide el resultado</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            El score final queda entre 0 y 100. Combina clasificar la gravedad,
-            aplicar acciones correctas y responder sin tardar demasiado. Los
-            mitos o elecciones peligrosas bajan el resultado.
+            El score final queda entre 0 y 100: 40% clasificar bien la gravedad
+            de la quemadura, 40% elegir instrumentos seguros y 20% responder sin
+            tardar demasiado. Los mitos o elecciones peligrosas bajan el
+            resultado.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -981,7 +982,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
+        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         transition={{ duration: 0.2 }}
       >

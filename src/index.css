@@ -38,6 +38,19 @@ body {
   }
 }
 
+@layer utilities {
+  .translate-z-0 {
+    --tw-translate-z: 0;
+    backface-visibility: hidden;
+    transform: translate3d(var(--tw-translate-x, 0), var(--tw-translate-y, 0), var(--tw-translate-z, 0))
+      rotate(var(--tw-rotate, 0))
+      skewX(var(--tw-skew-x, 0))
+      skewY(var(--tw-skew-y, 0))
+      scaleX(var(--tw-scale-x, 1))
+      scaleY(var(--tw-scale-y, 1));
+  }
+}
+
 @keyframes heimlich-qte-sweep {
   0% {
     transform: translate(-50%, 0);

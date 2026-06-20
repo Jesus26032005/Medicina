@@ -398,7 +398,7 @@ export default function TourniquetCode() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between gap-3">
           <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
@@ -426,7 +426,7 @@ export default function TourniquetCode() {
                 <span className="animate-bounce text-6xl" aria-hidden="true">
                   👇
                 </span>
-                <span className="mt-4 max-w-sm rounded-lg border border-rose-300/40 bg-rose-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                <span className="mt-4 max-w-sm translate-z-0 transform-gpu rounded-lg border border-rose-300/40 bg-rose-500/20 p-4 text-base font-bold text-white shadow-2xl">
                   Mantén la presion entre 65% y 85%. Si pasas de 85%, sube el dano al tejido.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
@@ -435,7 +435,7 @@ export default function TourniquetCode() {
               </button>
             ) : null}
 
-            <section className="rounded-lg border border-white/10 bg-white/5 p-4 md:p-6">
+            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white/5 p-4 md:p-6">
               <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} perdida</p>
               <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
               <p className="mt-3 text-slate-300">{caseData.description}</p>
@@ -443,7 +443,7 @@ export default function TourniquetCode() {
                 Coloca el torniquete 5-7 cm arriba de la herida. Nunca sobre una articulacion.
               </div>
 
-              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-4">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
                   <span>Sangrado activo</span>
                   <span>{Math.round(activeBleeding)}%</span>
@@ -461,7 +461,7 @@ export default function TourniquetCode() {
                 </div>
               </div>
 
-              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-4">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
                   <span>Dano tisular</span>
                   <span>{Math.round(tissueDamage)}%</span>
@@ -478,7 +478,7 @@ export default function TourniquetCode() {
                 </p>
               </div>
 
-              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-4 shadow-2xl shadow-rose-950/20">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4 shadow-2xl shadow-rose-950/20">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
                   <span>Barra de tension</span>
                   <span>{Math.round(pressureApplied)}%</span>
@@ -517,7 +517,7 @@ export default function TourniquetCode() {
               </button>
             </section>
 
-            <aside className="rounded-lg border border-white/10 bg-white p-5 text-slate-950 dark:bg-slate-900 dark:text-white">
+            <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white p-5 text-slate-950 dark:bg-slate-900 dark:text-white">
               <h2 className="font-bold">Telemetria</h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <Metric label="Control" value={`${controlPercent}%`} />
@@ -556,7 +556,7 @@ export default function TourniquetCode() {
 function Briefing({ caseData, onStart }) {
   return (
     <section className="grid flex-1 place-items-center py-10">
-      <div className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6">
+      <div className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Briefing medico</p>
         <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
         <p className="mt-3 text-slate-700 dark:text-slate-300">{caseData.description}</p>
@@ -577,6 +577,15 @@ function Briefing({ caseData, onStart }) {
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
             Inicio es el control del sangrado durante el primer tercio de la partida.
             Final es el control durante el ultimo tercio. La meta es hemorragia controlada: 0% de sangrado activo.
+          </p>
+        </div>
+        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Como se calcula el score</h2>
+          <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
+            El score va de 0 a 100: 40% decision clinica de controlar la
+            hemorragia, 40% precision manteniendo tension util sin excederte y
+            20% tiempo. Si pasas demasiado tiempo por arriba de 85%, sube el
+            dano tisular y el resultado se penaliza fuerte.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -606,7 +615,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
+        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
         initial={{ opacity: 0, y: 18 }}
       >
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">
