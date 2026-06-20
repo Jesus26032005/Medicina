@@ -98,6 +98,11 @@ const blockedWords = [
   'culero',
   'culera',
   'cabrón',
+  'mal',
+  'xd',
+  '67',
+  'insert',
+  'drop'
 ];
 const geminiModelCandidates = [
   'gemini-2.5-flash',
