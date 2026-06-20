@@ -74,6 +74,12 @@ export const evidenceByModule = {
         title: 'Reanimación cardiopulmonar básica',
         url: 'https://www.cruzroja.es/principal/web/ahora/reanimacion-cardiopulmonar',
       },
+      {
+        institution: 'Cruz roja',
+        note: 'Pagina que incluye informacion sobre las canciones de 100-120 BPM para RCP.',
+        title: 'Canciones de RCP para compresiones torácicas',
+        url: 'https://www-redcross-org.translate.goog/take-a-class/resources/articles/cpr-songs?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc'
+      }
     ],
   },
   choking_express: {
