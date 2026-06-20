@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   Activity,
+  BookOpenCheck,
   Brain,
   Globe2,
   LogOut,
@@ -467,6 +468,10 @@ Reglas:
           <div className="mt-4 inline-flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
             <ShieldCheck aria-hidden="true" className="h-4 w-4" />
             Fecha de ultima revision medica clinica: {LAST_MEDICAL_REVIEW}
+          </div>
+          <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100">
+            <BookOpenCheck aria-hidden="true" className="h-4 w-4" />
+            Proyecto en proceso de aval clinico y evaluacion academica.
           </div>
         </div>
 
