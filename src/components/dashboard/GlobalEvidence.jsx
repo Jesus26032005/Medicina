@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Activity, LogIn, MessageSquareQuote, ShieldCheck } from 'lucide-react';
+import { Activity, LogIn, MessageSquareQuote, ShieldCheck, Users } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -17,6 +17,7 @@ import ThemeToggle from '../common/ThemeToggle';
 export default function GlobalEvidence() {
   const [sessions, setSessions] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [registeredUsersCount, setRegisteredUsersCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -28,17 +29,22 @@ export default function GlobalEvidence() {
         return;
       }
 
-      const [{ data: sessionData, error: sessionError }, { data: testimonialData, error: testimonialError }] =
+      const [
+        { data: sessionData, error: sessionError },
+        { data: testimonialData, error: testimonialError },
+        { data: profilesCount, error: profilesCountError },
+      ] =
         await Promise.all([
           supabase
             .from('game_sessions')
-            .select('id, game_key, initial_precision, final_precision, errors_count, score, created_at')
+            .select('id, user_id, game_key, initial_precision, final_precision, errors_count, score, created_at')
             .order('created_at', { ascending: true }),
           supabase
             .from('testimonials')
             .select('id, content, learning_text, user_id, created_at')
             .order('created_at', { ascending: false })
             .limit(12),
+          supabase.rpc('get_profiles_count'),
         ]);
 
       if (sessionError) {
@@ -50,6 +56,11 @@ export default function GlobalEvidence() {
           current ? `${current} ${testimonialError.message}` : testimonialError.message
         );
       }
+
+      const fallbackUserIds = new Set([
+        ...(sessionData ?? []).map((session) => session.user_id).filter(Boolean),
+        ...(testimonialData ?? []).map((testimonial) => testimonial.user_id).filter(Boolean),
+      ]);
 
       const authorIds = [
         ...new Set((testimonialData ?? []).map((testimonial) => testimonial.user_id).filter(Boolean)),
@@ -71,6 +82,9 @@ export default function GlobalEvidence() {
       }
 
       setSessions(sessionData ?? []);
+      setRegisteredUsersCount(
+        profilesCountError ? fallbackUserIds.size : Number(profilesCount ?? 0)
+      );
       setTestimonials(
         (testimonialData ?? []).map((testimonial) => ({
           ...testimonial,
@@ -156,7 +170,12 @@ export default function GlobalEvidence() {
           </p>
         ) : null}
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <Kpi
+            icon={Users}
+            label="Usuarios en base de datos"
+            value={loading ? '...' : registeredUsersCount}
+          />
           <Kpi
             label="Partidas jugadas"
             value={loading ? '...' : sessions.length}
@@ -236,10 +255,10 @@ export default function GlobalEvidence() {
   );
 }
 
-function Kpi({ label, value }) {
+function Kpi({ icon: Icon = Activity, label, value }) {
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
-      <Activity aria-hidden="true" className="h-6 w-6 text-cyan-300" />
+      <Icon aria-hidden="true" className="h-6 w-6 text-cyan-300" />
       <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
         {label}
       </p>
