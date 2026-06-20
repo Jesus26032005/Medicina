@@ -628,7 +628,7 @@ Reglas:
             <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
               Testimonio publico
             </p>
-            <h2 className="mt-1 text-2xl font-bold">Comparte que aprendiste</h2>
+            <h2 className="mt-1 texzt-2xl font-bold">Comparte que aprendiste</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-700 dark:text-gray-200">
               Este mensaje puede aparecer en el Dashboard Global como evidencia
               cualitativa. La IA revisa que sea respetuoso antes de publicarlo.

@@ -388,7 +388,8 @@ export default function BurnLab() {
   const [errorsCount, setErrorsCount] = useState(0);
   const [usedTools, setUsedTools] = useState([]);
   const [actions, setActions] = useState([]);
-  const [alert, setAlert] = useState('Evalua el mecanismo y selecciona la conducta segura.');
+  const [severityFeedback, setSeverityFeedback] = useState('Evalua el mecanismo y selecciona la gravedad probable.');
+  const [toolFeedback, setToolFeedback] = useState('Despues de clasificar, selecciona una herramienta para ver la correccion clinica.');
   const [shakeKey, setShakeKey] = useState(0);
   const [results, setResults] = useState(null);
   const [saveState, setSaveState] = useState('idle');
@@ -505,7 +506,7 @@ export default function BurnLab() {
     const isCorrect = severityKey === caseData.severity;
     setSelectedSeverity(severityKey);
     setSeverityLocked(true);
-    setAlert(
+    setSeverityFeedback(
       isCorrect
         ? `Clasificacion correcta: ${severityLabels[severityKey]}. Ahora aplica las acciones seguras.`
         : `Clasificacion incorrecta. ${caseData.severityExplanation}`
@@ -569,7 +570,7 @@ export default function BurnLab() {
     setScore(nextScore);
     setErrorsCount(nextErrorsCount);
     setActions(nextActions);
-    setAlert(feedback);
+    setToolFeedback(feedback);
 
     if (!isCorrect) {
       setShakeKey((key) => key + 1);
@@ -605,7 +606,8 @@ export default function BurnLab() {
     setErrorsCount(0);
     setUsedTools([]);
     setActions([]);
-    setAlert('Evalua el mecanismo y selecciona la conducta segura.');
+    setSeverityFeedback('Evalua el mecanismo y selecciona la gravedad probable.');
+    setToolFeedback('Despues de clasificar, selecciona una herramienta para ver la correccion clinica.');
     setShakeKey(0);
     setResults(null);
     setSaveState('idle');
@@ -628,7 +630,7 @@ export default function BurnLab() {
   }
 
   function showHint() {
-    setAlert(`Pista: ${caseData.hint}`);
+    setToolFeedback(`Pista: ${caseData.hint}`);
   }
 
   return (
@@ -731,13 +733,13 @@ export default function BurnLab() {
                 </div>
                 <div
                   className={`mt-4 rounded-md border p-4 ${
-                    alert.includes('Error')
+                    severityFeedback.includes('incorrecta') || severityFeedback.includes('Error')
                       ? 'border-red-200 bg-red-50 text-red-800 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-100'
                       : 'border-cyan-200 bg-cyan-50 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100'
                   }`}
                 >
-                  <p className="text-sm font-bold">Respuesta clinica</p>
-                  <p className="mt-2 text-sm leading-6">{alert}</p>
+                  <p className="text-sm font-bold">Respuesta de gravedad</p>
+                  <p className="mt-2 text-sm leading-6">{severityFeedback}</p>
                 </div>
               </div>
 
@@ -805,6 +807,18 @@ export default function BurnLab() {
                         </button>
                       );
                     })}
+                  </div>
+                  <div
+                    className={`mt-4 rounded-md border p-4 ${
+                      toolFeedback.includes('Error')
+                        ? 'border-red-200 bg-red-50 text-red-800 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-100'
+                        : toolFeedback.includes('Correcto')
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
+                          : 'border-cyan-200 bg-cyan-50 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100'
+                    }`}
+                  >
+                    <p className="text-sm font-bold">Correccion de instrumental</p>
+                    <p className="mt-2 text-sm leading-6">{toolFeedback}</p>
                   </div>
                 </div>
               </div>

@@ -21,8 +21,8 @@ import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
-const SUCCESS_WINDOW_MS = 100;
-const PRECISION_WINDOW_MS = 250;
+const SUCCESS_WINDOW_MS = 140;
+const PRECISION_WINDOW_MS = 300;
 const MIN_INTERVAL_BETWEEN_PRESSES_MS = 250;
 const MIN_VALID_PRESSES_FOR_SCORE = 5;
 const durationOptions = [

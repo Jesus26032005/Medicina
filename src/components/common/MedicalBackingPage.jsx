@@ -2,96 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, ShieldCheck } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { evidenceByModule, evidenceCategories } from './ClinicalEvidenceDisclosure';
 
-const bibliography = [
-  {
-    title: 'RCP Hero',
-    description:
-      "Basado en las guias de la American Heart Association para RCP y Atencion Cardiovascular de Emergencia, con enfasis en compresiones toracicas de alta calidad dentro del rango 100-120 por minuto. Justificacion de Memoria Muscular: El entrenamiento con metronomos auditivos o canciones con un tempo de 100 a 120 BPM (como Stayin' Alive) esta comprobado clinicamente para mejorar la retencion de la frecuencia de compresion toracica adecuada.",
-    links: [
-      {
-        label: 'American Heart Association - CPR and ECC Guidelines',
-        url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines',
-      },
-      {
-        label: 'American Heart Association - High Quality CPR',
-        url: 'https://cpr.heart.org/en/resuscitation-science/high-quality-cpr',
-      },
-      {
-        label: 'American Red Cross - CPR Steps',
-        url: 'https://www.redcross.org/take-a-class/cpr/performing-cpr/cpr-steps',
-      },
-      {
-        label: "NIH/PubMed - Stayin' Alive mental metronome study",
-        url: 'https://pubmed.ncbi.nlm.nih.gov/22445896/',
-      },
-    ],
-  },
-  {
-    title: 'Laboratorio de Quemaduras',
-    description:
-      'Sustentado en lineamientos institucionales de primeros auxilios, epidemiologia de la OMS y literatura academica indexada para enfriamiento, irrigacion y manejo inicial de quemaduras.',
-    links: [
-      {
-        label: 'AHA / American Red Cross - 2024 First Aid Guidelines',
-        url: 'https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines',
-      },
-      {
-        label: 'World Health Organization - Burns fact sheet',
-        url: 'https://www.who.int/news-room/fact-sheets/detail/burns',
-      },
-      {
-        label: 'NIH/PubMed - Burn first aid cooling evidence',
-        url: 'https://pubmed.ncbi.nlm.nih.gov/34916091/',
-      },
-    ],
-  },
-  {
-    title: 'Ahogo Express (Heimlich)',
-    description:
-      'Basado en guias institucionales de primeros auxilios para diferenciar obstruccion parcial y completa y entrenar decisiones iniciales de desobstruccion.',
-    links: [
-      {
-        label: 'AHA / American Red Cross - 2024 First Aid Guidelines',
-        url: 'https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines',
-      },
-      {
-        label: 'American Red Cross - Learn First Aid',
-        url: 'https://www.redcross.org/take-a-class/resources/learn-first-aid',
-      },
-      {
-        label: 'American Red Cross - First Aid Training',
-        url: 'https://www.redcross.org/take-a-class/first-aid/first-aid-training',
-      },
-    ],
-  },
-  {
-    title: 'Codigo Torniquete',
-    description:
-      'Respaldado por el Consenso de Hartford, Stop the Bleed y materiales institucionales del American College of Surgeons para control de hemorragia externa potencialmente mortal.',
-    links: [
-      {
-        label: 'ACS Stop the Bleed - Get Trained',
-        url: 'https://www.stopthebleed.org/get-trained/',
-      },
-      {
-        label: 'American College of Surgeons - Trauma Programs',
-        url: 'https://www.facs.org/quality-programs/trauma/',
-      },
-    ],
-  },
-  {
-    title: 'Triage Tactico (Protocolo START)',
-    description:
-      'Basado en literatura academica indexada sobre triage de incidentes con multiples victimas y el algoritmo START.',
-    links: [
-      {
-        label: 'HHS REMM - START Adult Triage Algorithm',
-        url: 'https://remm.hhs.gov/startadult.htm',
-      },
-    ],
-  },
-];
+const bibliography = evidenceCategories.map(([moduleKey, title]) => ({
+  ...evidenceByModule[moduleKey],
+  title,
+}));
 
 export default function MedicalBackingPage() {
   return (
@@ -162,7 +78,12 @@ export default function MedicalBackingPage() {
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <span>{link.label}</span>
+                    <span>
+                      <span className="block">{link.title}</span>
+                      <span className="mt-1 block text-xs font-bold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
+                        {link.institution}
+                      </span>
+                    </span>
                     <ExternalLink aria-hidden="true" className="h-4 w-4 shrink-0" />
                   </a>
                 ))}

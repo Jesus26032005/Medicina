@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   BookOpen,
+  ClipboardList,
   Save,
   Siren,
   Timer,
@@ -16,64 +17,169 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
 const PATIENTS_PER_GAME = 5;
-const SECONDS_PER_PATIENT = 15;
+const SECONDS_PER_PATIENT = 20;
 
 const triageOptions = [
   {
-    colorClass: 'bg-emerald-600 hover:bg-emerald-700',
-    key: 'green',
-    label: 'VERDE',
-    subtitle: 'Leve',
-  },
-  {
-    colorClass: 'bg-yellow-500 hover:bg-yellow-600',
-    key: 'yellow',
-    label: 'AMARILLO',
-    subtitle: 'Diferido',
-  },
-  {
-    colorClass: 'bg-red-600 hover:bg-red-700',
+    colorClass: 'border-red-300/40 bg-red-600 hover:bg-red-700 shadow-red-950/40',
     key: 'red',
     label: 'ROJO',
-    subtitle: 'Inmediato',
+    subtitle: 'Inmediato - Riesgo vital',
+    time: '0 min',
   },
   {
-    colorClass: 'bg-slate-950 hover:bg-slate-800 dark:bg-black dark:hover:bg-slate-800',
-    key: 'black',
-    label: 'NEGRO',
-    subtitle: 'Fallecido',
+    colorClass: 'border-orange-300/40 bg-orange-500 hover:bg-orange-600 shadow-orange-950/40',
+    key: 'orange',
+    label: 'NARANJA',
+    subtitle: 'Muy urgente',
+    time: '10 min',
+  },
+  {
+    colorClass: 'border-yellow-300/40 bg-yellow-500 hover:bg-yellow-600 shadow-yellow-950/30',
+    key: 'yellow',
+    label: 'AMARILLO',
+    subtitle: 'Urgente',
+    time: '60 min',
+  },
+  {
+    colorClass: 'border-emerald-300/40 bg-emerald-600 hover:bg-emerald-700 shadow-emerald-950/40',
+    key: 'green',
+    label: 'VERDE',
+    subtitle: 'Estandar',
+    time: '120 min',
+  },
+  {
+    colorClass: 'border-blue-300/40 bg-blue-600 hover:bg-blue-700 shadow-blue-950/40',
+    key: 'blue',
+    label: 'AZUL',
+    subtitle: 'No urgente',
+    time: '240 min',
   },
 ];
+
+const manchesterLevels = {
+  blue: 'Azul - No urgente - 240 min',
+  green: 'Verde - Estandar - 120 min',
+  orange: 'Naranja - Muy urgente - 10 min',
+  red: 'Rojo - Inmediato - Riesgo vital',
+  yellow: 'Amarillo - Urgente - 60 min',
+};
 
 const notes = [
-  'START busca decisiones rapidas: caminar, respirar, circulacion y estado mental.',
-  'En incidentes con muchas victimas, clasificar rapido ayuda a usar mejor los recursos disponibles.',
-  'El color verde no significa sin dolor; significa que puede caminar y esperar.',
-  'Respirar mas de 30 por minuto es una bandera roja en START.',
-  'No obedecer ordenes simples puede indicar que el cerebro o la circulacion estan fallando.',
+  'Manchester prioriza por riesgo clinico: primero busca amenaza vital, conciencia, respiracion, hemorragia, dolor y constantes.',
+  'Un paciente azul no significa que no importe; significa que no tiene signos agudos de prioridad alta en el momento de clasificar.',
+  'Dolor severo, dificultad respiratoria severa o dolor toracico con sintomas autonomicos elevan la prioridad.',
+  'La clasificacion de triage no es diagnostico: decide que tan pronto debe valorarse al paciente.',
+  'El color rojo implica atencion inmediata porque hay riesgo vital evidente o muy probable.',
 ];
 
-const startSteps = [
-  {
-    color: 'VERDE',
-    description: 'Si la victima puede caminar, se localiza como verde aunque tenga dolor o este asustada.',
-    rule: 'Camina',
-  },
-  {
-    color: 'NEGRO',
-    description: 'Si no respira, abre la via aerea. Si aun asi no respira, se clasifica como negro.',
-    rule: 'No respira tras abrir via aerea',
-  },
+const manchesterSteps = [
   {
     color: 'ROJO',
-    description: 'Si respira >30, no tiene pulso radial (pulso en la muñeca), llenado capilar (sangre vuelve a la piel) >2 s o no obedece ordenes, es rojo.',
-    rule: '30 - 2 - Puede',
+    description: 'Riesgo vital inmediato: paro, inconsciencia, hemorragia exanguinante o compromiso respiratorio critico.',
+    rule: 'Amenaza vital',
+  },
+  {
+    color: 'NARANJA',
+    description: 'Muy urgente: dolor severo, dificultad respiratoria severa, dolor toracico de alto riesgo o hemorragia mayor controlable.',
+    rule: '10 min',
   },
   {
     color: 'AMARILLO',
-    description: 'Si no camina, pero respira menos de 30/min, tiene pulso radial y obedece, es amarillo.',
-    rule: 'Puede esperar vigilancia',
+    description: 'Urgente: dolor moderado, fiebre relevante, dificultad respiratoria moderada o constantes alteradas sin shock.',
+    rule: '60 min',
   },
+  {
+    color: 'VERDE',
+    description: 'Estandar: problema menor con sintomas tolerables, movilidad conservada y sin datos de alarma.',
+    rule: '120 min',
+  },
+  {
+    color: 'AZUL',
+    description: 'No urgente: solicitud administrativa o condicion cronica estable sin sintomas agudos.',
+    rule: '240 min',
+  },
+];
+
+const fallbackCases = [
+  {
+    chestPainRisk: false,
+    consciousness: 'inconsciente',
+    difficultyBreathing: 'severa',
+    expected: 'red',
+    hemorrhage: 'ausente',
+    id: 'mts_fallback_red_arrest',
+    pain: 'sin_dolor',
+    scenario: 'Paciente ingresa en paro cardiorrespiratorio presenciado; no respira y no tiene pulso palpable.',
+    source: 'fallback',
+    temperature: 'normal',
+    title: 'Paro cardiorrespiratorio presenciado',
+  },
+  {
+    chestPainRisk: true,
+    consciousness: 'alerta',
+    difficultyBreathing: 'severa',
+    expected: 'orange',
+    hemorrhage: 'ausente',
+    id: 'mts_fallback_orange_chest_pain',
+    pain: 'severo',
+    scenario: 'Paciente con dolor toracico opresivo irradiado a brazo izquierdo, diaforesis y dificultad para respirar severa.',
+    source: 'fallback',
+    temperature: 'normal',
+    title: 'Dolor toracico de alto riesgo',
+  },
+  {
+    chestPainRisk: false,
+    consciousness: 'alerta',
+    difficultyBreathing: 'ausente',
+    expected: 'yellow',
+    hemorrhage: 'ausente',
+    id: 'mts_fallback_yellow_abdomen',
+    pain: 'moderado',
+    scenario: 'Dolor abdominal moderado de 2 dias de evolucion, fiebre de 38.5 C, sin signos de shock.',
+    source: 'fallback',
+    temperature: 'alterada',
+    title: 'Dolor abdominal con fiebre',
+  },
+  {
+    chestPainRisk: false,
+    consciousness: 'alerta',
+    difficultyBreathing: 'ausente',
+    expected: 'green',
+    hemorrhage: 'ausente',
+    id: 'mts_fallback_green_sprain',
+    pain: 'moderado',
+    scenario: 'Esguince de tobillo tras caida leve, dolor tolerable 4/10, puede caminar cojeando y no hay deformidad evidente.',
+    source: 'fallback',
+    temperature: 'normal',
+    title: 'Esguince de tobillo',
+  },
+  {
+    chestPainRisk: false,
+    consciousness: 'alerta',
+    difficultyBreathing: 'ausente',
+    expected: 'blue',
+    hemorrhage: 'ausente',
+    id: 'mts_fallback_blue_prescription',
+    pain: 'sin_dolor',
+    scenario: 'Paciente acude para solicitud de renovacion de receta de medicamentos cronicos, sin sintomas agudos.',
+    source: 'fallback',
+    temperature: 'normal',
+    title: 'Renovacion de receta',
+  },
+];
+
+const consciousnessOptions = ['alerta', 'responde_voz', 'responde_dolor', 'inconsciente'];
+const hemorrhageOptions = ['exanguinante', 'mayor_controlable', 'menor', 'ausente'];
+const painOptions = ['severo', 'moderado', 'leve', 'sin_dolor'];
+const temperatureOptions = ['normal', 'alterada'];
+const breathingOptions = ['severa', 'moderada', 'ausente'];
+const contexts = [
+  'sala de espera de urgencias',
+  'area de admision',
+  'entrada de urgencias',
+  'consulta no programada',
+  'pasillo de triage',
 ];
 
 function clamp(value, min, max) {
@@ -94,141 +200,176 @@ function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeR
   );
 }
 
-function generatePatient(index) {
-  const canWalk = chance(0.22);
-  const noInitialBreathing = !canWalk && chance(0.18);
-  const breathesAfterAirway = noInitialBreathing ? chance(0.45) : true;
-  const respiratoryRate = noInitialBreathing
-    ? breathesAfterAirway
-      ? randomItem([10, 12, 16])
-      : 0
-    : canWalk
-      ? randomItem([18, 20, 22, 24])
-      : randomItem([18, 22, 26, 28, 32, 36, 40]);
-  const capillaryRefill = respiratoryRate === 0 ? null : randomItem([1, 2, 3, 4]);
-  const radialPulse = capillaryRefill !== null && capillaryRefill <= 2 && chance(0.82);
-  const mentalStatus = canWalk || chance(0.68) ? 'follows' : randomItem(['confused', 'unconscious']);
-  const mechanism = randomItem([
-    'explosion con varias victimas',
-    'choque vehicular multiple',
-    'colapso de estructura',
-    'incendio en zona industrial',
-    'accidente en transporte publico',
-  ]);
-  const title = canWalk
-    ? `Paciente ${index}: ambulante`
-    : respiratoryRate === 0
-      ? `Paciente ${index}: no respira`
-      : `Paciente ${index}: no puede caminar`;
-  const scenarioParts = [
-    `${title} tras ${mechanism}.`,
-    canWalk ? 'Camina hacia ti con dolor.' : 'Permanece en el suelo y no puede caminar.',
-    respiratoryRate === 0
-      ? breathesAfterAirway
-        ? 'No respiraba al inicio; al abrir la via aerea vuelve a respirar.'
-        : 'No respiraba al inicio; abres la via aerea y sigue sin respirar.'
-      : `Respira a ${respiratoryRate} rpm.`,
-    capillaryRefill === null
-      ? 'Llenado capilar no valorable.'
-      : `Llenado capilar (tiempo en que la sangre vuelve a la piel): ${capillaryRefill}s.`,
-    radialPulse ? 'Tiene pulso radial en la muñeca.' : 'No se palpa pulso radial claro.',
-    mentalStatus === 'follows'
-      ? 'Obedece la orden simple de apretar tu mano.'
-      : mentalStatus === 'confused'
-        ? 'Balbucea y no sigue una orden simple.'
-        : 'Esta inconsciente y no responde ordenes simples.',
-  ];
+function getPainLabel(pain) {
+  const labels = {
+    leve: 'leve 1-3/10',
+    moderado: 'moderado 4-7/10',
+    severo: 'severo 8-10/10',
+    sin_dolor: 'sin dolor',
+  };
+  return labels[pain] ?? pain;
+}
+
+function getConsciousnessLabel(consciousness) {
+  const labels = {
+    alerta: 'alerta',
+    inconsciente: 'inconsciente',
+    responde_dolor: 'responde al dolor',
+    responde_voz: 'responde a voz',
+  };
+  return labels[consciousness] ?? consciousness;
+}
+
+function getBreathingLabel(breathing) {
+  const labels = {
+    ausente: 'sin dificultad respiratoria',
+    moderada: 'dificultad respiratoria moderada',
+    severa: 'dificultad respiratoria severa',
+  };
+  return labels[breathing] ?? breathing;
+}
+
+function getHemorrhageLabel(hemorrhage) {
+  const labels = {
+    ausente: 'sin hemorragia',
+    exanguinante: 'hemorragia exanguinante',
+    mayor_controlable: 'hemorragia mayor controlable',
+    menor: 'hemorragia menor',
+  };
+  return labels[hemorrhage] ?? hemorrhage;
+}
+
+function evaluateManchesterCase(caseData) {
+  if (caseData.consciousness === 'inconsciente' || caseData.hemorrhage === 'exanguinante') {
+    return {
+      expected: 'red',
+      explanation:
+        'MTS: inconsciencia o hemorragia exanguinante son discriminadores de riesgo vital; se clasifica ROJO para atencion inmediata.',
+    };
+  }
+
+  if (
+    caseData.difficultyBreathing === 'severa' ||
+    caseData.hemorrhage === 'mayor_controlable' ||
+    caseData.pain === 'severo' ||
+    caseData.chestPainRisk ||
+    caseData.consciousness === 'responde_dolor'
+  ) {
+    return {
+      expected: 'orange',
+      explanation:
+        'MTS: dolor severo, dificultad respiratoria severa, dolor toracico de alto riesgo, respuesta solo al dolor o hemorragia mayor controlable elevan a NARANJA.',
+    };
+  }
+
+  if (
+    caseData.difficultyBreathing === 'moderada' ||
+    caseData.pain === 'moderado' ||
+    caseData.temperature === 'alterada' ||
+    caseData.consciousness === 'responde_voz'
+  ) {
+    return {
+      expected: 'yellow',
+      explanation:
+        'MTS: dolor moderado, fiebre o constantes alteradas, dificultad respiratoria moderada o respuesta solo a voz se clasifican AMARILLO.',
+    };
+  }
+
+  if (caseData.pain === 'leve' || caseData.hemorrhage === 'menor') {
+    return {
+      expected: 'green',
+      explanation:
+        'MTS: sintomas leves, hemorragia menor y estabilidad general corresponden a VERDE, atencion estandar.',
+    };
+  }
 
   return {
-    airwayOpened: noInitialBreathing,
-    breathesAfterAirway,
-    breathingAfterAirway: breathesAfterAirway,
-    canWalk,
-    capillaryRefill,
-    capillaryRefillSeconds: capillaryRefill,
-    explanation: getStartExplanation({
-      canWalk,
-      breathesAfterAirway,
-      respiratoryRate,
-      capillaryRefill,
-      radialPulse,
-      mentalStatus,
-    }),
-    mentalStatus,
-    obeysCommands: mentalStatus === 'follows',
-    radialPulse,
-    respiratoryRate,
-    respirations: respiratoryRate,
-    scenario: scenarioParts.join(' '),
-    title,
-    walks: canWalk,
+    expected: 'blue',
+    explanation:
+      'MTS: no hay sintomas agudos ni discriminadores de urgencia; se clasifica AZUL como no urgente.',
+  };
+}
+
+function buildProceduralScenario(caseData) {
+  const parts = [
+    `Paciente en ${caseData.context}.`,
+    `Nivel de consciencia: ${getConsciousnessLabel(caseData.consciousness)}.`,
+    `Hemorragia: ${getHemorrhageLabel(caseData.hemorrhage)}.`,
+    `Dolor: ${getPainLabel(caseData.pain)}.`,
+    `Respiracion: ${getBreathingLabel(caseData.difficultyBreathing)}.`,
+    caseData.temperature === 'alterada'
+      ? 'Temperatura o constantes alteradas.'
+      : 'Temperatura y constantes sin alarma evidente.',
+  ];
+
+  if (caseData.chestPainRisk) {
+    parts.push('Refiere dolor toracico opresivo con datos de alarma.');
+  }
+
+  return parts.join(' ');
+}
+
+function generateManchesterCase(index) {
+  const caseData = {
+    chestPainRisk: chance(0.16),
+    consciousness: randomItem(consciousnessOptions),
+    context: randomItem(contexts),
+    difficultyBreathing: randomItem(breathingOptions),
+    hemorrhage: randomItem(hemorrhageOptions),
+    id: `mts_proc_${Date.now()}_${index}_${Math.random().toString(16).slice(2)}`,
+    pain: randomItem(painOptions),
+    source: 'procedural',
+    temperature: randomItem(temperatureOptions),
+  };
+  const evaluated = evaluateManchesterCase(caseData);
+
+  return {
+    ...caseData,
+    expected: evaluated.expected,
+    explanation: evaluated.explanation,
+    scenario: buildProceduralScenario(caseData),
+    title: `Paciente ${index}: prioridad ${manchesterLevels[evaluated.expected]}`,
+  };
+}
+
+function normalizeFallbackCase(caseData, index) {
+  const evaluated = evaluateManchesterCase(caseData);
+
+  return {
+    ...caseData,
+    explanation: evaluated.explanation,
+    title: `Paciente ${index}: ${caseData.title}`,
   };
 }
 
 function generatePatients() {
-  return Array.from({ length: PATIENTS_PER_GAME }, (_, index) => generatePatient(index + 1));
-}
-
-function getStartExplanation(patient) {
-  if (patient.canWalk) {
-    return 'Paso 1 START: si puede caminar, se clasifica VERDE para despejar la escena y atender primero a quien no camina.';
+  try {
+    return Array.from({ length: PATIENTS_PER_GAME }, (_, index) => {
+      if (chance(0.28)) {
+        return normalizeFallbackCase(
+          fallbackCases[index % fallbackCases.length],
+          index + 1
+        );
+      }
+      return generateManchesterCase(index + 1);
+    });
+  } catch {
+    return fallbackCases
+      .slice(0, PATIENTS_PER_GAME)
+      .map((caseData, index) => normalizeFallbackCase(caseData, index + 1));
   }
-
-  if (patient.respiratoryRate === 0) {
-    return patient.breathesAfterAirway
-      ? 'Paso 2 START: si no respiraba y vuelve a respirar al abrir la via aerea, se clasifica ROJO.'
-      : 'Paso 2 START: si no respira incluso despues de abrir la via aerea, se clasifica NEGRO.';
-  }
-
-  if (patient.respiratoryRate > 30) {
-    return 'Paso 3 START: si no camina y respira mas de 30 veces por minuto, se clasifica ROJO.';
-  }
-
-  if (!patient.radialPulse || patient.capillaryRefill > 2) {
-    return 'Paso 4 START: si no hay pulso radial o el llenado capilar tarda mas de 2 segundos, la circulacion falla y se clasifica ROJO.';
-  }
-
-  if (patient.mentalStatus !== 'follows') {
-    return 'Paso 5 START: si no obedece ordenes simples, se clasifica ROJO.';
-  }
-
-  return 'Paso 5 START: si no camina, respira a 30 o menos, tiene buena circulacion y obedece ordenes, se clasifica AMARILLO.';
-}
-
-function scrollToGameTop() {
-  window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
-}
-
-function getStartCategory(patient) {
-  if (patient.canWalk) {
-    return 'green';
-  }
-
-  if (patient.respiratoryRate === 0) {
-    return patient.breathesAfterAirway ? 'red' : 'black';
-  }
-
-  if (patient.respiratoryRate > 30) {
-    return 'red';
-  }
-
-  if (!patient.radialPulse || patient.capillaryRefill > 2) {
-    return 'red';
-  }
-
-  if (patient.mentalStatus !== 'follows') {
-    return 'red';
-  }
-
-  return 'yellow';
 }
 
 function getAverage(items) {
   return items.length
     ? Math.round(items.reduce((sum, item) => sum + item.precision, 0) / items.length)
     : 0;
+}
+
+function scrollToGameTop() {
+  window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
 }
 
 export default function TacticalTriage() {
@@ -272,8 +413,9 @@ export default function TacticalTriage() {
         score: nextResults.score,
         telemetry: {
           answers: finalAnswers,
-          generator: 'procedural_start',
-          protocol: 'START',
+          fallback_cases_available: fallbackCases.length,
+          generator: 'hybrid_manchester_triage',
+          protocol: 'Manchester Triage System',
           total_patients: PATIENTS_PER_GAME,
         },
       });
@@ -349,19 +491,19 @@ export default function TacticalTriage() {
         return;
       }
 
-      const expectedCategory = getStartCategory(currentPatient);
-      const correct = !timedOut && selectedKey === expectedCategory;
+      const correct = !timedOut && selectedKey === currentPatient.expected;
       const answer = {
         correct,
-        expected: expectedCategory,
-        patient_id: currentPatient.title,
+        expected: currentPatient.expected,
+        patient_id: currentPatient.id,
         patient_variables: {
-          breathesAfterAirway: currentPatient.breathesAfterAirway,
-          canWalk: currentPatient.canWalk,
-          capillaryRefill: currentPatient.capillaryRefill,
-          mentalStatus: currentPatient.mentalStatus,
-          radialPulse: currentPatient.radialPulse,
-          respiratoryRate: currentPatient.respiratoryRate,
+          chestPainRisk: currentPatient.chestPainRisk,
+          consciousness: currentPatient.consciousness,
+          difficultyBreathing: currentPatient.difficultyBreathing,
+          hemorrhage: currentPatient.hemorrhage,
+          pain: currentPatient.pain,
+          source: currentPatient.source,
+          temperature: currentPatient.temperature,
         },
         precision: correct ? 100 : 0,
         selected: timedOut ? 'timeout' : selectedKey,
@@ -375,8 +517,8 @@ export default function TacticalTriage() {
         correct
           ? `Correcto: ${currentPatient.explanation}`
           : timedOut
-            ? `Tiempo agotado. Regla START: ${currentPatient.explanation}`
-            : `Clasificacion incorrecta. Regla START: ${currentPatient.explanation}`
+            ? `Tiempo agotado. MTS esperado: ${manchesterLevels[currentPatient.expected]}. ${currentPatient.explanation}`
+            : `Clasificacion incorrecta. MTS esperado: ${manchesterLevels[currentPatient.expected]}. ${currentPatient.explanation}`
       );
     },
     [answers, currentPatient, isLocked, results, secondsLeft, showBriefing, showTutorial]
@@ -411,7 +553,7 @@ export default function TacticalTriage() {
       event.preventDefault();
     }
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, { passive: false });
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -444,15 +586,22 @@ export default function TacticalTriage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6">
+    <main
+      className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
+      style={{
+        backgroundImage:
+          'radial-gradient(circle at 18% 18%, rgba(249,115,22,0.13), transparent 28%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',
+        backgroundSize: 'auto, 30px 30px, 30px 30px',
+      }}
+    >
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <Link className="flex h-10 touch-manipulation select-none items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10" to="/dashboard">
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
           </Link>
-          <div className="rounded-md border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm font-semibold text-red-100">
-            Triage Tactico - START
+          <div className="rounded-md border border-orange-400/30 bg-orange-400/10 px-3 py-2 text-sm font-semibold text-orange-100">
+            Triage Tactico - Manchester MTS
           </div>
           <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
         </header>
@@ -460,10 +609,10 @@ export default function TacticalTriage() {
         {showBriefing ? (
           <Briefing onStart={startSimulation} />
         ) : (
-          <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="relative grid flex-1 items-start gap-6 py-6 md:gap-8 md:py-8 xl:grid-cols-[minmax(0,1fr)_340px]">
             {showTutorial ? (
               <button
-                aria-label="Cerrar tutorial de triage tactico"
+                aria-label="Cerrar tutorial de Manchester Triage"
                 className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
                 onClick={(event) => {
                   event.preventDefault();
@@ -475,30 +624,36 @@ export default function TacticalTriage() {
                 <span className="animate-bounce text-6xl" aria-hidden="true">
                   👇
                 </span>
-                <span className="mt-4 max-w-sm rounded-lg border border-red-300/40 bg-red-500/20 p-4 text-base font-bold text-white shadow-2xl">
-                  Lee el caso y selecciona la accion medica correcta.
+                <span className="mt-4 max-w-sm rounded-lg border border-orange-300/40 bg-orange-500/20 p-4 text-base font-bold text-white shadow-2xl">
+                  Lee los discriminadores clinicos y selecciona la prioridad Manchester correcta.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
-                  Toca VERDE, AMARILLO, ROJO o NEGRO segun la regla START.
+                  Toca ROJO, NARANJA, AMARILLO, VERDE o AZUL.
                 </span>
               </button>
             ) : null}
-            <section className="rounded-lg border border-red-400/20 bg-white/5 p-6 shadow-2xl shadow-red-950/20">
-              <div className="mb-5 rounded-lg border border-red-300/25 bg-red-400/10 p-4">
-                <p className="text-sm font-black uppercase tracking-wide text-red-200">
-                  Triage: Clasificacion rapida de prioridad medica
-                </p>
-                <p className="mt-1 text-sm leading-6 text-slate-300">
-                  Decide quien necesita ayuda inmediata cuando hay varias victimas.
-                </p>
+            <section className="rounded-lg border border-orange-400/20 bg-slate-900/80 p-4 shadow-2xl shadow-orange-950/20 backdrop-blur md:p-6">
+              <div className="mb-5 flex flex-col gap-4 rounded-lg border border-orange-300/25 bg-orange-400/10 p-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-orange-200">
+                    <ClipboardList aria-hidden="true" className="h-4 w-4" />
+                    Manchester Triage System
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-slate-300">
+                    Clasifica prioridad intrahospitalaria segun riesgo clinico y tiempo maximo de atencion.
+                  </p>
+                </div>
+                <div className="rounded-md border border-cyan-300/30 bg-cyan-300/10 px-3 py-2 text-xs font-bold uppercase tracking-wide text-cyan-100">
+                  5 niveles MTS
+                </div>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-red-300">
+                  <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-300">
                     <Siren aria-hidden="true" className="h-4 w-4" />
-                    Victima {currentIndex + 1} de {PATIENTS_PER_GAME}
+                    Paciente {currentIndex + 1} de {PATIENTS_PER_GAME}
                   </p>
-                  <h1 className="mt-2 text-3xl font-bold">{currentPatient.title}</h1>
+                  <h1 className="mt-2 text-2xl font-bold md:text-3xl">{currentPatient.title}</h1>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg border border-yellow-300/30 bg-yellow-300/10 px-4 py-3 text-yellow-100">
                   <Timer aria-hidden="true" className="h-5 w-5" />
@@ -506,30 +661,31 @@ export default function TacticalTriage() {
                 </div>
               </div>
 
-              <div className="mt-6 rounded-lg border border-white/10 bg-slate-900 p-5">
+              <div className="mt-6 rounded-lg border border-cyan-300/20 bg-slate-950/80 p-4 shadow-inner md:p-5">
                 <p className="text-sm font-semibold uppercase tracking-wide text-slate-400">Tarjeta clinica</p>
-                <p className="mt-3 text-xl font-semibold text-white">{currentPatient.scenario}</p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                  <ClinicalMetric label="Camina" value={currentPatient.walks ? 'Si' : 'No'} />
-                  <ClinicalMetric label="Respira" value={`${currentPatient.respirations}/min`} />
-                  <ClinicalMetric label="Llenado capilar (piel)" value={currentPatient.capillaryRefillSeconds === null ? 'No aplica' : `${currentPatient.capillaryRefillSeconds}s`} />
-                  <ClinicalMetric label="Via aerea" value={currentPatient.airwayOpened ? 'Abierta' : 'No requerida'} />
-                  <ClinicalMetric label="Pulso radial" value={currentPatient.radialPulse ? 'Si' : 'No'} />
-                  <ClinicalMetric label="Obedece" value={currentPatient.obeysCommands ? 'Si' : 'No'} />
+                <p className="mt-3 text-lg font-semibold leading-7 text-white">{currentPatient.scenario}</p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <ClinicalMetric label="Conciencia" value={getConsciousnessLabel(currentPatient.consciousness)} />
+                  <ClinicalMetric label="Hemorragia" value={getHemorrhageLabel(currentPatient.hemorrhage)} />
+                  <ClinicalMetric label="Dolor" value={getPainLabel(currentPatient.pain)} />
+                  <ClinicalMetric label="Respiracion" value={getBreathingLabel(currentPatient.difficultyBreathing)} />
+                  <ClinicalMetric label="Temperatura" value={currentPatient.temperature === 'alterada' ? 'Alterada' : 'Normal'} />
+                  <ClinicalMetric label="Dolor toracico" value={currentPatient.chestPainRisk ? 'Alto riesgo' : 'No'} />
                 </div>
               </div>
 
-              <div className="mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
                 {triageOptions.map((option) => (
                   <button
-                    className={`min-h-20 w-full touch-manipulation select-none rounded-lg px-5 py-4 text-left text-white shadow-lg transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-24 ${option.colorClass}`}
+                    className={`min-h-[76px] w-full touch-manipulation select-none rounded-lg border px-4 py-4 text-left text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-24 ${option.colorClass}`}
                     disabled={isLocked || showTutorial}
                     key={option.key}
                     onClick={() => classifyPatient(option.key)}
                     type="button"
                   >
                     <span className="block text-2xl font-black">{option.label}</span>
-                    <span className="text-sm font-semibold opacity-90">{option.subtitle}</span>
+                    <span className="block text-xs font-black uppercase opacity-95">{option.time}</span>
+                    <span className="mt-1 block text-sm font-semibold opacity-90">{option.subtitle}</span>
                   </button>
                 ))}
               </div>
@@ -542,7 +698,7 @@ export default function TacticalTriage() {
                 }`}>
                   {feedback}
                   <button
-                    className="mt-4 flex h-12 w-full touch-manipulation select-none items-center justify-center rounded-md bg-white px-4 text-sm font-bold text-slate-950 transition hover:bg-slate-100 sm:w-auto"
+                    className="mt-4 flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-slate-700 active:scale-95 sm:w-auto"
                     disabled={showTutorial}
                     onClick={() => goNext()}
                     type="button"
@@ -553,18 +709,17 @@ export default function TacticalTriage() {
               ) : null}
             </section>
 
-            <aside className="rounded-lg border border-white/10 bg-slate-900 p-5">
-              <h2 className="font-bold">Telemetria START</h2>
+            <aside className="rounded-lg border border-slate-700 bg-slate-900/90 p-5 text-white shadow-2xl shadow-black/20">
+              <h2 className="font-bold">Telemetria MTS</h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <ClinicalMetric label="Correctos" value={`${correctCount}/${answers.length}`} />
                 <ClinicalMetric label="Errores" value={errorsCount} />
                 <ClinicalMetric label="Pendientes" value={PATIENTS_PER_GAME - answers.length} />
                 <ClinicalMetric label="Tiempo/paciente" value={`${SECONDS_PER_PATIENT}s`} />
               </div>
-              <p className="mt-5 text-sm leading-6 text-slate-300">
-                START se decide en este orden: caminar, respiracion, pulso radial
-                (pulso en la muñeca) o llenado capilar (sangre vuelve a la
-                piel), y capacidad de obedecer ordenes simples.
+              <p className="mt-5 rounded-md border border-orange-200 bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-900 dark:border-orange-300/30 dark:bg-orange-400/10 dark:text-orange-100">
+                MTS prioriza por discriminadores: conciencia, hemorragia,
+                dolor, respiracion, temperatura y signos de alto riesgo.
               </p>
             </aside>
           </div>
@@ -589,57 +744,67 @@ function Briefing({ onStart }) {
     <section className="grid flex-1 place-items-center py-10">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white"
+        className="w-full max-w-3xl rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-6"
         initial={{ opacity: 0, y: 16 }}
       >
-        <p className="text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">
+        <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">
           Briefing medico
         </p>
-        <h1 className="mt-2 text-3xl font-bold">Triage Tactico</h1>
+        <h1 className="mt-2 text-3xl font-bold">Triage Tactico Manchester</h1>
+        <p className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-950 dark:border-orange-300/30 dark:bg-orange-400/10 dark:text-orange-100">
+          El Sistema de Triage de Manchester (MTS) es el estandar intrahospitalario para priorizar pacientes en Urgencias basado en su riesgo clinico.
+        </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-md border border-slate-700 bg-slate-950/70 p-4">
             <h2 className="font-bold">Instrucciones</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-              En computadora y celular: toca o haz clic en uno de los cuatro
-              colores para clasificar cada paciente. Verde si camina, negro si
-              no respira despues de abrir via aerea, rojo si necesita ayuda
-              inmediata y amarillo si puede esperar.
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              En computadora y celular: toca o haz clic en uno de los cinco
+              niveles Manchester. Lee conciencia, hemorragia, dolor,
+              respiracion, temperatura y datos de alto riesgo antes de decidir.
             </p>
           </div>
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-md border border-slate-700 bg-slate-950/70 p-4">
             <h2 className="font-bold">Inicio vs Final</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
+            <p className="mt-2 text-sm leading-6 text-slate-300">
               Inicio es el promedio de precision de los primeros 2 pacientes.
-              Final es el promedio de los ultimos 2. Asi se mide si clasificas
-              mejor conforme avanza el incidente.
+              Final es el promedio de los ultimos 2. Asi se mide si priorizas
+              mejor conforme avanza el turno de triage.
             </p>
           </div>
         </div>
         <div className="mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 dark:border-yellow-300/30 dark:bg-yellow-400/10 dark:text-yellow-100">
           Tendras {SECONDS_PER_PATIENT} segundos por paciente. Si el tiempo se
-          acaba, cuenta como error y se explica la regla START correcta.
+          acaba, cuenta como error y se explica el discriminador MTS esperado.
         </div>
-        <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-          <h2 className="font-bold">Como se localiza en START</h2>
+        <div className="mt-4 rounded-md border border-slate-700 bg-slate-950/70 p-4">
+          <h2 className="font-bold">Niveles MTS</h2>
           <div className="mt-3 grid gap-3">
-            {startSteps.map((step) => (
-              <div className="grid gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm dark:border-white/10 dark:bg-slate-950 sm:grid-cols-[120px_1fr]" key={step.color}>
+            {manchesterSteps.map((step) => (
+              <div className="grid gap-2 rounded-md border border-slate-700 bg-slate-900 p-3 text-sm sm:grid-cols-[120px_1fr]" key={step.color}>
                 <div>
-                  <p className="font-black text-slate-950 dark:text-white">{step.color}</p>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{step.rule}</p>
+                  <p className="font-black text-white">{step.color}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{step.rule}</p>
                 </div>
-                <p className="leading-6 text-slate-700 dark:text-slate-300">{step.description}</p>
+                <p className="leading-6 text-slate-300">{step.description}</p>
               </div>
             ))}
           </div>
         </div>
+        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
+          <p className="font-bold">Respaldo clinico</p>
+          <p className="mt-2">
+            Basado conceptualmente en las Guias del Grupo de Triage de
+            Manchester (Manchester Triage Group). El espacio de video queda
+            reservado para un material validado sobre escala hospitalaria de 5 niveles.
+          </p>
+        </div>
         <MedicalDisclaimer />
         <ClinicalEvidenceDisclosure moduleKey="tactical_triage" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
-          <button className="h-12 w-full touch-manipulation select-none rounded-md bg-red-600 px-5 text-sm font-bold text-white transition hover:bg-red-700 sm:w-auto" onClick={onStart} type="button">
+          <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-orange-500 active:scale-95 sm:w-auto" onClick={onStart} type="button">
             Entendido, Iniciar Simulacion
           </button>
-          <VideoTutorialModal title="Video tutorial triage START" videoId="_B4y6W59WNQ" />
+          <VideoTutorialModal title="Video tutorial triage hospitalario MTS" videoId="_B4y6W59WNQ" />
         </div>
       </motion.div>
     </section>
@@ -648,26 +813,26 @@ function Briefing({ onStart }) {
 
 function ClinicalMetric({ label, value }) {
   return (
-    <div className="rounded-md border border-white/10 bg-white/5 p-3">
+    <div className="rounded-md border border-slate-700 bg-slate-950/80 p-3">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-xl font-bold text-white">{value}</p>
+      <p className="mt-1 text-lg font-bold text-white">{value}</p>
     </div>
   );
 }
 
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
+        className="max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-8"
         initial={{ opacity: 0, y: 18 }}
       >
-        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">
+        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-300">
           <BookOpen aria-hidden="true" className="h-4 w-4" />
           Retroalimentacion clinica
         </p>
-        <h2 className="mt-1 text-2xl font-bold">Triage completado</h2>
+        <h2 className="mt-1 text-2xl font-bold">Triage Manchester completado</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <ResultMetric label="Inicial" value={`${results.initialPrecision}%`} />
           <ResultMetric label="Final" value={`${results.finalPrecision}%`} />
@@ -681,11 +846,11 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
         </div>
         <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
-          <button className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto" onClick={onExit} type="button">
+          <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-slate-700 active:scale-95 sm:w-auto" onClick={onExit} type="button">
             Salir al Dashboard
           </button>
-          <button className="h-12 w-full touch-manipulation select-none rounded-md bg-red-600 px-4 text-sm font-semibold text-white transition hover:bg-red-700 sm:w-auto" onClick={onRestart} type="button">
-            Nuevo incidente
+          <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg bg-orange-600 px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-orange-500 active:scale-95 sm:w-auto" onClick={onRestart} type="button">
+            Nuevo turno MTS
           </button>
         </div>
       </motion.section>
@@ -695,9 +860,9 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
 
 function ResultMetric({ label, value }) {
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-slate-950 dark:text-white">{value}</p>
+    <div className="rounded-md border border-slate-700 bg-slate-950/80 p-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className="mt-1 text-2xl font-bold text-white">{value}</p>
     </div>
   );
 }
