@@ -560,6 +560,17 @@ export default function TacticalTriage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!showTutorial || showBriefing || results) {
+      return undefined;
+    }
+
+    scrollToGameTop();
+    const frameId = window.requestAnimationFrame(scrollToGameTop);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [results, showBriefing, showTutorial]);
+
   function startSimulation() {
     scrollToGameTop();
     setShowBriefing(false);
@@ -587,7 +598,7 @@ export default function TacticalTriage() {
 
   return (
     <main
-      className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           'radial-gradient(circle at 18% 18%, rgba(249,115,22,0.13), transparent 28%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',

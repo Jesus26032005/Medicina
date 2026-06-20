@@ -389,6 +389,17 @@ export default function ChokingExpress() {
     };
   }, [applyCompression, beginInteractiveRun, results, showBriefing, showTutorial]);
 
+  useEffect(() => {
+    if (!showTutorial || showBriefing || results) {
+      return undefined;
+    }
+
+    scrollToGameTop();
+    const frameId = window.requestAnimationFrame(scrollToGameTop);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [results, showBriefing, showTutorial]);
+
   function startSimulation() {
     scrollToGameTop();
     samplesRef.current = [];
@@ -422,7 +433,7 @@ export default function ChokingExpress() {
   }
 
   return (
-    <main className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white">
+    <main className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between">
           <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
@@ -439,7 +450,7 @@ export default function ChokingExpress() {
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
           <div className="grid flex-1 items-center gap-6 py-4 md:gap-8 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <section className="isolate relative flex h-[calc(100dvh-120px)] translate-z-0 transform-gpu flex-col justify-center overflow-y-auto overscroll-none rounded-lg border border-white/10 bg-white/5 p-3 md:h-auto md:overflow-visible md:p-6">
+            <section className="isolate relative flex h-[calc(100dvh-120px)] flex-col justify-center overflow-y-auto overscroll-none rounded-lg border border-white/10 bg-white/5 p-3 md:h-auto md:overflow-visible md:p-6">
               {showTutorial ? (
                 <button
                   aria-label="Cerrar tutorial e iniciar practica"

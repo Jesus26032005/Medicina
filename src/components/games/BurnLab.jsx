@@ -633,9 +633,20 @@ export default function BurnLab() {
     setToolFeedback(`Pista: ${caseData.hint}`);
   }
 
+  useEffect(() => {
+    if (!showTutorial || showBriefing || results) {
+      return undefined;
+    }
+
+    scrollToGameTop();
+    const frameId = window.requestAnimationFrame(scrollToGameTop);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [results, showBriefing, showTutorial]);
+
   return (
     <main
-      className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           'radial-gradient(circle at 20% 20%, rgba(14,165,233,0.12), transparent 26%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',

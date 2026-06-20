@@ -353,6 +353,17 @@ export default function TourniquetCode() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [applyPressure, gameOver, gameStarted]);
 
+  useEffect(() => {
+    if (!showTutorial || showBriefing || results) {
+      return undefined;
+    }
+
+    scrollToGameTop();
+    const frameId = window.requestAnimationFrame(scrollToGameTop);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [results, showBriefing, showTutorial]);
+
   function startSimulation() {
     scrollToGameTop();
     samplesRef.current = [];
@@ -398,7 +409,7 @@ export default function TourniquetCode() {
   }
 
   return (
-    <main className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white">
+    <main className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between gap-3">
           <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">

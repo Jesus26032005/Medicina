@@ -477,6 +477,17 @@ export default function RcpHero() {
     };
   }, [isRunning, recordCompression, results, showBriefing, showTutorial]);
 
+  useEffect(() => {
+    if (!showTutorial || showBriefing || results) {
+      return undefined;
+    }
+
+    scrollToGameTop();
+    const frameId = window.requestAnimationFrame(scrollToGameTop);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [results, showBriefing, showTutorial]);
+
   async function startGame() {
     scrollToGameTop();
     attemptsRef.current = [];
@@ -542,7 +553,7 @@ export default function RcpHero() {
 
   return (
     <main
-      className="isolate min-h-screen w-full max-w-[100vw] translate-z-0 transform-gpu overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           'linear-gradient(rgba(34,197,94,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.08) 1px, transparent 1px)',
