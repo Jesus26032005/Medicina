@@ -26,8 +26,8 @@ const PRECISION_WINDOW_MS = 300;
 const MIN_INTERVAL_BETWEEN_PRESSES_MS = 250;
 const MIN_VALID_PRESSES_FOR_SCORE = 5;
 const durationOptions = [
-  { label: 'Modo Practica (30s)', value: 30000 },
-  { label: 'Modo Estandar (60s)', value: 60000 },
+  { label: 'Modo Práctica (30s)', value: 30000 },
+  { label: 'Modo Estándar (60s)', value: 60000 },
   { label: 'Modo AHA (120s)', value: 120000 },
 ];
 
@@ -41,9 +41,9 @@ const cprPlaylist = [
 ];
 
 const medicalNotes = [
-  'La RCP funciona mejor cuando mantienes un ritmo parecido a una cancion bailable: rapido, constante y sin pausas largas.',
-  'En una persona adulta, las compresiones deben hundir el pecho lo suficiente para mover sangre, pero sin aplastar de mas.',
-  'Despues de cada compresion deja que el pecho vuelva a subir; asi el corazon puede llenarse otra vez.',
+  'La RCP funciona mejor cuando mantienes un ritmo parecido a una canción bailable: rápido, constante y sin pausas largas.',
+  'En una persona adulta, las compresiones deben hundir el pecho lo suficiente para mover sangre, pero sin aplastar de más.',
+  'Después de cada compresión deja que el pecho vuelva a subir; así el corazón puede llenarse otra vez.',
   'Las pausas largas hacen que baje el flujo de sangre, por eso este juego premia la constancia.',
   'Si hay un DEA cerca, en la vida real se prende y se siguen sus instrucciones de voz.',
   'Las manos van al centro del pecho, como si quisieras empujar el ritmo hacia abajo, no hacia los lados.',
@@ -280,7 +280,7 @@ export default function RcpHero() {
     async (nextResults, finalAttempts, soundtrack, durationMs, bpm, intervalMs) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
+        setSaveError('No se pudo guardar: falta una sesión activa o conexión con el expediente.');
         return;
       }
 
@@ -349,10 +349,10 @@ export default function RcpHero() {
     setResults({
       ...nextResults,
       note: nextResults.inactive
-        ? 'Simulacion fallida por inactividad. Recuerda: en un paro cardiaco, hacer compresiones siempre es mejor que no hacer nada. ¡No dudes en actuar!'
+        ? 'Simulación fallida por inactividad. Recuerda: en un paro cardíaco, hacer compresiones siempre es mejor que no hacer nada. ¡No dudes en actuar!'
         : medicalNotes[Math.floor(Math.random() * medicalNotes.length)],
     });
-    setLastFeedback('Sesion completada. Revisa tu retroalimentacion clinica.');
+    setLastFeedback('Sesión completada. Revisa tu retroalimentación clínica.');
     persistSession(nextResults, finalAttempts, soundtrack, gameDurationMs, targetBPM, beatIntervalMs);
   }, [beatIntervalMs, gameDurationMs, persistSession, selectedTrack, stopTrack, targetBPM]);
 
@@ -401,7 +401,7 @@ export default function RcpHero() {
       spamAttemptsRef.current += 1;
       setFeedbackTone('error');
       setFeedbackFlashKey((key) => key + 1);
-      setLastFeedback('Demasiado rapido: esa pulsacion se marco como spam y no cuenta.');
+      setLastFeedback('Demasiado rápido: esa pulsación se marcó como spam y no cuenta.');
       return;
     }
 
@@ -435,15 +435,15 @@ export default function RcpHero() {
     if (success) {
       setFeedbackTone('success');
       setFeedbackFlashKey((key) => key + 1);
-      setLastFeedback(absDelta <= 45 ? 'Perfecto!' : 'Bien, estas dentro del margen.');
+      setLastFeedback(absDelta <= 45 ? '¡Perfecto!' : 'Bien, estás dentro del margen.');
     } else if (deltaMs < 0) {
       setFeedbackTone('error');
       setFeedbackFlashKey((key) => key + 1);
-      setLastFeedback('Rapido! Espera el siguiente cierre del circulo.');
+      setLastFeedback('¡Rápido! Espera el siguiente cierre del círculo.');
     } else {
       setFeedbackTone('error');
       setFeedbackFlashKey((key) => key + 1);
-      setLastFeedback('Lento! Acelera un poco.');
+      setLastFeedback('¡Lento! Acelera un poco.');
     }
   }, [beatIntervalMs, gameDurationMs, isRunning]);
 
@@ -528,7 +528,7 @@ export default function RcpHero() {
     setSaveError('');
     setFeedbackTone('idle');
     setFeedbackFlashKey(0);
-    setLastFeedback('Toca la guia para iniciar el ritmo.');
+    setLastFeedback('Toca la guía para iniciar el ritmo.');
   }
 
   function resetToBriefing() {
@@ -600,7 +600,7 @@ export default function RcpHero() {
                 👇
               </span>
               <span className="mt-4 max-w-sm rounded-lg border border-rose-300/40 bg-rose-500/20 p-4 text-base font-bold text-white shadow-2xl">
-                ¡Presiona el boton al ritmo de la musica!
+                ¡Presiona el botón al ritmo de la música!
               </span>
               <span className="mt-3 text-sm text-slate-200">
                 En celular toca Comprimir. En computadora usa barra espaciadora.
@@ -613,11 +613,11 @@ export default function RcpHero() {
               Monitor vital - RCP Hero
             </p>
             <h1 className="mt-2 text-2xl font-bold text-emerald-50 md:text-5xl">
-              Manten flujo de sangre efectivo
+              Mantén el flujo de sangre efectivo
             </h1>
             <p className="mt-4 max-w-2xl text-slate-300">
               Sigue la pista musical y comprime cuando el anillo ECG cierre. El
-              margen de exito es de +/- {SUCCESS_WINDOW_MS} ms por latido.
+              margen de éxito es de +/- {SUCCESS_WINDOW_MS} ms por latido.
             </p>
 
             <div className="isolate mt-6 w-full max-w-2xl translate-z-0 transform-gpu rounded-lg border border-emerald-400/20 bg-black/70 p-3 text-left shadow-2xl shadow-emerald-950/30">
@@ -629,7 +629,7 @@ export default function RcpHero() {
                 <span>{selectedTrack.name} · {selectedTrack.bpm} BPM</span>
               </div>
               <p className="mt-2 text-xs leading-5 text-slate-400">
-                El intervalo objetivo de esta partida es de {roundMetric(beatIntervalMs)} ms por compresion.
+                El intervalo objetivo de esta partida es de {roundMetric(beatIntervalMs)} ms por compresión.
               </p>
             </div>
 
@@ -777,7 +777,7 @@ export default function RcpHero() {
           </section>
 
           <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-emerald-400/20 bg-black/80 p-5 text-emerald-50 shadow-2xl shadow-emerald-950/30">
-            <h2 className="text-lg font-bold text-emerald-300">Telemetria en vivo</h2>
+            <h2 className="text-lg font-bold text-emerald-300">Telemetría en vivo</h2>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Metric label="Tiempo" value={`${secondsLeft}s`} />
               <Metric label="Modo" value={`${gameDurationMs / 1000}s`} />
@@ -785,7 +785,7 @@ export default function RcpHero() {
               <Metric label="Latido" value={currentBeat + 1} />
               <Metric label="Pulsaciones" value={attempts.length} />
               <Metric label="Spam" value={spamAttemptsRef.current} />
-              <Metric label="Precision media" value={`${averagePrecision}%`} />
+              <Metric label="Precisión media" value={`${averagePrecision}%`} />
             </div>
             <div className="mt-5 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-4">
               <p className="text-sm font-semibold text-emerald-300">Feedback</p>
@@ -793,7 +793,7 @@ export default function RcpHero() {
             </div>
             <div className="mt-5 text-sm text-slate-300">
               Barra espaciadora activa durante la partida. Evita mantenerla
-              presionada; cada compresion debe ser intencional.
+              presionada; cada compresión debe ser intencional.
             </div>
           </aside>
         </div>
@@ -825,23 +825,23 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
         transition={{ duration: 0.22 }}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">
-          Briefing medico
+          Briefing médico
         </p>
         <h1 className="mt-2 text-3xl font-bold">RCP Hero</h1>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-            <h2 className="font-bold">Por que importa</h2>
+            <h2 className="font-bold">Por qué importa</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
               La AHA recomienda 100-120 compresiones por minuto porque ese
-              ritmo ayuda a mover sangre cuando el corazon no lo esta logrando
-              por si solo.
+              ritmo ayuda a mover sangre cuando el corazón no lo está logrando
+              por sí solo.
             </p>
           </div>
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
             <h2 className="font-bold">Instrucciones</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
               En computadora: escucha la pista y presiona la barra espaciadora
-              cuando el anillo se cierre. En celular: toca el boton Comprimir al
+              cuando el anillo se cierre. En celular: toca el botón Comprimir al
               mismo ritmo. Nota: Las compresiones reales deben tener una
               profundidad de 5 a 6 cm.
             </p>
@@ -851,20 +851,20 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
           <h2 className="font-bold text-rose-900 dark:text-rose-100">Prueba de resistencia</h2>
           <p className="mt-2 text-sm leading-6 text-rose-800 dark:text-rose-100">
             A los 2 minutos los brazos empiezan a cansarse. Mantener el ritmo
-            de la cancion elegida, dentro del rango 100-120 BPM, muestra si tu
+            de la canción elegida, dentro del rango 100-120 BPM, muestra si tu
             ritmo aguanta cuando la adrenalina y la fatiga aparecen.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-300/30 dark:bg-amber-400/10">
-          <h2 className="font-bold text-amber-950 dark:text-amber-100">Nota Clinica</h2>
+          <h2 className="font-bold text-amber-950 dark:text-amber-100">Nota clínica</h2>
           <p className="mt-2 text-sm leading-6 text-amber-900 dark:text-amber-100">
-            Este ejercicio mide el ritmo de compresiones. No evalua la
-            profundidad ni el retroceso toracico fisico real.
+            Este ejercicio mide el ritmo de compresiones. No evalúa la
+            profundidad ni el retroceso torácico físico real.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
           <label className="text-sm font-bold text-emerald-950 dark:text-emerald-100" htmlFor="rcp-duration">
-            Duracion de la simulacion
+            Duración de la simulación
           </label>
           <select
             className="mt-3 h-11 w-full rounded-md border border-emerald-300 bg-white px-3 text-sm font-semibold text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-emerald-950"
@@ -879,13 +879,13 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
             ))}
           </select>
           <p className="mt-2 text-xs leading-5 text-emerald-800 dark:text-emerald-100">
-            Practica rapido para probar cambios, o usa 120 segundos para simular
+            Practica rápido para probar cambios, o usa 120 segundos para simular
             el ciclo completo recomendado antes de cambiar de reanimador.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
           <label className="text-sm font-bold text-cyan-950 dark:text-cyan-100" htmlFor="rcp-track">
-            Cancion guia para memoria muscular
+            Canción guía para memoria muscular
           </label>
           <select
             className="mt-3 h-11 w-full rounded-md border border-cyan-300 bg-white px-3 text-sm font-semibold text-slate-950 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"
@@ -900,22 +900,22 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
             ))}
           </select>
           <p className="mt-2 text-xs leading-5 text-cyan-900 dark:text-cyan-100">
-            Esta pista ajusta automaticamente el ritmo objetivo a {selectedTrack.bpm} BPM,
-            equivalente a {roundMetric(60000 / selectedTrack.bpm)} ms por compresion.
+            Esta pista ajusta automáticamente el ritmo objetivo a {selectedTrack.bpm} BPM,
+            equivalente a {roundMetric(60000 / selectedTrack.bpm)} ms por compresión.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide Inicio vs Final</h2>
+          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide Inicio vs Final</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            Inicio es tu precision promedio en los primeros 10 segundos. Final
-            es tu precision promedio en los ultimos 10 segundos de la duracion
-            elegida. Asi vemos si tu ritmo mejora o se mantiene con la practica.
+            Inicio es tu precisión promedio en los primeros 10 segundos. Final
+            es tu precisión promedio en los últimos 10 segundos de la duración
+            elegida. Así vemos si tu ritmo mejora o se mantiene con la práctica.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Como se calcula el score</h2>
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula el score</h2>
           <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
-            El score va de 0 a 100 y depende solo de tu ejecucion: 65% precision
+            El score va de 0 a 100 y depende solo de tu ejecución: 65% precisión
             al caer cerca del latido ideal y 35% ritmo promedio cercano a
             100-120 BPM. Los fallos, clics fuera de tiempo o pulsaciones tipo
             spam restan puntos.
@@ -929,7 +929,7 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
             onClick={onStart}
             type="button"
           >
-            Entendido, Iniciar Simulacion
+            Entendido, iniciar simulación
           </button>
           <VideoTutorialModal title="Video tutorial RCP" videoId="O1AOt_s1NzM" />
         </div>
@@ -962,9 +962,9 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <div>
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700">
               <BookOpen aria-hidden="true" className="h-4 w-4" />
-              Retroalimentacion clinica
+              Retroalimentación clínica
             </p>
-            <h2 className="mt-1 text-2xl font-bold">Sesion RCP Hero completada</h2>
+            <h2 className="mt-1 text-2xl font-bold">Sesión RCP Hero completada</h2>
           </div>
           <div className="rounded-md bg-rose-50 px-3 py-2 text-right dark:bg-rose-400/10">
             <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Score</p>
@@ -973,8 +973,8 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <Metric label="Precision inicial" value={`${results.initialPrecision}%`} />
-          <Metric label="Precision final" value={`${results.finalPrecision}%`} />
+          <Metric label="Precisión inicial" value={`${results.initialPrecision}%`} />
+          <Metric label="Precisión final" value={`${results.finalPrecision}%`} />
           <Metric label="Ritmo promedio" value={`${results.averageBPM} BPM`} />
           <Metric label="Fallos" value={results.errorsCount} />
           <Metric label="Spam" value={results.spamAttempts} />

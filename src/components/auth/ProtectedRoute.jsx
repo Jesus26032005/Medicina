@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
         <div className="rounded-lg border border-white/10 bg-white/5 px-6 py-5 text-sm text-slate-200">
-          Cargando sesion...
+          Cargando sesión...
         </div>
       </main>
     );

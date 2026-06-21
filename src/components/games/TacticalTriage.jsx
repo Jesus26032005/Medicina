@@ -45,7 +45,7 @@ const triageOptions = [
     colorClass: 'border-emerald-300/40 bg-emerald-600 hover:bg-emerald-700 shadow-emerald-950/40',
     key: 'green',
     label: 'VERDE',
-    subtitle: 'Estandar',
+    subtitle: 'Estándar',
     time: '120 min',
   },
   {
@@ -59,29 +59,29 @@ const triageOptions = [
 
 const manchesterLevels = {
   blue: 'Azul - No urgente - 240 min',
-  green: 'Verde - Estandar - 120 min',
+  green: 'Verde - Estándar - 120 min',
   orange: 'Naranja - Muy urgente - 10 min',
   red: 'Rojo - Inmediato - Riesgo vital',
   yellow: 'Amarillo - Urgente - 60 min',
 };
 
 const notes = [
-  'Manchester prioriza por riesgo clinico: primero busca amenaza vital, conciencia, respiracion, hemorragia, dolor y constantes.',
+  'Manchester prioriza por riesgo clínico: primero busca amenaza vital, conciencia, respiración, hemorragia, dolor y constantes.',
   'Un paciente azul no significa que no importe; significa que no tiene signos agudos de prioridad alta en el momento de clasificar.',
-  'Dolor severo, dificultad respiratoria severa o dolor toracico con sintomas autonomicos elevan la prioridad.',
-  'La clasificacion de triage no es diagnostico: decide que tan pronto debe valorarse al paciente.',
-  'El color rojo implica atencion inmediata porque hay riesgo vital evidente o muy probable.',
+  'Dolor severo, dificultad respiratoria severa o dolor torácico con síntomas autonómicos elevan la prioridad.',
+  'La clasificación de triage no es diagnóstico: decide qué tan pronto debe valorarse al paciente.',
+  'El color rojo implica atención inmediata porque hay riesgo vital evidente o muy probable.',
 ];
 
 const manchesterSteps = [
   {
     color: 'ROJO',
-    description: 'Riesgo vital inmediato: paro, inconsciencia, hemorragia exanguinante o compromiso respiratorio critico.',
+    description: 'Riesgo vital inmediato: paro, inconsciencia, hemorragia exanguinante o compromiso respiratorio crítico.',
     rule: 'Amenaza vital',
   },
   {
     color: 'NARANJA',
-    description: 'Muy urgente: dolor severo, dificultad respiratoria severa, dolor toracico de alto riesgo o hemorragia mayor controlable.',
+    description: 'Muy urgente: dolor severo, dificultad respiratoria severa, dolor torácico de alto riesgo o hemorragia mayor controlable.',
     rule: '10 min',
   },
   {
@@ -91,12 +91,12 @@ const manchesterSteps = [
   },
   {
     color: 'VERDE',
-    description: 'Estandar: problema menor con sintomas tolerables, movilidad conservada y sin datos de alarma.',
+    description: 'Estándar: problema menor con síntomas tolerables, movilidad conservada y sin datos de alarma.',
     rule: '120 min',
   },
   {
     color: 'AZUL',
-    description: 'No urgente: solicitud administrativa o condicion cronica estable sin sintomas agudos.',
+    description: 'No urgente: solicitud administrativa o condición crónica estable sin síntomas agudos.',
     rule: '240 min',
   },
 ];
@@ -126,7 +126,7 @@ const fallbackCases = [
     scenario: 'Paciente con dolor toracico opresivo irradiado a brazo izquierdo, diaforesis y dificultad para respirar severa.',
     source: 'fallback',
     temperature: 'normal',
-    title: 'Dolor toracico de alto riesgo',
+    title: 'Dolor torácico de alto riesgo',
   },
   {
     chestPainRisk: false,
@@ -136,7 +136,7 @@ const fallbackCases = [
     hemorrhage: 'ausente',
     id: 'mts_fallback_yellow_abdomen',
     pain: 'moderado',
-    scenario: 'Dolor abdominal moderado de 2 dias de evolucion, fiebre de 38.5 C, sin signos de shock.',
+    scenario: 'Dolor abdominal moderado de 2 días de evolución, fiebre de 38.5 °C, sin signos de shock.',
     source: 'fallback',
     temperature: 'alterada',
     title: 'Dolor abdominal con fiebre',
@@ -149,7 +149,7 @@ const fallbackCases = [
     hemorrhage: 'ausente',
     id: 'mts_fallback_green_sprain',
     pain: 'moderado',
-    scenario: 'Esguince de tobillo tras caida leve, dolor tolerable 4/10, puede caminar cojeando y no hay deformidad evidente.',
+    scenario: 'Esguince de tobillo tras caída leve, dolor tolerable 4/10, puede caminar cojeando y no hay deformidad evidente.',
     source: 'fallback',
     temperature: 'normal',
     title: 'Esguince de tobillo',
@@ -162,10 +162,10 @@ const fallbackCases = [
     hemorrhage: 'ausente',
     id: 'mts_fallback_blue_prescription',
     pain: 'sin_dolor',
-    scenario: 'Paciente acude para solicitud de renovacion de receta de medicamentos cronicos, sin sintomas agudos.',
+    scenario: 'Paciente acude para solicitud de renovación de receta de medicamentos crónicos, sin síntomas agudos.',
     source: 'fallback',
     temperature: 'normal',
-    title: 'Renovacion de receta',
+    title: 'Renovación de receta',
   },
 ];
 
@@ -244,7 +244,7 @@ function evaluateManchesterCase(caseData) {
     return {
       expected: 'red',
       explanation:
-        'MTS: inconsciencia o hemorragia exanguinante son discriminadores de riesgo vital; se clasifica ROJO para atencion inmediata.',
+        'MTS: inconsciencia o hemorragia exanguinante son discriminadores de riesgo vital; se clasifica ROJO para atención inmediata.',
     };
   }
 
@@ -258,7 +258,7 @@ function evaluateManchesterCase(caseData) {
     return {
       expected: 'orange',
       explanation:
-        'MTS: dolor severo, dificultad respiratoria severa, dolor toracico de alto riesgo, respuesta solo al dolor o hemorragia mayor controlable elevan a NARANJA.',
+        'MTS: dolor severo, dificultad respiratoria severa, dolor torácico de alto riesgo, respuesta solo al dolor o hemorragia mayor controlable elevan a NARANJA.',
     };
   }
 
@@ -279,14 +279,14 @@ function evaluateManchesterCase(caseData) {
     return {
       expected: 'green',
       explanation:
-        'MTS: sintomas leves, hemorragia menor y estabilidad general corresponden a VERDE, atencion estandar.',
+        'MTS: síntomas leves, hemorragia menor y estabilidad general corresponden a VERDE, atención estándar.',
     };
   }
 
   return {
     expected: 'blue',
     explanation:
-      'MTS: no hay sintomas agudos ni discriminadores de urgencia; se clasifica AZUL como no urgente.',
+        'MTS: no hay síntomas agudos ni discriminadores de urgencia; se clasifica AZUL como no urgente.',
   };
 }
 
@@ -296,14 +296,14 @@ function buildProceduralScenario(caseData) {
     `Nivel de consciencia: ${getConsciousnessLabel(caseData.consciousness)}.`,
     `Hemorragia: ${getHemorrhageLabel(caseData.hemorrhage)}.`,
     `Dolor: ${getPainLabel(caseData.pain)}.`,
-    `Respiracion: ${getBreathingLabel(caseData.difficultyBreathing)}.`,
+    `Respiración: ${getBreathingLabel(caseData.difficultyBreathing)}.`,
     caseData.temperature === 'alterada'
       ? 'Temperatura o constantes alteradas.'
       : 'Temperatura y constantes sin alarma evidente.',
   ];
 
   if (caseData.chestPainRisk) {
-    parts.push('Refiere dolor toracico opresivo con datos de alarma.');
+    parts.push('Refiere dolor torácico opresivo con datos de alarma.');
   }
 
   return parts.join(' ');
@@ -396,7 +396,7 @@ export default function TacticalTriage() {
     async (nextResults, finalAnswers) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
+        setSaveError('No se pudo guardar: falta una sesión activa o conexión con el expediente.');
         return;
       }
 
@@ -424,7 +424,7 @@ export default function TacticalTriage() {
         setSaveState('error');
         setSaveError(
           error.message?.includes('game_sessions_game_key_check')
-            ? 'El expediente aun no acepta el modulo Triage. Actualiza la regla de juegos permitidos en la base de datos.'
+            ? 'El expediente aún no acepta el módulo Triage. Actualiza la regla de juegos permitidos en la base de datos.'
             : 'No se pudo registrar el resultado. Intenta de nuevo en unos momentos.'
         );
         return;
@@ -518,7 +518,7 @@ export default function TacticalTriage() {
           ? `Correcto: ${currentPatient.explanation}`
           : timedOut
             ? `Tiempo agotado. MTS esperado: ${manchesterLevels[currentPatient.expected]}. ${currentPatient.explanation}`
-            : `Clasificacion incorrecta. MTS esperado: ${manchesterLevels[currentPatient.expected]}. ${currentPatient.explanation}`
+            : `Clasificación incorrecta. MTS esperado: ${manchesterLevels[currentPatient.expected]}. ${currentPatient.explanation}`
       );
     },
     [answers, currentPatient, isLocked, results, secondsLeft, showBriefing, showTutorial]
@@ -612,7 +612,7 @@ export default function TacticalTriage() {
             Dashboard
           </Link>
           <div className="rounded-md border border-orange-400/30 bg-orange-400/10 px-3 py-2 text-sm font-semibold text-orange-100">
-            Triage Tactico - Manchester MTS
+            Triage Táctico - Manchester MTS
           </div>
           <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
         </header>
@@ -636,7 +636,7 @@ export default function TacticalTriage() {
                   👇
                 </span>
                 <span className="mt-4 max-w-sm translate-z-0 transform-gpu rounded-lg border border-orange-300/40 bg-orange-500/20 p-4 text-base font-bold text-white shadow-2xl">
-                  Lee los discriminadores clinicos y selecciona la prioridad Manchester correcta.
+                  Lee los discriminadores clínicos y selecciona la prioridad Manchester correcta.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
                   Toca ROJO, NARANJA, AMARILLO, VERDE o AZUL.
@@ -651,7 +651,7 @@ export default function TacticalTriage() {
                     Manchester Triage System
                   </p>
                   <p className="mt-1 text-sm leading-6 text-slate-300">
-                    Clasifica prioridad intrahospitalaria segun riesgo clinico y tiempo maximo de atencion.
+                    Clasifica prioridad intrahospitalaria según riesgo clínico y tiempo máximo de atención.
                   </p>
                 </div>
                 <div className="rounded-md border border-cyan-300/30 bg-cyan-300/10 px-3 py-2 text-xs font-bold uppercase tracking-wide text-cyan-100">
@@ -673,15 +673,15 @@ export default function TacticalTriage() {
               </div>
 
               <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-950/90 p-4 shadow-inner md:p-5">
-                <p className="text-sm font-semibold uppercase tracking-wide text-slate-400">Tarjeta clinica</p>
+                <p className="text-sm font-semibold uppercase tracking-wide text-slate-400">Tarjeta clínica</p>
                 <p className="mt-3 text-lg font-semibold leading-7 text-white">{currentPatient.scenario}</p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <ClinicalMetric label="Conciencia" value={getConsciousnessLabel(currentPatient.consciousness)} />
                   <ClinicalMetric label="Hemorragia" value={getHemorrhageLabel(currentPatient.hemorrhage)} />
                   <ClinicalMetric label="Dolor" value={getPainLabel(currentPatient.pain)} />
-                  <ClinicalMetric label="Respiracion" value={getBreathingLabel(currentPatient.difficultyBreathing)} />
+                  <ClinicalMetric label="Respiración" value={getBreathingLabel(currentPatient.difficultyBreathing)} />
                   <ClinicalMetric label="Temperatura" value={currentPatient.temperature === 'alterada' ? 'Alterada' : 'Normal'} />
-                  <ClinicalMetric label="Dolor toracico" value={currentPatient.chestPainRisk ? 'Alto riesgo' : 'No'} />
+                  <ClinicalMetric label="Dolor torácico" value={currentPatient.chestPainRisk ? 'Alto riesgo' : 'No'} />
                 </div>
               </div>
 
@@ -721,7 +721,7 @@ export default function TacticalTriage() {
             </section>
 
             <aside className="isolate w-full translate-z-0 transform-gpu rounded-lg border border-slate-700 bg-slate-900/95 p-5 text-white shadow-2xl shadow-black/20">
-              <h2 className="font-bold">Telemetria MTS</h2>
+              <h2 className="font-bold">Telemetría MTS</h2>
               <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
                 <ClinicalMetric label="Correctos" value={`${correctCount}/${answers.length}`} />
                 <ClinicalMetric label="Errores" value={errorsCount} />
@@ -730,7 +730,7 @@ export default function TacticalTriage() {
               </div>
               <p className="mt-5 rounded-md border border-orange-200 bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-900 dark:border-orange-300/30 dark:bg-orange-400/10 dark:text-orange-100">
                 MTS prioriza por discriminadores: conciencia, hemorragia,
-                dolor, respiracion, temperatura y signos de alto riesgo.
+                dolor, respiración, temperatura y signos de alto riesgo.
               </p>
             </aside>
           </div>
@@ -759,11 +759,11 @@ function Briefing({ onStart }) {
         initial={{ opacity: 0, y: 16 }}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">
-          Briefing medico
+          Briefing médico
         </p>
-        <h1 className="mt-2 text-3xl font-bold">Triage Tactico Manchester</h1>
+        <h1 className="mt-2 text-3xl font-bold">Triage Táctico Manchester</h1>
         <p className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-950 dark:border-orange-300/30 dark:bg-orange-400/10 dark:text-orange-100">
-          El Sistema de Triage de Manchester (MTS) es el estandar intrahospitalario para priorizar pacientes en Urgencias basado en su riesgo clinico.
+          El Sistema de Triage de Manchester (MTS) es el estándar intrahospitalario para priorizar pacientes en urgencias basado en su riesgo clínico.
         </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="rounded-md border border-slate-700 bg-slate-950/70 p-4">
@@ -771,40 +771,40 @@ function Briefing({ onStart }) {
             <p className="mt-2 text-sm leading-6 text-slate-300">
               En computadora y celular: toca o haz clic en uno de los cinco
               niveles Manchester. Lee conciencia, hemorragia, dolor,
-              respiracion, temperatura y datos de alto riesgo antes de decidir.
+              respiración, temperatura y datos de alto riesgo antes de decidir.
             </p>
           </div>
           <div className="rounded-md border border-slate-700 bg-slate-950/70 p-4">
             <h2 className="font-bold">Inicio vs Final</h2>
             <p className="mt-2 text-sm leading-6 text-slate-300">
-              Inicio es el promedio de precision de los primeros 2 pacientes.
-              Final es el promedio de los ultimos 2. Asi se mide si priorizas
+              Inicio es el promedio de precisión de los primeros 2 pacientes.
+              Final es el promedio de los últimos 2. Así se mide si priorizas
               mejor conforme avanza el turno de triage.
             </p>
           </div>
         </div>
         <div className="mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 dark:border-yellow-300/30 dark:bg-yellow-400/10 dark:text-yellow-100">
-          Tendras {SECONDS_PER_PATIENT} segundos por paciente. Si el tiempo se
+          Tendrás {SECONDS_PER_PATIENT} segundos por paciente. Si el tiempo se
           acaba, cuenta como error y se explica el discriminador MTS esperado.
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
-          <h2 className="font-bold">Como clasificar rapido</h2>
+          <h2 className="font-bold">Cómo clasificar rápido</h2>
           <p className="mt-2">
-            Primero descarta ROJO: inconsciente, paro, respiracion critica o
+            Primero descarta ROJO: inconsciente, paro, respiración crítica o
             hemorragia exanguinante. Luego busca NARANJA: dolor severo,
-            dificultad respiratoria severa, dolor toracico de alto riesgo o
+            dificultad respiratoria severa, dolor torácico de alto riesgo o
             hemorragia mayor controlable. AMARILLO es urgente, pero estable:
             dolor moderado, fiebre o dificultad respiratoria moderada. VERDE es
-            problema menor con sintomas tolerables. AZUL es solicitud sin
-            sintomas agudos.
+            problema menor con síntomas tolerables. AZUL es solicitud sin
+            síntomas agudos.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
-          <h2 className="font-bold">Como se calcula el score</h2>
+          <h2 className="font-bold">Cómo se calcula el score</h2>
           <p className="mt-2">
-            El score va de 0 a 100: 40% decision clinica, 40% precision de
-            clasificacion y 20% tiempo restante. Cada paciente correcto suma
-            precision; cada error o tiempo agotado baja el promedio final.
+            El score va de 0 a 100: 40% decisión clínica, 40% precisión de
+            clasificación y 20% tiempo restante. Cada paciente correcto suma
+            precisión; cada error o tiempo agotado baja el promedio final.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-slate-700 bg-slate-950/70 p-4">
@@ -822,9 +822,9 @@ function Briefing({ onStart }) {
           </div>
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
-          <p className="font-bold">Respaldo clinico</p>
+          <p className="font-bold">Respaldo clínico</p>
           <p className="mt-2">
-            Basado conceptualmente en las Guias del Grupo de Triage de
+            Basado conceptualmente en las guías del Grupo de Triage de
             Manchester (Manchester Triage Group). El espacio de video queda
             reservado para un material validado sobre escala hospitalaria de 5 niveles.
           </p>
@@ -833,7 +833,7 @@ function Briefing({ onStart }) {
         <ClinicalEvidenceDisclosure moduleKey="tactical_triage" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-orange-500 active:scale-95 sm:w-auto" onClick={onStart} type="button">
-            Entendido, Iniciar Simulacion
+            Entendido, iniciar simulación
           </button>
           <VideoTutorialModal title="Video tutorial triage hospitalario MTS" videoId="_B4y6W59WNQ" />
         </div>
@@ -861,7 +861,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       >
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-300">
           <BookOpen aria-hidden="true" className="h-4 w-4" />
-          Retroalimentacion clinica
+          Retroalimentación clínica
         </p>
         <h2 className="mt-1 text-2xl font-bold">Triage Manchester completado</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">

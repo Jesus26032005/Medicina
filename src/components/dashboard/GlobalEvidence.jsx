@@ -24,7 +24,7 @@ export default function GlobalEvidence() {
   useEffect(() => {
     async function loadEvidence() {
       if (!supabase) {
-        setErrorMessage('Supabase no esta configurado.');
+        setErrorMessage('Supabase no está configurado.');
         setLoading(false);
         return;
       }
@@ -140,7 +140,7 @@ export default function GlobalEvidence() {
               Mi dashboard
             </Link>
             <Link className="text-sm font-semibold text-emerald-700 hover:text-emerald-900 dark:text-emerald-200 dark:hover:text-white" to="/respaldo-medico">
-              Respaldo medico
+              Respaldo médico
             </Link>
             <ThemeToggle />
             <Link
@@ -160,7 +160,7 @@ export default function GlobalEvidence() {
         </p>
         <h1 className="mt-2 text-4xl font-bold">Panel de impacto educativo</h1>
         <p className="mt-3 max-w-2xl text-gray-600 dark:text-slate-300">
-          Vista agregada de telemetria: adquisicion de precision, reduccion de
+          Vista agregada de telemetría: adquisición de precisión, reducción de
           errores y testimonios de aprendizaje.
         </p>
 
@@ -180,13 +180,13 @@ export default function GlobalEvidence() {
             label="Partidas jugadas"
             value={loading ? '...' : sessions.length}
           />
-          <Kpi label="Errores medicos detectados" value={loading ? '...' : totalErrors} />
-          <Kpi label="Precision inicial global" value={loading ? '...' : `${globalInitial}%`} />
-          <Kpi label="Precision final global" value={loading ? '...' : `${globalFinal}%`} />
+          <Kpi label="Errores médicos detectados" value={loading ? '...' : totalErrors} />
+          <Kpi label="Precisión inicial global" value={loading ? '...' : `${globalInitial}%`} />
+          <Kpi label="Precisión final global" value={loading ? '...' : `${globalFinal}%`} />
         </div>
 
         <section className="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-5 text-gray-900 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-white">
-          <h2 className="font-bold">Precision Inicial vs Final Global</h2>
+          <h2 className="font-bold">Precisión Inicial vs Final Global</h2>
           <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">
             Promedio agregado de todos los intentos registrados.
           </p>
@@ -198,8 +198,8 @@ export default function GlobalEvidence() {
                 <YAxis domain={[0, 100]} tick={{ fill: '#94a3b8' }} />
                 <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc' }} />
                 <Legend />
-                <Bar dataKey="initial" fill="#f97316" name="Precision inicial" />
-                <Bar dataKey="final" fill="#06b6d4" name="Precision final" />
+                <Bar dataKey="initial" fill="#f97316" name="Precisión inicial" />
+                <Bar dataKey="final" fill="#06b6d4" name="Precisión final" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -244,8 +244,8 @@ export default function GlobalEvidence() {
               ))
             ) : (
               <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-sm text-gray-600 dark:border-white/15 dark:bg-white/5 dark:text-slate-300 md:col-span-3">
-                Aun no hay testimonios. Cuando los usuarios compartan aprendizajes
-                respetuosos, apareceran aqui como evidencia cualitativa.
+                Aún no hay testimonios. Cuando los usuarios compartan aprendizajes
+                respetuosos, aparecerán aquí como evidencia cualitativa.
               </div>
             )}
           </div>

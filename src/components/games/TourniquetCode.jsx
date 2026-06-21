@@ -18,17 +18,17 @@ const CRITICAL_TISSUE_DAMAGE = 100;
 const cases = [
   {
     bleedRate: 'alta',
-    description: 'Sangrado muy fuerte en el brazo. Hay que aplicar tension suficiente para detenerlo.',
+    description: 'Sangrado muy fuerte en el brazo. Hay que aplicar tensión suficiente para detenerlo.',
     id: 'arm_amputation_machinery',
     pressureGain: 12,
-    title: 'Amputacion de brazo por maquinaria',
+    title: 'Amputación de brazo por maquinaria',
   },
   {
     bleedRate: 'media',
-    description: 'Corte profundo en pierna con sangrado constante de perdida media.',
+    description: 'Corte profundo en pierna con sangrado constante de pérdida media.',
     id: 'leg_glass_laceration',
     pressureGain: 10,
-    title: 'Laceracion profunda en pierna por cristal',
+    title: 'Laceración profunda en pierna por cristal',
   },
   {
     bleedRate: 'moderada',
@@ -39,7 +39,7 @@ const cases = [
   },
   {
     bleedRate: 'muy alta',
-    description: 'Sangrado a chorros en el muslo: requiere tension rapida y sostenida.',
+    description: 'Sangrado a chorros en el muslo: requiere tensión rápida y sostenida.',
     id: 'thigh_gunshot_arterial',
     pressureGain: 13,
     title: 'Herida por arma de fuego en muslo',
@@ -61,11 +61,11 @@ const cases = [
 ];
 
 const notes = [
-  'Un torniquete se usa cuando una extremidad sangra tanto que la presion directa no basta.',
-  'La meta es detener el sangrado visible con tension sostenida y controlada.',
-  'Anotar la hora importa porque el equipo medico necesita saber cuanto tiempo lleva puesto.',
+  'Un torniquete se usa cuando una extremidad sangra tanto que la presión directa no basta.',
+  'La meta es detener el sangrado visible con tensión sostenida y controlada.',
+  'Anotar la hora importa porque el equipo médico necesita saber cuánto tiempo lleva puesto.',
   'Aunque controles el sangrado, en la vida real hay que llamar a emergencias cuanto antes.',
-  'El torniquete debe colocarse 5-7 cm arriba de la herida y nunca encima de una articulacion.',
+  'El torniquete debe colocarse 5-7 cm arriba de la herida y nunca encima de una articulación.',
 ];
 
 function pickCase() {
@@ -98,7 +98,7 @@ export default function TourniquetCode() {
   const [activeBleeding, setActiveBleeding] = useState(BLEEDING_START_PERCENT);
   const [tissueDamage, setTissueDamage] = useState(0);
   const [errorsCount, setErrorsCount] = useState(0);
-  const [feedback, setFeedback] = useState('Aplica presion repetidamente hasta que el sangrado llegue a 0%.');
+  const [feedback, setFeedback] = useState('Aplica presión repetidamente hasta que el sangrado llegue a 0%.');
   const [results, setResults] = useState(null);
   const [saveState, setSaveState] = useState('idle');
   const [saveError, setSaveError] = useState('');
@@ -123,14 +123,14 @@ export default function TourniquetCode() {
     pressureApplied > IDEAL_PRESSURE_MAX
       ? 'Peligro: afloja un poco'
       : pressureApplied >= IDEAL_PRESSURE_MIN
-        ? 'Presion optima: controlando sangrado'
-        : 'Presion insuficiente';
+        ? 'Presión óptima: controlando sangrado'
+        : 'Presión insuficiente';
 
   const persistSession = useCallback(
     async (nextResults) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
+        setSaveError('No se pudo guardar: falta una sesión activa o conexión con el expediente.');
         return;
       }
 
@@ -204,7 +204,7 @@ export default function TourniquetCode() {
     };
 
     setResults(nextResults);
-    setFeedback(options.criticalError ? 'Error critico por exceso de presion.' : 'Hemorragia controlada.');
+    setFeedback(options.criticalError ? 'Error crítico por exceso de presión.' : 'Hemorragia controlada.');
     persistSession(nextResults);
   }, [errorsCount, persistSession, tissueDamage]);
 
@@ -216,11 +216,11 @@ export default function TourniquetCode() {
     setPressureApplied((currentPressure) => {
       const nextPressure = clamp(currentPressure + caseData.pressureGain, 0, MAX_PRESSURE);
       if (nextPressure > IDEAL_PRESSURE_MAX) {
-        setFeedback('Peligro: exceso de presion. Afloja un poco para evitar dano al tejido o nervios.');
+        setFeedback('Peligro: exceso de presión. Afloja un poco para evitar daño al tejido o nervios.');
       } else if (nextPressure >= IDEAL_PRESSURE_MIN) {
-        setFeedback('Presion optima: controlando sangrado.');
+        setFeedback('Presión óptima: controlando sangrado.');
       } else {
-        setFeedback('Aun falta presion: el sangrado sigue activo.');
+        setFeedback('Aún falta presión: el sangrado sigue activo.');
       }
       return nextPressure;
     });
@@ -275,7 +275,7 @@ export default function TourniquetCode() {
           });
           return nextBleeding;
         });
-        setFeedback('Presion optima: controlando sangrado.');
+        setFeedback('Presión óptima: controlando sangrado.');
         return;
       }
 
@@ -293,7 +293,7 @@ export default function TourniquetCode() {
           });
           return nextDamage;
         });
-        setFeedback('Peligro: exceso de presion. Afloja un poco.');
+        setFeedback('Peligro: exceso de presión. Afloja un poco.');
         return;
       }
 
@@ -310,7 +310,7 @@ export default function TourniquetCode() {
         setErrorsCount((count) => count + 1);
         lastErrorRef.current = Date.now();
       }
-      setFeedback('Falta presion sostenida: el sangrado no baja.');
+      setFeedback('Falta presión sostenida: el sangrado no baja.');
     }, 500);
 
     return () => window.clearInterval(interval);
@@ -333,7 +333,7 @@ export default function TourniquetCode() {
     finishTriggeredRef.current = true;
     finishGame({
       criticalError: true,
-      note: 'Error Critico: Has causado dano permanente por exceso de presion.',
+      note: 'Error crítico: Has causado daño permanente por exceso de presión.',
       tissueDamage,
     });
   }, [finishGame, gameOver, gameStarted, tissueDamage]);
@@ -375,7 +375,7 @@ export default function TourniquetCode() {
     setActiveBleeding(BLEEDING_START_PERCENT);
     setTissueDamage(0);
     setErrorsCount(0);
-    setFeedback('Aplica presion repetidamente hasta que el sangrado llegue a 0%.');
+    setFeedback('Aplica presión repetidamente hasta que el sangrado llegue a 0%.');
     setShowBriefing(false);
     setShowTutorial(true);
   }
@@ -397,7 +397,7 @@ export default function TourniquetCode() {
     setActiveBleeding(BLEEDING_START_PERCENT);
     setTissueDamage(0);
     setErrorsCount(0);
-    setFeedback('Aplica presion repetidamente hasta que el sangrado llegue a 0%.');
+    setFeedback('Aplica presión repetidamente hasta que el sangrado llegue a 0%.');
     setSaveState('idle');
     setSaveError('');
     samplesRef.current = [];
@@ -417,7 +417,7 @@ export default function TourniquetCode() {
             Dashboard
           </Link>
           <div className="rounded-md border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-sm font-semibold text-rose-100">
-            Codigo Torniquete
+            Código Torniquete
           </div>
           <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
         </header>
@@ -428,7 +428,7 @@ export default function TourniquetCode() {
           <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_340px]">
             {showTutorial ? (
               <button
-                aria-label="Cerrar tutorial de Codigo Torniquete"
+                aria-label="Cerrar tutorial de Código Torniquete"
                 className="fixed inset-0 z-50 flex touch-manipulation select-none flex-col items-center justify-center bg-black/70 px-6 text-center backdrop-blur-sm"
                 onClick={dismissTutorial}
                 onPointerDown={dismissTutorial}
@@ -438,20 +438,20 @@ export default function TourniquetCode() {
                   👇
                 </span>
                 <span className="mt-4 max-w-sm translate-z-0 transform-gpu rounded-lg border border-rose-300/40 bg-rose-500/20 p-4 text-base font-bold text-white shadow-2xl">
-                  Mantén la presion entre 65% y 85%. Si pasas de 85%, sube el dano al tejido.
+                  Mantén la presión entre 65% y 85%. Si pasas de 85%, sube el daño al tejido.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
-                  En celular toca el boton. En computadora usa barra espaciadora.
+                  En celular toca el botón. En computadora usa barra espaciadora.
                 </span>
               </button>
             ) : null}
 
             <section className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white/5 p-4 md:p-6">
-              <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} perdida</p>
+              <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} pérdida</p>
               <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
               <p className="mt-3 text-slate-300">{caseData.description}</p>
               <div className="mt-4 rounded-md border border-rose-300/30 bg-rose-400/10 p-3 text-sm font-semibold text-rose-100">
-                Coloca el torniquete 5-7 cm arriba de la herida. Nunca sobre una articulacion.
+                Coloca el torniquete 5-7 cm arriba de la herida. Nunca sobre una articulación.
               </div>
 
               <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4">
@@ -474,7 +474,7 @@ export default function TourniquetCode() {
 
               <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
-                  <span>Dano tisular</span>
+                  <span>Daño tisular</span>
                   <span>{Math.round(tissueDamage)}%</span>
                 </div>
                 <div className="mt-3 h-8 overflow-hidden rounded-full bg-white/10">
@@ -485,13 +485,13 @@ export default function TourniquetCode() {
                   />
                 </div>
                 <p className="mt-2 text-xs leading-5 text-slate-400">
-                  El dano aumenta si mantienes la presion por encima de {IDEAL_PRESSURE_MAX}%.
+                  El daño aumenta si mantienes la presión por encima de {IDEAL_PRESSURE_MAX}%.
                 </p>
               </div>
 
               <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4 shadow-2xl shadow-rose-950/20">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
-                  <span>Barra de tension</span>
+                  <span>Barra de tensión</span>
                   <span>{Math.round(pressureApplied)}%</span>
                 </div>
                 <div className="mt-3 h-10 overflow-hidden rounded-full bg-white/10">
@@ -524,18 +524,18 @@ export default function TourniquetCode() {
                 type="button"
               >
                 <Gauge aria-hidden="true" className="h-5 w-5" />
-                Aplicar Presion
+                Aplicar presión
               </button>
             </section>
 
             <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white p-5 text-slate-950 dark:bg-slate-900 dark:text-white">
-              <h2 className="font-bold">Telemetria</h2>
+              <h2 className="font-bold">Telemetría</h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <Metric label="Control" value={`${controlPercent}%`} />
                 <Metric label="Errores" value={errorsCount} />
                 <Metric label="Sangrado" value={`${Math.round(activeBleeding)}%`} />
-                <Metric label="Presion" value={`${Math.round(pressureApplied)}%`} />
-                <Metric label="Dano" value={`${Math.round(tissueDamage)}%`} />
+                <Metric label="Presión" value={`${Math.round(pressureApplied)}%`} />
+                <Metric label="Daño" value={`${Math.round(tissueDamage)}%`} />
               </div>
               <div className={`mt-5 rounded-md border p-4 text-sm font-semibold ${
                 pressureApplied > IDEAL_PRESSURE_MAX
@@ -568,42 +568,42 @@ function Briefing({ caseData, onStart }) {
   return (
     <section className="grid flex-1 place-items-center py-10">
       <div className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-6">
-        <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Briefing medico</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">Briefing médico</p>
         <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
         <p className="mt-3 text-slate-700 dark:text-slate-300">{caseData.description}</p>
         <div className="mt-3 rounded-md border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-900 dark:border-rose-300/30 dark:bg-rose-400/10 dark:text-rose-100">
           <h2 className="font-bold">Instrucciones</h2>
           <p className="mt-2 leading-6">
-            En computadora: presiona repetidamente la barra espaciadora o el boton.
-            En celular: toca Aplicar Presion. La zona ideal es 65% a 85%:
-            ahi el sangrado baja rapido. Si pasas de 85%, el sangrado puede
-            detenerse, pero sube el dano al tejido y nervios.
+            En computadora: presiona repetidamente la barra espaciadora o el botón.
+            En celular: toca Aplicar presión. La zona ideal es 65% a 85%:
+            ahí el sangrado baja rápido. Si pasas de 85%, el sangrado puede
+            detenerse, pero sube el daño al tejido y nervios.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-900 dark:border-rose-300/30 dark:bg-rose-400/10 dark:text-rose-100">
-          Coloca el torniquete 5-7 cm arriba de la herida y nunca encima de una articulacion.
+          Coloca el torniquete 5-7 cm arriba de la herida y nunca encima de una articulación.
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide Inicio vs Final</h2>
+          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide Inicio vs Final</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
             Inicio es el control del sangrado durante el primer tercio de la partida.
-            Final es el control durante el ultimo tercio. La meta es hemorragia controlada: 0% de sangrado activo.
+            Final es el control durante el último tercio. La meta es hemorragia controlada: 0% de sangrado activo.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Como se calcula el score</h2>
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula el score</h2>
           <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
-            El score va de 0 a 100: 40% decision clinica de controlar la
-            hemorragia, 40% precision manteniendo tension util sin excederte y
+            El score va de 0 a 100: 40% decisión clínica de controlar la
+            hemorragia, 40% precisión manteniendo tensión útil sin excederte y
             20% tiempo. Si pasas demasiado tiempo por arriba de 85%, sube el
-            dano tisular y el resultado se penaliza fuerte.
+            daño tisular y el resultado se penaliza fuerte.
           </p>
         </div>
         <MedicalDisclaimer />
         <ClinicalEvidenceDisclosure moduleKey="tourniquet_code" />
         <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
           <button className="h-12 touch-manipulation select-none rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700" onClick={onStart} type="button">
-            Entendido, Iniciar Simulacion
+            Entendido, iniciar simulación
           </button>
           <VideoTutorialModal title="Video tutorial control de hemorragias" videoId="llgVqL8HyiI" />
         </div>
@@ -631,16 +631,16 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       >
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">
           <BookOpen aria-hidden="true" className="h-4 w-4" />
-          Retroalimentacion clinica
+          Retroalimentación clínica
         </p>
         <h2 className="mt-1 text-2xl font-bold">
-          {results.criticalError ? 'Error critico por exceso de presion' : 'Hemorragia controlada'}
+          {results.criticalError ? 'Error crítico por exceso de presión' : 'Hemorragia controlada'}
         </h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Inicial" value={`${results.initialPrecision}%`} />
           <Metric label="Final" value={`${results.finalPrecision}%`} />
           <Metric label="Score" value={results.score} />
-          <Metric label="Dano tisular" value={`${results.tissueDamage}%`} />
+          <Metric label="Daño tisular" value={`${results.tissueDamage}%`} />
         </div>
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">

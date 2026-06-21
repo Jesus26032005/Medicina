@@ -4,31 +4,31 @@ import { ExternalLink, Library } from 'lucide-react';
 export const evidenceByModule = {
   rcp_hero: {
     description:
-      'RCP Hero se respalda en guias oficiales AHA para soporte vital basico adulto, RCP de alta calidad y recursos institucionales que usan canciones de 100-120 BPM como ayuda de memoria ritmica.',
+      'RCP Hero se respalda en guías oficiales AHA para soporte vital básico adulto, RCP de alta calidad y recursos institucionales que usan canciones de 100-120 BPM como ayuda de memoria rítmica.',
     rationale:
-      "Ajuste pedagogico: la musica ayuda a recordar la frecuencia de compresion, pero no garantiza por si sola una RCP correcta. No sustituye profundidad, recoil, posicion de manos, activacion de emergencias, uso de DEA ni entrenamiento formal.",
+      "Ajuste pedagógico: la música ayuda a recordar la frecuencia de compresión, pero no garantiza por sí sola una RCP correcta. No sustituye profundidad, retroceso torácico, posición de manos, activación de emergencias, uso de DEA ni entrenamiento formal.",
     links: [
       {
         institution: 'American Heart Association',
-        note: 'Guia oficial AHA 2025 para soporte vital basico en adultos; contiene recomendaciones formales sobre compresiones, DEA y obstruccion de via aerea.',
+        note: 'Guía oficial AHA 2025 para soporte vital básico en adultos; contiene recomendaciones formales sobre compresiones, DEA y obstrucción de vía aérea.',
         title: 'Part 7: Adult Basic Life Support',
         url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support',
       },
       {
         institution: 'American Heart Association',
-        note: 'Resume parametros operativos centrales de RCP en adultos, incluyendo frecuencia de compresiones, profundidad y uso de DEA.',
+        note: 'Resume parámetros operativos centrales de RCP en adultos, incluyendo frecuencia de compresiones, profundidad y uso de DEA.',
         title: 'What is CPR',
         url: 'https://cpr.heart.org/en/resources/what-is-cpr',
       },
       {
         institution: 'American Heart Association',
-        note: 'Define metricas concretas de calidad de RCP, utiles para justificar telemetria y sistema de puntuacion.',
+        note: 'Define métricas concretas de calidad de RCP, útiles para justificar telemetría y sistema de puntuación.',
         title: 'High Quality CPR',
         url: 'https://cpr.heart.org/en/resuscitation-science/high-quality-cpr',
       },
       {
         institution: 'American Heart Association',
-        note: "Documento institucional que vincula Hands-Only CPR con la cancion Stayin' Alive y explica el uso de canciones familiares para fijar ritmo.",
+        note: "Documento institucional que vincula Hands-Only CPR con la canción Stayin' Alive y explica el uso de canciones familiares para fijar ritmo.",
         title: 'FAQ: Hands-Only CPR',
         url: 'https://cpr.heart.org/-/media/cpr-files/courses-and-kits/hands-only-cpr/handsonly-cpr-faqs-ucm_494175.pdf',
       },
@@ -46,13 +46,13 @@ export const evidenceByModule = {
       },
       {
         institution: 'PubMed',
-        note: 'Estudio indexado que apoya el uso de una ayuda musical/mnemonica para mantener la frecuencia de compresiones dentro de guia.',
+        note: 'Estudio indexado que apoya el uso de una ayuda musical/mnemónica para mantener la frecuencia de compresiones dentro de guía.',
         title: "Stayin' Alive: A Novel Mental Metronome to Maintain Compression Rates in Simulated Cardiac Arrests",
         url: 'https://pubmed.ncbi.nlm.nih.gov/22445896/',
       },
       {
         institution: 'American Heart Association / YouTube',
-        note: 'Recurso audiovisual oficial para demostracion de Hands-Only CPR.',
+        note: 'Recurso audiovisual oficial para demostración de Hands-Only CPR.',
         title: 'Official AHA Hands-Only CPR Demonstration Video',
         url: 'https://www.youtube.com/watch?v=7m5tPiTXL5A',
       },
@@ -75,8 +75,8 @@ export const evidenceByModule = {
         url: 'https://www.cruzroja.es/principal/web/ahora/reanimacion-cardiopulmonar',
       },
       {
-        institution: 'Cruz roja',
-        note: 'Pagina que incluye informacion sobre las canciones de 100-120 BPM para RCP.',
+        institution: 'Cruz Roja',
+        note: 'Página que incluye información sobre las canciones de 100-120 BPM para RCP.',
         title: 'Canciones de RCP para compresiones torácicas',
         url: 'https://www-redcross-org.translate.goog/take-a-class/resources/articles/cpr-songs?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc'
       }
@@ -84,37 +84,37 @@ export const evidenceByModule = {
   },
   choking_express: {
     description:
-      'Choking Express se sustenta en la diferenciacion critica entre obstruccion parcial y obstruccion grave. La conducta educativa central es animar a toser si aun hay tos/voz, y actuar con maniobras de desobstruccion si la obstruccion es grave.',
+      'Choking Express se sustenta en la diferenciación crítica entre obstrucción parcial y obstrucción grave. La conducta educativa central es animar a toser si aún hay tos/voz, y actuar con maniobras de desobstrucción si la obstrucción es grave.',
     rationale:
-      'Ajuste pedagogico recomendado: para obstruccion grave en adulto consciente, el flujo debe representar 5 golpes dorsales + 5 compresiones abdominales. En embarazo tardio o si no se puede rodear el abdomen, se usan compresiones toracicas.',
+      'Ajuste pedagógico recomendado: para obstrucción grave en adulto consciente, el flujo debe representar 5 golpes dorsales + 5 compresiones abdominales. En embarazo tardío o si no se puede rodear el abdomen, se usan compresiones torácicas.',
     links: [
       {
         institution: 'American Heart Association',
-        note: 'Algoritmo oficial AHA 2025 para obstruccion de via aerea en adultos, signos de gravedad y secuencia de maniobras.',
+        note: 'Algoritmo oficial AHA 2025 para obstrucción de vía aérea en adultos, signos de gravedad y secuencia de maniobras.',
         title: 'Adult Foreign-Body Airway Obstruction',
         url: 'https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-BLS-Adult-FBAO-250630.pdf?sc_lang=en',
       },
       {
         institution: 'American Heart Association',
-        note: 'Texto normativo que distingue obstruccion leve y grave y formaliza la recomendacion de golpes dorsales y compresiones.',
+        note: 'Texto normativo que distingue obstrucción leve y grave y formaliza la recomendación de golpes dorsales y compresiones.',
         title: 'Part 7: Adult Basic Life Support',
         url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support',
       },
       {
         institution: 'MedlinePlus / NIH-NLM',
-        note: 'Confirma que si la persona puede toser y hablar no debe iniciarse la maniobra de desobstruccion; se anima a toser.',
+        note: 'Confirma que si la persona puede toser y hablar no debe iniciarse la maniobra de desobstrucción; se anima a toser.',
         title: 'Choking - adult or child over 1 year',
         url: 'https://medlineplus.gov/ency/article/000049.htm',
       },
       {
         institution: 'Mayo Clinic',
-        note: 'Recurso clinico institucional para soporte de primeros auxilios y redaccion pedagogica accesible.',
+        note: 'Recurso clínico institucional para soporte de primeros auxilios y redacción pedagógica accesible.',
         title: 'Choking: First aid',
         url: 'https://www.mayoclinic.org/first-aid/first-aid-choking/basics/art-20056637',
       },
       {
         institution: 'American Red Cross / YouTube',
-        note: 'Video oficial de apoyo audiovisual demostrativo para auditoria docente.',
+        note: 'Video oficial de apoyo audiovisual demostrativo para auditoría docente.',
         title: 'What to Do When an Adult is Choking',
         url: 'https://www.youtube.com/watch?v=8R3RWC-xx1I',
       },
@@ -142,17 +142,17 @@ export const evidenceByModule = {
     description:
       'Tourniquet Code se respalda en AHA/Red Cross, Stop the Bleed y el Consenso de Hartford para control precoz de hemorragia externa de extremidad potencialmente mortal.',
     rationale:
-      'Ajuste pedagogico recomendado: la ensenanza audit-safe es colocar arriba de la herida, nunca sobre articulacion, apretar hasta detener el sangrado, asegurar, registrar hora, considerar segundo torniquete si sigue sangrando y no aflojar.',
+      'Ajuste pedagógico recomendado: la enseñanza segura es colocar arriba de la herida, nunca sobre articulación, apretar hasta detener el sangrado, asegurar, registrar hora, considerar segundo torniquete si sigue sangrando y no aflojar.',
     links: [
       {
         institution: 'American Heart Association / American Red Cross',
-        note: 'Guia formal 2024 de primeros auxilios; establece que el torniquete debe apretarse hasta que el sangrado se detenga.',
+        note: 'Guía formal 2024 de primeros auxilios; establece que el torniquete debe apretarse hasta que el sangrado se detenga.',
         title: '2024 American Heart Association and American Red Cross Guidelines for First Aid',
         url: 'https://cpr.heart.org/en/resuscitation-science/2024-first-aid-guidelines',
       },
       {
         institution: 'American Red Cross',
-        note: 'Recurso operativo que especifica ubicacion, dolor esperado, segundo torniquete y prohibicion de aflojar o retirar por personal lego.',
+        note: 'Recurso operativo que especifica ubicación, dolor esperado, segundo torniquete y prohibición de aflojar o retirar por personal lego.',
         title: 'How to Apply a Tourniquet',
         url: 'https://www.redcross.org/take-a-class/resources/articles/how-to-apply-a-tourniquet?srsltid=AfmBOop20guID8BPJ0X-AImlD4nJ11T6uV10ijKMLpsj-5y6OU101H6j',
       },
@@ -196,67 +196,67 @@ export const evidenceByModule = {
   },
   burn_lab: {
     description:
-      'Burn Lab se respalda en guias AHA/Red Cross, OMS, NIH/NLM, CDC/NIOSH y recursos clinicos institucionales para distinguir quemaduras termicas, quimicas, electricas, por frio, alquitran e inhalacion de humo.',
+      'Burn Lab se respalda en guías AHA/Red Cross, OMS, NIH/NLM, CDC/NIOSH y recursos clínicos institucionales para distinguir quemaduras térmicas, químicas, eléctricas, por frío, alquitrán e inhalación de humo.',
     rationale:
-      'Ajuste pedagogico: distinguir causa y gravedad es esencial. La evidencia respalda enfriamiento con agua corriente limpia, retirar contaminantes cuando sea seguro, irrigacion en quimicas, evitar hielo/aceites/pasta y activar emergencias ante criterios de gravedad.',
+      'Ajuste pedagógico: distinguir causa y gravedad es esencial. La evidencia respalda enfriamiento con agua corriente limpia, retirar contaminantes cuando sea seguro, irrigación en químicas, evitar hielo/aceites/pasta y activar emergencias ante criterios de gravedad.',
     links: [
       {
         institution: 'American Heart Association / American Red Cross',
-        note: 'Fuente guia para quemaduras termicas y criterios de derivacion o activacion de emergencias en primeros auxilios.',
+        note: 'Fuente guía para quemaduras térmicas y criterios de derivación o activación de emergencias en primeros auxilios.',
         title: '2024 American Heart Association and American Red Cross Guidelines for First Aid',
         url: 'https://cpr.heart.org/en/resuscitation-science/2024-first-aid-guidelines',
       },
       {
         institution: 'World Health Organization',
-        note: 'Resume que hacer y que no hacer en quemaduras, incluyendo agua corriente, irrigacion y prohibicion de pasta, aceite o hielo.',
+        note: 'Resume qué hacer y qué no hacer en quemaduras, incluyendo agua corriente, irrigación y prohibición de pasta, aceite o hielo.',
         title: 'Burns',
         url: 'https://www.who.int/news-room/fact-sheets/detail/burns',
       },
       {
         institution: 'MedlinePlus / NIH-NLM',
-        note: 'Refuerza manejo inicial, proteccion de la herida, senales de gravedad, inhalacion de humo y que no aplicar.',
+        note: 'Refuerza manejo inicial, protección de la herida, señales de gravedad, inhalación de humo y qué no aplicar.',
         title: 'Burns: MedlinePlus Medical Encyclopedia',
         url: 'https://medlineplus.gov/ency/article/000030.htm',
       },
       {
         institution: 'Mayo Clinic',
-        note: 'Especifica retirar ropa contaminada y enjuagar prolongadamente quemaduras quimicas.',
+        note: 'Especifica retirar ropa contaminada y enjuagar prolongadamente quemaduras químicas.',
         title: 'Chemical burns: First aid',
         url: 'https://www.mayoclinic.org/first-aid/first-aid-chemical-burns/basics/art-20056667',
       },
       {
         institution: 'Mayo Clinic',
-        note: 'Respalda seguridad de escena, posible RCP y cobertura inicial en lesiones electricas.',
+        note: 'Respalda seguridad de escena, posible RCP y cobertura inicial en lesiones eléctricas.',
         title: 'Electrical burns: First aid',
         url: 'https://www.mayoclinic.org/first-aid/first-aid-electrical-burns/basics/art-20056687',
       },
       {
         institution: 'Mayo Clinic',
-        note: 'Apoya clasificacion de gravedad, retirada de objetos constrictivos, cobertura y criterios de atencion urgente.',
+        note: 'Apoya clasificación de gravedad, retirada de objetos constrictivos, cobertura y criterios de atención urgente.',
         title: 'Burns: First aid',
         url: 'https://www.mayoclinic.org/first-aid/first-aid-burns/basics/art-20056649',
       },
       {
         institution: 'NIOSH / CDC',
-        note: 'Referencia federal para descontaminacion inicial; retirar exceso de solidos quimicos y luego lavar o irrigar.',
+        note: 'Referencia federal para descontaminación inicial; retirar exceso de sólidos químicos y luego lavar o irrigar.',
         title: 'First Aid Procedures for Chemical Hazards',
         url: 'https://www.cdc.gov/niosh/npg/firstaid.html',
       },
       {
         institution: 'NIOSH / CDC',
-        note: 'Confirma que el oxido de calcio libera calor con agua, por lo que el caso debe ensenarse con precision.',
+        note: 'Confirma que el óxido de calcio libera calor con agua, por lo que el caso debe enseñarse con precisión.',
         title: 'NIOSH Pocket Guide to Chemical Hazards - Calcium oxide',
         url: 'https://www.cdc.gov/niosh/npg/npgd0093.html',
       },
       {
         institution: 'PubChem / NIH',
-        note: 'Ficha NIH/PubChem con primeros auxilios para calcio oxido; util para revisar reglas especiales del minijuego.',
+        note: 'Ficha NIH/PubChem con primeros auxilios para óxido de calcio; útil para revisar reglas especiales del minijuego.',
         title: 'Calcium Oxide',
         url: 'https://pubchem.ncbi.nlm.nih.gov/compound/Calcium-Oxide',
       },
       {
         institution: 'Mayo Clinic Health System / YouTube',
-        note: 'Recurso audiovisual institucional para acompanar la evidencia escrita sobre quemaduras menores.',
+        note: 'Recurso audiovisual institucional para acompañar la evidencia escrita sobre quemaduras menores.',
         title: 'First aid tips: How to treat minor burns',
         url: 'https://www.youtube.com/watch?v=LIaqKI7B8EI',
       },
@@ -288,19 +288,19 @@ export const evidenceByModule = {
   },
   tactical_triage: {
     description:
-      'Tactical Triage se respalda en el Sistema de Triage de Manchester (MTS), referencias oficiales de Manchester Triage Group / ALSG, documentos tecnicos de implementacion y literatura indexada sobre validez y comparacion del MTS.',
+      'Tactical Triage se respalda en el Sistema de Triage de Manchester (MTS), referencias oficiales de Manchester Triage Group / ALSG, documentos técnicos de implementación y literatura indexada sobre validez y comparación del MTS.',
     rationale:
-      'El modulo usa MTS como marco intrahospitalario de cinco niveles. La evidencia de respaldo documenta gobernanza, entrenamiento, control de versiones, implementacion informatica y validacion academica del sistema.',
+      'El módulo usa MTS como marco intrahospitalario de cinco niveles. La evidencia de respaldo documenta gobernanza, entrenamiento, control de versiones, implementación informática y validación académica del sistema.',
     links: [
       {
         institution: 'Deutsches Netzwerk Ersteinschätzung / triagenet',
-        note: 'Documento tecnico oficial sobre proposito, procedimiento, copyright, orden de discriminadores, riesgo-limite e implementacion informatica del MTS.',
+        note: 'Documento técnico oficial sobre propósito, procedimiento, copyright, orden de discriminadores, riesgo-límite e implementación informática del MTS.',
         title: 'Guideline For Implementation Of Manchester-Triage-Systems In An Hospital Information System',
         url: 'https://www.triagenet.net/content/mts_it_specification_german.pdf',
       },
       {
         institution: 'PubMed',
-        note: 'Comparacion MTS vs ESI en simulacion.',
+        note: 'Comparación MTS vs ESI en simulación.',
         title: 'MTS vs ESI Simulation',
         url: 'https://pubmed.ncbi.nlm.nih.gov/19625548/',
       },
@@ -345,7 +345,7 @@ export default function ClinicalEvidenceDisclosure({ moduleKey }) {
     <details className="mt-4 rounded-lg border border-cyan-200 bg-cyan-50 p-4 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
       <summary className="flex cursor-pointer touch-manipulation select-none items-center gap-2 text-sm font-bold">
         <Library aria-hidden="true" className="h-4 w-4" />
-        Fuentes y Evidencia Clinica
+        Fuentes y evidencia clínica
       </summary>
       <p className="mt-3 text-sm leading-6">{evidence.description}</p>
       {evidence.rationale ? (

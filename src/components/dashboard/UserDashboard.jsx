@@ -31,9 +31,9 @@ import ThemeToggle from '../common/ThemeToggle';
 const games = [
   ['RCP Hero', 'rcp_hero', 'Practica ritmo y resistencia para compresiones.'],
   ['Laboratorio de Quemaduras', 'burn_lab', 'Aprende que ayuda y que empeora una quemadura.'],
-  ['Codigo Torniquete', 'tourniquet_code', 'Controla sangrado con presion suficiente y segura.'],
-  ['Ahogo Express', 'choking_express', 'Reconoce donde aplicar la maniobra segun el caso.'],
-  ['Triage Tactico', 'tactical_triage', 'Clasifica multiples victimas con protocolo START.'],
+  ['Código Torniquete', 'tourniquet_code', 'Controla sangrado con presión suficiente y segura.'],
+  ['Ahogo Express', 'choking_express', 'Reconoce dónde aplicar la maniobra según el caso.'],
+  ['Triage Táctico', 'tactical_triage', 'Clasifica múltiples víctimas con protocolo START.'],
 ];
 
 const limitOptions = [10, 25, 50, 100];
@@ -56,23 +56,23 @@ const defaultAiFact =
   'Primer consejo: si hay una emergencia real, primero llama a emergencias y luego ayuda sin ponerte en riesgo.';
 const localAiFacts = [
   defaultAiFact,
-  'Practicar pocos minutos varias veces ayuda mas que intentar memorizar todo en una sola sesion.',
+  'Practicar pocos minutos varias veces ayuda más que intentar memorizar todo en una sola sesión.',
   'En una emergencia real, tu primera meta es mantenerte seguro, pedir ayuda y actuar con calma.',
-  'Los mitos de primeros auxilios suelen sonar faciles, pero pueden retrasar lo que si ayuda.',
-  'Reconocer rapido que no hacer tambien salva tiempo valioso.',
+  'Los mitos de primeros auxilios suelen sonar fáciles, pero pueden retrasar lo que sí ayuda.',
+  'Reconocer rápido qué no hacer también salva tiempo valioso.',
 ];
 const localInfoCards = [
   {
-    text: 'Sabias que muchas emergencias cardiacas ocurren en el hogar? Practicar aqui puede ayudarte a reaccionar mejor con alguien cercano.',
+    text: '¿Sabías que muchas emergencias cardíacas ocurren en el hogar? Practicar aquí puede ayudarte a reaccionar mejor con alguien cercano.',
     title: 'Dato curioso',
   },
   {
-    text: 'Triage START se recuerda como "30 - 2 - Puede": respiracion, pulso/perfusion y estado mental.',
-    title: 'Recordatorio clinico',
+    text: 'Triage START se recuerda como "30 - 2 - Puede": respiración, pulso/perfusión y estado mental.',
+    title: 'Recordatorio clínico',
   },
   {
-    text: 'Haz una partida corta, revisa tu precision final y repite. La practica con retroalimentacion inmediata ayuda mas que memorizar todo de golpe.',
-    title: 'Practica inteligente',
+    text: 'Haz una partida corta, revisa tu precisión final y repite. La práctica con retroalimentación inmediata ayuda más que memorizar todo de golpe.',
+    title: 'Práctica inteligente',
   },
 ];
 const infoCardIcons = [Activity, Brain, Sparkles];
@@ -156,13 +156,13 @@ async function moderateTestimonialWithGemini(text) {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const prompt = `Revisa este testimonio para una app educativa de primeros auxilios.
-Responde solo JSON valido con esta forma:
+Responde solo JSON válido con esta forma:
 {"allowed":true,"reason":"mensaje corto"}
 
 Reglas:
-- allowed debe ser false si hay insultos, groserias, acoso, odio, contenido sexual, violencia gratuita, mala opinion de la web, inyecciones sql o contenido de codigo, cosas como memes tales como 67, cosas graciosas o mas configuraciones.
-- allowed debe ser true si es una opinion sencilla, positiva, neutral o critica respetuosa.
-- reason debe ser amable, en espanol y maximo una oracion.
+- allowed debe ser false si hay insultos, groserías, acoso, odio, contenido sexual, violencia gratuita, mala opinión de la web, inyecciones SQL o contenido de código, cosas como memes tales como 67, cosas graciosas o más configuraciones.
+- allowed debe ser true si es una opinión sencilla, positiva, neutral o crítica respetuosa.
+- reason debe ser amable, en español y máximo una oración.
 
 Testimonio: ${JSON.stringify(text)}`;
 
@@ -246,7 +246,7 @@ export default function UserDashboard() {
         try {
           const model = genAI.getGenerativeModel({ model: modelName });
           const result = await model.generateContent(
-            'Dame un dato curioso, corto y amigable sobre primeros auxilios para alguien que no sabe medicina. Maximo 2 oraciones.'
+            'Dame un dato curioso, corto y amigable sobre primeros auxilios para alguien que no sabe medicina. Máximo 2 oraciones.'
           );
           const text = result.response.text().trim();
 
@@ -279,14 +279,14 @@ export default function UserDashboard() {
 
       const genAI = new GoogleGenerativeAI(apiKey);
       const prompt = `Genera 3 tarjetas breves para una app educativa de primeros auxilios.
-Responde solo JSON valido con esta forma:
+Responde solo JSON válido con esta forma:
 [
-  {"title":"titulo corto","text":"explicacion amigable de maximo 22 palabras"},
-  {"title":"titulo corto","text":"explicacion amigable de maximo 22 palabras"},
-  {"title":"titulo corto","text":"explicacion amigable de maximo 22 palabras"}
+  {"title":"título corto","text":"explicación amigable de máximo 22 palabras"},
+  {"title":"título corto","text":"explicación amigable de máximo 22 palabras"},
+  {"title":"título corto","text":"explicación amigable de máximo 22 palabras"}
 ]
 Reglas:
-- Lenguaje para publico general, sin tecnicismos sin explicar.
+- Lenguaje para público general, sin tecnicismos sin explicar.
 - Temas posibles: RCP, quemaduras, hemorragias, atragantamiento o triage START.
 - No des instrucciones peligrosas ni reemplaces llamar a emergencias.`;
 
@@ -391,7 +391,7 @@ Reglas:
 
     if (!cleanTestimonial || !user?.id || !supabase) {
       setTestimonialState('error');
-      setTestimonialMessage('No hay una sesion activa o Supabase no esta configurado.');
+      setTestimonialMessage('No hay una sesión activa o Supabase no está configurado.');
       return;
     }
 
@@ -410,7 +410,7 @@ Reglas:
     }
 
     setTestimonialState('saving');
-    setTestimonialMessage('Revision aprobada. Guardando testimonio...');
+    setTestimonialMessage('Revisión aprobada. Guardando testimonio...');
 
     const { error } = await supabase.from('testimonials').insert({
       content: cleanTestimonial,
@@ -444,7 +444,7 @@ Reglas:
               Dashboard global
             </Link>
             <Link className="text-sm font-semibold text-emerald-700 hover:text-emerald-900 dark:text-emerald-200 dark:hover:text-white" to="/respaldo-medico">
-              Respaldo medico
+              Respaldo médico
             </Link>
             <ThemeToggle />
             <button
@@ -466,17 +466,17 @@ Reglas:
           </p>
           <h1 className="mt-2 text-2xl font-bold md:text-3xl">Hola, vamos a practicar con datos reales</h1>
           <p className="mt-3 max-w-2xl text-gray-600 dark:text-gray-300">
-            Tu sesion es {user?.email}. Este panel compara como empiezas y como
-            terminas cada intento, para ver si la practica de verdad esta
+            Tu sesión es {user?.email}. Este panel compara cómo empiezas y cómo
+            terminas cada intento, para ver si la práctica de verdad está
             ayudando.
           </p>
           <div className="mt-4 inline-flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
             <ShieldCheck aria-hidden="true" className="h-4 w-4" />
-            Fecha de ultima revision medica clinica: {LAST_MEDICAL_REVIEW}
+            Fecha de última revisión médica clínica: {LAST_MEDICAL_REVIEW}
           </div>
           <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100">
             <BookOpenCheck aria-hidden="true" className="h-4 w-4" />
-            Proyecto en proceso de aval clinico y evaluacion academica.
+            Proyecto en proceso de aval clínico y evaluación académica.
           </div>
         </div>
 
@@ -515,15 +515,15 @@ Reglas:
               <div>
                 <h2 className="font-bold">Dashboard personal</h2>
                 <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                  Cada barra compara tu precision al inicio y al final. Por
-                  defecto ves tus ultimos 10 intentos.
+                  Cada barra compara tu precisión al inicio y al final. Por
+                  defecto ves tus últimos 10 intentos.
                 </p>
                 <p className="mt-1 text-xs font-semibold text-cyan-700 dark:text-cyan-300">
                   Mostrando {personalProgressData.length} de {dedupedPersonalSessions.length} intentos guardados.
                 </p>
               </div>
               <label className="text-sm font-semibold text-gray-700 dark:text-gray-200" htmlFor="progress-limit">
-                Ver ultimos
+                Ver últimos
                 <select
                   className="mt-2 h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-gray-950 dark:text-white dark:focus:ring-cyan-950 sm:w-36"
                   id="progress-limit"
@@ -564,7 +564,7 @@ Reglas:
           <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
             Minijuegos
           </p>
-          <h2 className="mt-1 text-2xl font-bold">Elige una simulacion</h2>
+          <h2 className="mt-1 text-2xl font-bold">Elige una simulación</h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {games.map(([title, gameKey, description]) => {
               const GameIcon = gameIcons[gameKey] ?? PlayCircle;
@@ -586,9 +586,9 @@ Reglas:
 
         <section>
           <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
-            Notas e informacion adicional
+            Notas e información adicional
           </p>
-          <h2 className="mt-1 text-2xl font-bold">Ideas utiles para practicar mejor</h2>
+          <h2 className="mt-1 text-2xl font-bold">Ideas útiles para practicar mejor</h2>
           <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {infoCardsStatus === 'loading'
               ? infoCardIcons.map((Icon, index) => (
@@ -619,16 +619,16 @@ Reglas:
                   Dashboard global
                 </p>
                 <h3 className="mt-1 text-2xl font-bold text-teal-950 dark:text-white">
-                  Ver Estadisticas Globales y Ranking
+                  Ver estadísticas globales y ranking
                 </h3>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-teal-900 dark:text-teal-100">
-                  Consulta el impacto de todos los usuarios, precision global,
-                  partidas jugadas y testimonios publicos.
+                  Consulta el impacto de todos los usuarios, precisión global,
+                  partidas jugadas y testimonios públicos.
                 </p>
               </div>
             </div>
             <span className="inline-flex min-h-12 items-center justify-center rounded-lg bg-teal-600 px-5 text-sm font-bold text-white">
-              Abrir estadisticas
+              Abrir estadísticas
             </span>
           </Link>
         </section>
@@ -636,9 +636,9 @@ Reglas:
         <section>
           <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-6 shadow-sm dark:border-cyan-300/20 dark:bg-cyan-300/10">
             <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
-              Testimonio publico
+              Testimonio público
             </p>
-            <h2 className="mt-1 texzt-2xl font-bold">Comparte que aprendiste</h2>
+            <h2 className="mt-1 text-2xl font-bold">Comparte qué aprendiste</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-700 dark:text-gray-200">
               Este mensaje puede aparecer en el Dashboard Global como evidencia
               cualitativa. La IA revisa que sea respetuoso antes de publicarlo.
@@ -647,7 +647,7 @@ Reglas:
               <textarea
                 className="min-h-32 w-full rounded-lg border border-cyan-300 bg-white p-4 text-sm text-gray-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"
                 onChange={(event) => setTestimonialText(event.target.value)}
-                placeholder="Ej. Aprendi que el hielo puede empeorar una quemadura..."
+                placeholder="Ej. Aprendí que el hielo puede empeorar una quemadura..."
                 required
                 value={testimonialText}
               />
@@ -690,12 +690,12 @@ Reglas:
         <section className="pb-12">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 shadow-sm dark:border-white/10 dark:bg-slate-800/50">
             <p className="text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
-              Buzon de mejora
+              Buzón de mejora
             </p>
             <h2 className="mt-1 text-2xl font-bold">¿Tienes alguna sugerencia o queja?</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-300">
-              Cuentanos que funciono, que fue confuso o que mejorarias. Este
-              mensaje no aparece como testimonio publico.
+              Cuéntanos qué funcionó, qué fue confuso o qué mejorarías. Este
+              mensaje no aparece como testimonio público.
             </p>
             <form className="mt-5 space-y-4" onSubmit={handleSubmitSuggestion}>
               <input
@@ -708,7 +708,7 @@ Reglas:
               <textarea
                 className="min-h-36 w-full rounded-lg border border-slate-300 bg-white p-4 text-sm text-gray-900 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-teal-950"
                 onChange={(event) => setSuggestionText(event.target.value)}
-                placeholder="Ayudanos a mejorar el simulador..."
+                placeholder="Ayúdanos a mejorar el simulador..."
                 required
                 value={suggestionText}
               />
@@ -728,7 +728,7 @@ Reglas:
             ) : null}
             {submitStatus === 'error' ? (
               <p className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-200">
-                Hubo un problema al enviar. Intenta mas tarde.
+                Hubo un problema al enviar. Intenta más tarde.
               </p>
             ) : null}
           </div>

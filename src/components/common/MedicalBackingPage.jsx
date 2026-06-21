@@ -38,16 +38,16 @@ export default function MedicalBackingPage() {
 
       <section className="mx-auto max-w-6xl px-6 py-10">
         <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
-          Bibliografia interactiva
+          Bibliografía interactiva
         </p>
-        <h1 className="mt-2 text-4xl font-bold">Respaldo medico por minijuego</h1>
+        <h1 className="mt-2 text-4xl font-bold">Respaldo médico por minijuego</h1>
         <p className="mt-3 max-w-3xl text-gray-600 dark:text-gray-300">
-          Fuentes usadas como apoyo teorico para la validacion academica del
-          simulador. Los enlaces abren en una pestana nueva.
+          Fuentes usadas como apoyo teórico para la validación académica del
+          simulador. Los enlaces abren en una pestaña nueva.
         </p>
 
         <section className="mt-8 rounded-lg border border-green-200 bg-green-50 p-5 text-green-800 dark:border-green-700/70 dark:bg-green-900/30 dark:text-green-200">
-          <p className="font-bold">Validacion medica confirmada:</p>
+          <p className="font-bold">Validación médica confirmada:</p>
           <p className="mt-2 leading-7">
             RCP a 110 BPM (rango óptimo), evitación de vasoconstricción
             (cuando los vasos se cierran demasiado) por hielo en quemaduras,

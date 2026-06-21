@@ -28,10 +28,10 @@ function GamePlaceholder() {
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
           Ruta protegida
         </p>
-        <h1 className="mt-2 text-2xl font-bold">Modulo de juego</h1>
+        <h1 className="mt-2 text-2xl font-bold">Módulo de juego</h1>
         <p className="mt-3 text-slate-300">
-          Aqui construiremos la experiencia interactiva y guardaremos la
-          telemetria en Supabase.
+          Aquí construiremos la experiencia interactiva y guardaremos la
+          telemetría en Supabase.
         </p>
         <Link
           className="mt-5 inline-flex h-10 items-center rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"

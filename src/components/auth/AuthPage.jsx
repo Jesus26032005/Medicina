@@ -22,7 +22,7 @@ const featureCards = [
   {
     description: 'Situaciones inspiradas en emergencias reales, explicadas sin lenguaje complicado.',
     icon: Stethoscope,
-    title: 'Casos clinicos simplificados',
+    title: 'Casos clínicos simplificados',
   },
   {
     description: 'Compara como empiezas y como terminas para ver tu avance.',
@@ -30,7 +30,7 @@ const featureCards = [
     title: 'Telemetria de aprendizaje',
   },
   {
-    description: 'Cada modulo incluye fuentes para revisar el fundamento academico.',
+    description: 'Cada módulo incluye fuentes para revisar el fundamento académico.',
     icon: BookOpenCheck,
     title: 'Respaldo cientifico',
   },
@@ -44,7 +44,7 @@ function getFriendlyAuthError(error) {
   }
 
   if (message.includes('email rate limit exceeded') || message.includes('rate limit')) {
-    return 'Por seguridad, se ha alcanzado el limite de intentos. Por favor, espera unos minutos antes de intentar de nuevo.';
+    return 'Por seguridad, se ha alcanzado el límite de intentos. Por favor, espera unos minutos antes de intentar de nuevo.';
   }
 
   if (
@@ -54,7 +54,7 @@ function getFriendlyAuthError(error) {
     message.includes('duplicate key') ||
     message.includes('unique')
   ) {
-    return 'Este correo electronico ya esta registrado. Intenta iniciar sesion.';
+    return 'Este correo electrónico ya está registrado. Intenta iniciar sesión.';
   }
 
   if (
@@ -63,10 +63,10 @@ function getFriendlyAuthError(error) {
     message.includes('networkerror') ||
     message.includes('network')
   ) {
-    return 'No se pudo conectar con el servidor. Verifica tu conexion a internet.';
+    return 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
   }
 
-  return 'Ups, ocurrio un problema inesperado. Por favor, intentalo de nuevo en unos momentos.';
+    return 'Ups, ocurrió un problema inesperado. Por favor, inténtalo de nuevo en unos momentos.';
 }
 
 export default function AuthPage() {
@@ -137,7 +137,7 @@ export default function AuthPage() {
           </p>
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-bold text-amber-800 shadow-sm dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100">
             <BookOpenCheck aria-hidden="true" className="h-4 w-4" />
-            En proceso de aval clinico y evaluacion academica
+            En proceso de aval clínico y evaluación académica
           </div>
           <h1 className="text-3xl font-black leading-tight text-teal-950 dark:text-white md:text-6xl">
             Aprende a salvar vidas jugando
@@ -145,7 +145,7 @@ export default function AuthPage() {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-teal-800 dark:text-slate-300">
             Una plataforma educativa para practicar primeros auxilios de forma
             segura, visual y medible. No necesitas saber medicina: cada juego te
-            explica que hacer, por que importa y que mitos evitar.
+            explica qué hacer, por qué importa y qué mitos evitar.
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -165,8 +165,8 @@ export default function AuthPage() {
 
           <div className="mt-8 rounded-lg border border-cyan-200 bg-cyan-50 p-5 text-sm leading-6 text-cyan-900 shadow-sm dark:border-cyan-300/20 dark:bg-cyan-400/10 dark:text-cyan-100">
             <Activity aria-hidden="true" className="mb-3 h-5 w-5" />
-            La app guarda precision inicial, precision final y errores para que
-            tu avance no sea solo una sensacion: se pueda ver en datos.
+            La app guarda precisión inicial, precisión final y errores para que
+            tu avance no sea solo una sensación: se pueda ver en datos.
           </div>
         </div>
 
@@ -189,7 +189,7 @@ export default function AuthPage() {
               onClick={() => switchMode('login')}
             >
               <LogIn aria-hidden="true" className="h-4 w-4" />
-              Iniciar Sesion
+              Iniciar sesión
             </button>
             <button
               className={`flex h-12 items-center justify-center gap-2 rounded-md text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 ${
@@ -225,7 +225,7 @@ export default function AuthPage() {
 
             <label className="block">
               <span className="text-sm font-medium text-teal-900 dark:text-slate-200">
-                Correo electronico
+                  Correo electrónico
               </span>
               <input
                 className="mt-2 h-12 w-full rounded-md border border-teal-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"

@@ -7,11 +7,11 @@ export default function MedicalDisclaimer() {
       <div className="flex items-start gap-3">
         <AlertTriangle aria-hidden="true" className="mt-0.5 h-5 w-5 flex-none" />
         <p className="text-sm font-semibold leading-6">
-          Atencion: Esta es una simulacion educativa basada en investigaciones
-          teorico-practicas y no reemplaza el criterio de un profesional de la
-          salud. Aun se encuentra en proceso para tener el aval de un medico clinico oficial. En una emergencia
+          Atención: Esta es una simulación educativa basada en investigaciones
+          teórico-prácticas y no reemplaza el criterio de un profesional de la
+          salud. Aún se encuentra en proceso para tener el aval de un médico clínico oficial. En una emergencia
           real, el primer paso SIEMPRE es llamar a los servicios de emergencia
-          (Ej. 911).
+          (ej. 911).
         </p>
       </div>
     </div>

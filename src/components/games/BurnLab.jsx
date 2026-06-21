@@ -29,11 +29,11 @@ import { supabase } from '../../lib/supabaseClient';
 const toolDefinitions = {
   airway_assessment: {
     icon: Wind,
-    label: 'Evaluar Via Aerea',
+    label: 'Evaluar vía aérea',
   },
   brush_powder: {
     icon: Brush,
-    label: 'Cepillar Polvo',
+    label: 'Cepillar polvo',
   },
   butter: {
     icon: Package,
@@ -41,19 +41,19 @@ const toolDefinitions = {
   },
   call_emergency: {
     icon: Activity,
-    label: 'Activar Emergencias',
+    label: 'Activar emergencias',
   },
   cool_water: {
     icon: Droplets,
-    label: 'Agua Fria',
+    label: 'Agua fría',
   },
   copious_irrigation: {
     icon: Droplets,
-    label: 'Irrigacion Abundante',
+    label: 'Irrigación abundante',
   },
   dry_cover: {
     icon: Package,
-    label: 'Cobertura Seca',
+    label: 'Cobertura seca',
   },
   ice: {
     icon: Snowflake,
@@ -61,27 +61,27 @@ const toolDefinitions = {
   },
   no_remove_tar: {
     icon: ShieldAlert,
-    label: 'No Retirar Alquitran',
+    label: 'No retirar alquitrán',
   },
   neutralizer: {
     icon: Package,
-    label: 'Neutralizante Casero',
+    label: 'Neutralizante casero',
   },
   remove_clothing: {
     icon: Brush,
-    label: 'Retirar Ropa Contaminada',
+    label: 'Retirar ropa contaminada',
   },
   remove_jewelry: {
     icon: BadgeCheck,
-    label: 'Retirar Joyeria',
+    label: 'Retirar joyería',
   },
   sterile_gauze: {
     icon: BadgeCheck,
-    label: 'Gasa Esteril',
+    label: 'Gasa estéril',
   },
   stop_burning: {
     icon: Flame,
-    label: 'Apagar Fuente de Calor',
+    label: 'Apagar fuente de calor',
   },
   sunscreen: {
     icon: Sun,
@@ -101,12 +101,12 @@ const clinicalCases = [
   {
     id: 'solar_first_degree',
     title: 'Solar: quemadura leve de 1er grado',
-    mechanism: 'Exposicion solar prolongada en hombros sin ampollas.',
+    mechanism: 'Exposición solar prolongada en hombros sin ampollas.',
     woundDescription: 'Piel enrojecida, seca, caliente y dolorosa al tacto; no hay ampollas ni zonas abiertas.',
     visual: 'thermal',
     severity: 'first',
     severityExplanation: 'La piel roja, seca y dolorosa sin ampollas suele corresponder a 1er grado.',
-    hint: 'Enfria la piel y evita productos irritantes; si aparecen ampollas, ya no seria leve.',
+    hint: 'Enfría la piel y evita productos irritantes; si aparecen ampollas, ya no sería leve.',
     correctTools: {
       cool_water: 'Correcto: enfriar con agua fresca ayuda a bajar dolor y calor residual.',
       sterile_gauze: 'Correcto: cubrir suavemente protege si hay roce, sin apretar.',
@@ -120,197 +120,197 @@ const clinicalCases = [
   },
   {
     id: 'thermal_boiling_water',
-    title: 'Termica: agua hirviendo',
+    title: 'Térmica: agua hirviendo',
     mechanism: 'Escaldadura en antebrazo por agua a alta temperatura.',
-    woundDescription: 'Piel muy roja, brillante, con ampollas intactas y dolor intenso despues del contacto con agua hirviendo.',
+    woundDescription: 'Piel muy roja, brillante, con ampollas intactas y dolor intenso después del contacto con agua hirviendo.',
     visual: 'thermal',
     severity: 'second',
     severityExplanation: 'La presencia de ampollas indica una quemadura de 2do grado.',
-    hint: 'Enfria poco a poco y cubre limpio. Nada de remedios grasosos.',
+    hint: 'Enfría poco a poco y cubre limpio. Nada de remedios grasosos.',
     correctTools: {
-      cool_water: 'Correcto: el agua fresca baja el calor que sigue danando la piel.',
+      cool_water: 'Correcto: el agua fresca baja el calor que sigue dañando la piel.',
       remove_jewelry: 'Correcto: si la zona se hincha, anillos o pulseras pueden apretar demasiado.',
       sterile_gauze: 'Correcto: cubrir con gasa limpia protege la piel abierta.',
     },
     incorrectTools: {
-      butter: 'Error: la grasa guarda el calor como una tapa y hace que la quemadura siga cocinandose.',
-      ice: 'Error: el hielo cierra las venas de golpe y quema la piel por frio, empeorando todo.',
-      toothpaste: 'Error: la pasta tiene quimicos y suciedad; puede irritar e infectar la herida.',
+      butter: 'Error: la grasa guarda el calor como una tapa y hace que la quemadura siga cocinándose.',
+      ice: 'Error: el hielo cierra las venas de golpe y quema la piel por frío, empeorando todo.',
+      toothpaste: 'Error: la pasta tiene químicos y suciedad; puede irritar e infectar la herida.',
     },
   },
   {
     id: 'thermal_direct_fire',
-    title: 'Termica: fuego directo',
+    title: 'Térmica: fuego directo',
     mechanism: 'Llama directa en manga de ropa con quemadura irregular.',
-    woundDescription: 'Zona roja con ampollas y dolor fuerte alrededor de la manga quemada; la piel aun esta sensible.',
+    woundDescription: 'Zona roja con ampollas y dolor fuerte alrededor de la manga quemada; la piel aún está sensible.',
     visual: 'thermal',
     severity: 'second',
-    severityExplanation: 'Ampollas y dolor intenso sugieren 2do grado; si fuera correosa o sin dolor central, pensariamos en 3er grado.',
-    hint: 'Primero detén lo que quema; luego enfria y cubre limpio.',
+    severityExplanation: 'Ampollas y dolor intenso sugieren 2do grado; si fuera correosa o sin dolor central, pensaríamos en 3er grado.',
+    hint: 'Primero detén lo que quema; luego enfría y cubre limpio.',
     correctTools: {
       stop_burning: 'Correcto: apagar la fuente evita que la piel siga recibiendo calor.',
       cool_water: 'Correcto: el agua fresca frena el calor que queda atrapado.',
       sterile_gauze: 'Correcto: cubrir limpio baja el roce, el dolor y la suciedad.',
     },
     incorrectTools: {
-      butter: 'Error: la mantequilla atrapa calor y deja una capa dificil de limpiar.',
-      ice: 'Error: el frio extremo tambien quema y puede matar piel que aun podia salvarse.',
-      toothpaste: 'Error: la pasta no es esteril; ensucia una herida que debe estar limpia.',
+      butter: 'Error: la mantequilla atrapa calor y deja una capa difícil de limpiar.',
+      ice: 'Error: el frío extremo también quema y puede matar piel que aún podía salvarse.',
+      toothpaste: 'Error: la pasta no es estéril; ensucia una herida que debe estar limpia.',
     },
   },
   {
     id: 'chemical_liquid_acid',
-    title: 'Quimica liquida: acido clorhidrico',
-    mechanism: 'Salpicadura liquida acida en piel y ropa.',
-    woundDescription: 'Piel enrojecida, humeda, con ardor intenso y pequenas ampollas bajo la zona mojada con quimico.',
+    title: 'Química líquida: ácido clorhídrico',
+    mechanism: 'Salpicadura líquida ácida en piel y ropa.',
+    woundDescription: 'Piel enrojecida, húmeda, con ardor intenso y pequeñas ampollas bajo la zona mojada con químico.',
     visual: 'chemical',
     severity: 'second',
     severityExplanation: 'Ampollas, humedad y dolor intenso por corrosivo apuntan a 2do grado hasta que un profesional valore profundidad.',
-    hint: 'Si es liquido corrosivo, quita lo contaminado y enjuaga con mucha agua.',
+    hint: 'Si es líquido corrosivo, quita lo contaminado y enjuaga con mucha agua.',
     correctTools: {
-      remove_clothing: 'Correcto: la ropa mojada con quimico sigue quemando si se queda pegada.',
-      copious_irrigation: 'Correcto: mucha agua ayuda a arrastrar y diluir el acido. La irrigacion con agua abundante debe mantenerse entre 15 y 30 minutos continuos.',
-      call_emergency: 'Correcto: una quemadura quimica necesita revision profesional.',
+      remove_clothing: 'Correcto: la ropa mojada con químico sigue quemando si se queda pegada.',
+      copious_irrigation: 'Correcto: mucha agua ayuda a arrastrar y diluir el ácido. La irrigación con agua abundante debe mantenerse entre 15 y 30 minutos continuos.',
+      call_emergency: 'Correcto: una quemadura química necesita revisión profesional.',
     },
     incorrectTools: {
-      neutralizer: 'Error: mezclar quimicos en casa puede calentar la zona y empeorar la quemadura.',
+      neutralizer: 'Error: mezclar químicos en casa puede calentar la zona y empeorar la quemadura.',
       butter: 'Error: la grasa deja el corrosivo atrapado contra la piel.',
-      sterile_gauze: 'Error: tapar antes de enjuagar deja el quimico trabajando sobre la piel.',
+      sterile_gauze: 'Error: tapar antes de enjuagar deja el químico trabajando sobre la piel.',
     },
   },
   {
     id: 'chemical_powder_quicklime',
-    title: 'Quimica en polvo: cal viva',
+    title: 'Química en polvo: cal viva',
     mechanism: 'Polvo alcalino reactivo sobre antebrazo.',
     woundDescription: 'Polvo blanco adherido, piel muy irritada y dolorosa, con zonas rojizas que pueden formar ampollas.',
     visual: 'chemical',
     severity: 'second',
-    severityExplanation: 'Dolor, irritacion intensa y posible ampolla sugieren 2do grado; primero se retira el polvo en seco.',
-    hint: 'Si es polvo que reacciona con agua, primero retiralo en seco.',
+    severityExplanation: 'Dolor, irritación intensa y posible ampolla sugieren 2do grado; primero se retira el polvo en seco.',
+    hint: 'Si es polvo que reacciona con agua, primero retíralo en seco.',
     correctTools: {
-      brush_powder: 'Correcto: quitar el polvo en seco evita activar mas reaccion.',
-      dry_cover: 'Correcto: cubrir seco protege sin mojar el quimico.',
-      call_emergency: 'Correcto: estos quimicos pueden seguir entrando profundo en la piel.',
+      brush_powder: 'Correcto: quitar el polvo en seco evita activar más reacción.',
+      dry_cover: 'Correcto: cubrir seco protege sin mojar el químico.',
+      call_emergency: 'Correcto: estos químicos pueden seguir entrando profundo en la piel.',
     },
     incorrectTools: {
-      cool_water: 'Error critico: la cal viva con agua puede calentarse de golpe y quemar mas.',
-      copious_irrigation: 'Error critico: mojar antes de quitar el polvo puede activar la reaccion.',
-      butter: 'Error: la grasa pega el quimico a la piel.',
+      cool_water: 'Error crítico: la cal viva con agua puede calentarse de golpe y quemar más.',
+      copious_irrigation: 'Error crítico: mojar antes de quitar el polvo puede activar la reacción.',
+      butter: 'Error: la grasa pega el químico a la piel.',
     },
   },
   {
     id: 'electrical_high_voltage',
-    title: 'Electrica: alto voltaje',
-    mechanism: 'Marca de entrada y salida electrica; el peligro puede estar por dentro.',
-    woundDescription: 'Punto oscuro de entrada, textura seca/correosa y dolor menor en el centro pese al dano visible.',
+    title: 'Eléctrica: alto voltaje',
+    mechanism: 'Marca de entrada y salida eléctrica; el peligro puede estar por dentro.',
+    woundDescription: 'Punto oscuro de entrada, textura seca/correosa y dolor menor en el centro pese al daño visible.',
     visual: 'electrical',
     severity: 'third',
-    severityExplanation: 'La piel correosa, oscura o con poca sensibilidad central sugiere dano profundo de 3er grado.',
-    hint: 'Aqui lo peligroso puede estar por dentro: llama emergencias y revisa respiracion.',
+    severityExplanation: 'La piel correosa, oscura o con poca sensibilidad central sugiere daño profundo de 3er grado.',
+    hint: 'Aquí lo peligroso puede estar por dentro: llama emergencias y revisa respiración.',
     correctTools: {
-      call_emergency: 'Correcto: con electricidad fuerte, el corazon puede estar en riesgo aunque la piel se vea pequena.',
-      airway_assessment: 'Correcto: hay que revisar respiracion y estado general, no solo la quemadura.',
+      call_emergency: 'Correcto: con electricidad fuerte, el corazón puede estar en riesgo aunque la piel se vea pequeña.',
+      airway_assessment: 'Correcto: hay que revisar respiración y estado general, no solo la quemadura.',
       sterile_gauze: 'Correcto: cubrir limpio protege las marcas visibles.',
     },
     incorrectTools: {
-      cool_water: 'Error: si la escena no es segura, el agua puede ponerte en peligro tambien.',
-      butter: 'Error: la mantequilla no ayuda al posible dano interno ni al corazon.',
-      ice: 'Error: el hielo no arregla el riesgo electrico interno.',
+      cool_water: 'Error: si la escena no es segura, el agua puede ponerte en peligro también.',
+      butter: 'Error: la mantequilla no ayuda al posible daño interno ni al corazón.',
+      ice: 'Error: el hielo no arregla el riesgo eléctrico interno.',
     },
   },
   {
     id: 'friction_motorcycle',
-    title: 'Friccion: caida de motocicleta',
-    mechanism: 'Abrasiones extensas con contaminacion por asfalto.',
-    woundDescription: 'Piel raspada, roja, humeda, con zonas abiertas superficiales y dolor intenso por friccion.',
+    title: 'Fricción: caída de motocicleta',
+    mechanism: 'Abrasiones extensas con contaminación por asfalto.',
+    woundDescription: 'Piel raspada, roja, húmeda, con zonas abiertas superficiales y dolor intenso por fricción.',
     visual: 'friction',
     severity: 'second',
-    severityExplanation: 'Cuando la friccion abre la piel y deja superficie humeda/dolorosa, se maneja como 2do grado superficial.',
+    severityExplanation: 'Cuando la fricción abre la piel y deja superficie húmeda/dolorosa, se maneja como 2do grado superficial.',
     hint: 'Piensa en enfriar, limpiar suavemente y cubrir sin productos contaminantes.',
     correctTools: {
       cool_water: 'Correcto: el agua ayuda a enfriar y retirar suciedad superficial.',
-      sterile_gauze: 'Correcto: cubrir disminuye contaminacion y dolor.',
+      sterile_gauze: 'Correcto: cubrir disminuye contaminación y dolor.',
       call_emergency: 'Correcto: abrasiones extensas pueden coexistir con trauma mayor.',
     },
     incorrectTools: {
-      toothpaste: 'Error: agrega quimicos y bacterias a una herida ya contaminada.',
-      butter: 'Error: una grasa impide limpieza adecuada de particulas.',
+      toothpaste: 'Error: agrega químicos y bacterias a una herida ya contaminada.',
+      butter: 'Error: una grasa impide limpieza adecuada de partículas.',
       ice: 'Error: el hielo baja el flujo de sangre en la piel y no limpia la suciedad.',
     },
   },
   {
     id: 'cold_liquid_nitrogen',
-    title: 'Congelamiento: nitrogeno liquido',
-    mechanism: 'Quemadura por frio extremo con piel palida y rigida.',
-    woundDescription: 'Piel palida, rigida, con dolor y posible ampollamiento al recalentarse.',
+    title: 'Congelamiento: nitrógeno líquido',
+    mechanism: 'Quemadura por frío extremo con piel pálida y rígida.',
+    woundDescription: 'Piel pálida, rígida, con dolor y posible ampollamiento al recalentarse.',
     visual: 'cold',
     severity: 'second',
-    severityExplanation: 'Las lesiones por frio con rigidez y ampollas se tratan como dano parcial profundo, compatible con 2do grado.',
+    severityExplanation: 'Las lesiones por frío con rigidez y ampollas se tratan como daño parcial profundo, compatible con 2do grado.',
     hint: 'No frotes ni uses hielo; recalienta de forma controlada.',
     correctTools: {
       warm_water: 'Correcto: el recalentamiento gradual con agua tibia protege tejido congelado.',
-      sterile_gauze: 'Correcto: cubrir sin comprimir protege la piel fragil.',
-      call_emergency: 'Correcto: lesiones por frio extremo pueden tener dano profundo.',
+      sterile_gauze: 'Correcto: cubrir sin comprimir protege la piel frágil.',
+      call_emergency: 'Correcto: lesiones por frío extremo pueden tener daño profundo.',
     },
     incorrectTools: {
-      ice: 'Error: aumenta la lesion por congelacion.',
-      cool_water: 'Error: el agua fria perpetua la perdida de calor.',
-      butter: 'Error: no recalienta tejido y dificulta la evaluacion.',
+      ice: 'Error: aumenta la lesión por congelación.',
+      cool_water: 'Error: el agua fría perpetúa la pérdida de calor.',
+      butter: 'Error: no recalienta tejido y dificulta la evaluación.',
     },
   },
   {
     id: 'solar_second_degree',
     title: 'Solar: quemadura grave de 2do grado',
-    mechanism: 'Ampollas extensas tras exposicion solar prolongada.',
+    mechanism: 'Ampollas extensas tras exposición solar prolongada.',
     woundDescription: 'Piel muy roja con ampollas extensas, dolor intenso y sensibilidad al roce.',
     visual: 'thermal',
     severity: 'second',
     severityExplanation: 'Las ampollas extensas son el dato clave de 2do grado.',
-    hint: 'Enfria, cubre y deriva si hay ampollas extensas o compromiso sistemico.',
+    hint: 'Enfría, cubre y deriva si hay ampollas extensas o compromiso sistémico.',
     correctTools: {
       cool_water: 'Correcto: enfriar alivia dolor y reduce calor residual.',
-      sterile_gauze: 'Correcto: cubrir ampollas intactas reduce friccion y contaminacion.',
-      call_emergency: 'Correcto: ampollas extensas requieren valoracion por perdida de barrera cutanea.',
+      sterile_gauze: 'Correcto: cubrir ampollas intactas reduce fricción y contaminación.',
+      call_emergency: 'Correcto: ampollas extensas requieren valoración por pérdida de barrera cutánea.',
     },
     incorrectTools: {
       sunscreen: 'Error: el protector solar no se aplica sobre quemadura abierta o ampollada.',
-      toothpaste: 'Error: irrita piel danada y aumenta riesgo infeccioso.',
-      ice: 'Error: el frio extremo puede profundizar la lesion.',
+      toothpaste: 'Error: irrita piel dañada y aumenta riesgo infeccioso.',
+      ice: 'Error: el frío extremo puede profundizar la lesión.',
     },
   },
   {
     id: 'hot_tar',
-    title: 'Alquitran caliente',
+    title: 'Alquitrán caliente',
     mechanism: 'Material caliente adherido a piel.',
     woundDescription: 'Material negro pegado, zonas blanquecinas o carbonizadas alrededor y dolor irregular.',
     visual: 'tar',
     severity: 'third',
-    severityExplanation: 'El material adherido caliente puede causar dano profundo; piel blanquecina, correosa o carbonizada sugiere 3er grado.',
-    hint: 'Enfria el material, pero no lo arranques de la piel.',
+    severityExplanation: 'El material adherido caliente puede causar daño profundo; piel blanquecina, correosa o carbonizada sugiere 3er grado.',
+    hint: 'Enfría el material, pero no lo arranques de la piel.',
     correctTools: {
-      cool_water: 'Correcto: enfriar solidifica y baja la temperatura del alquitran.',
+      cool_water: 'Correcto: enfriar solidifica y baja la temperatura del alquitrán.',
       no_remove_tar: 'Correcto: arrancarlo puede retirar piel viable adherida.',
-      call_emergency: 'Correcto: requiere manejo clinico para retirada segura.',
+      call_emergency: 'Correcto: requiere manejo clínico para retirada segura.',
     },
     incorrectTools: {
       brush_powder: 'Error: friccionar puede desgarrar piel adherida al material.',
-      butter: 'Error: no enfria adecuadamente y contamina la zona.',
-      ice: 'Error: el frio extremo puede lesionar mas tejido.',
+      butter: 'Error: no enfría adecuadamente y contamina la zona.',
+      ice: 'Error: el frío extremo puede lesionar más tejido.',
     },
   },
   {
     id: 'smoke_inhalation_airway',
-    title: 'Inhalacion de humo / vias aereas',
-    mechanism: 'Quemadura facial con tos, hollin y ronquera.',
-    woundDescription: 'Cara con hollin, cejas chamuscadas, ronquera y tos; aunque la piel no parezca grande, la via aerea puede inflamarse.',
+    title: 'Inhalación de humo / vías aéreas',
+    mechanism: 'Quemadura facial con tos, hollín y ronquera.',
+    woundDescription: 'Cara con hollín, cejas chamuscadas, ronquera y tos; aunque la piel no parezca grande, la vía aérea puede inflamarse.',
     visual: 'airway',
     severity: 'third',
-    severityExplanation: 'Humo, hollin y ronquera son datos de alarma: la prioridad es via aerea y se considera grave.',
+    severityExplanation: 'Humo, hollín y ronquera son datos de alarma: la prioridad es vía aérea y se considera grave.',
     hint: 'Si respiro humo, lo urgente puede ser que la garganta se cierre, no solo la piel.',
     correctTools: {
-      airway_assessment: 'Correcto: ronquera y hollin son pistas de que respirar puede ponerse dificil.',
+      airway_assessment: 'Correcto: ronquera y hollín son pistas de que respirar puede ponerse difícil.',
       call_emergency: 'Correcto: necesita ayuda urgente y vigilancia para respirar.',
-      cool_water: 'Correcto: enfria la piel visible, pero sin retrasar la ayuda.',
+      cool_water: 'Correcto: enfría la piel visible, pero sin retrasar la ayuda.',
     },
     incorrectTools: {
       butter: 'Error: no ayuda a respirar y retrasa lo importante.',
@@ -321,9 +321,9 @@ const clinicalCases = [
 ];
 
 const burnNotes = [
-  'No todas las quemaduras se tratan igual: primero piensa que la causo.',
-  'Si el quimico esta en polvo, a veces mojarlo de inmediato puede empeorar la reaccion.',
-  'Con electricidad, una marca pequena en la piel puede esconder un problema serio por dentro.',
+  'No todas las quemaduras se tratan igual: primero piensa qué la causó.',
+  'Si el químico está en polvo, a veces mojarlo de inmediato puede empeorar la reacción.',
+  'Con electricidad, una marca pequeña en la piel puede esconder un problema serio por dentro.',
   'Mantequilla, pasta dental y remedios caseros suelen ensuciar, atrapar calor o retrasar ayuda real.',
   'Si hubo humo, tos o ronquera, lo urgente puede ser respirar, no solo la piel.',
 ];
@@ -342,7 +342,7 @@ const severityOptions = [
   {
     key: 'third',
     label: '3er grado',
-    description: 'Profunda, carbonizada, electrica o via aerea comprometida.',
+    description: 'Profunda, carbonizada, eléctrica o vía aérea comprometida.',
   },
 ];
 
@@ -388,8 +388,8 @@ export default function BurnLab() {
   const [errorsCount, setErrorsCount] = useState(0);
   const [usedTools, setUsedTools] = useState([]);
   const [actions, setActions] = useState([]);
-  const [severityFeedback, setSeverityFeedback] = useState('Evalua el mecanismo y selecciona la gravedad probable.');
-  const [toolFeedback, setToolFeedback] = useState('Despues de clasificar, selecciona una herramienta para ver la correccion clinica.');
+  const [severityFeedback, setSeverityFeedback] = useState('Evalúa el mecanismo y selecciona la gravedad probable.');
+  const [toolFeedback, setToolFeedback] = useState('Después de clasificar, selecciona una herramienta para ver la corrección clínica.');
   const [shakeKey, setShakeKey] = useState(0);
   const [results, setResults] = useState(null);
   const [saveState, setSaveState] = useState('idle');
@@ -412,7 +412,7 @@ export default function BurnLab() {
     async (nextResults, finalActions) => {
       if (!supabase || !user?.id) {
         setSaveState('error');
-        setSaveError('No se pudo guardar: falta una sesion activa o conexion con el expediente.');
+        setSaveError('No se pudo guardar: falta una sesión activa o conexión con el expediente.');
         return;
       }
 
@@ -508,8 +508,8 @@ export default function BurnLab() {
     setSeverityLocked(true);
     setSeverityFeedback(
       isCorrect
-        ? `Clasificacion correcta: ${severityLabels[severityKey]}. Ahora aplica las acciones seguras.`
-        : `Clasificacion incorrecta. ${caseData.severityExplanation}`
+        ? `Clasificación correcta: ${severityLabels[severityKey]}. Ahora aplica las acciones seguras.`
+        : `Clasificación incorrecta. ${caseData.severityExplanation}`
     );
 
     if (!isCorrect) {
@@ -531,7 +531,7 @@ export default function BurnLab() {
     const baseFeedback = caseData.correctTools[toolId] ?? caseData.incorrectTools[toolId];
     const chemicalSafetyNote =
       caseData.visual === 'chemical'
-        ? ' Recuerda consultar la etiqueta o SDS del quimico si esta disponible, sin retrasar la irrigacion.'
+        ? ' Recuerda consultar la etiqueta o SDS del químico si está disponible, sin retrasar la irrigación.'
         : '';
     const feedback = `${baseFeedback}${chemicalSafetyNote}`;
 
@@ -539,7 +539,7 @@ export default function BurnLab() {
       return;
     }
 
-    const scoreDelta = isCorrect ? 45 : feedback.includes('critico') ? -35 : -20;
+    const scoreDelta = isCorrect || (!feedback.includes('crítico') && !feedback.includes('critico')) ? (isCorrect ? 45 : -20) : -35;
     const nextUsedTools = [...usedTools, toolId];
     const nextErrorsCount = errorsCount + (isCorrect ? 0 : 1);
     const nextCorrectApplied = nextUsedTools.filter((nextToolId) =>
@@ -606,8 +606,8 @@ export default function BurnLab() {
     setErrorsCount(0);
     setUsedTools([]);
     setActions([]);
-    setSeverityFeedback('Evalua el mecanismo y selecciona la gravedad probable.');
-    setToolFeedback('Despues de clasificar, selecciona una herramienta para ver la correccion clinica.');
+    setSeverityFeedback('Evalúa el mecanismo y selecciona la gravedad probable.');
+    setToolFeedback('Después de clasificar, selecciona una herramienta para ver la corrección clínica.');
     setShakeKey(0);
     setResults(null);
     setSaveState('idle');
@@ -687,10 +687,10 @@ export default function BurnLab() {
                   👇
                 </span>
                 <span className="mt-4 max-w-sm translate-z-0 transform-gpu rounded-lg border border-cyan-300/40 bg-cyan-500/20 p-4 text-base font-bold text-white shadow-2xl">
-                  Lee el caso y selecciona la accion medica correcta.
+                  Lee el caso y selecciona la acción médica correcta.
                 </span>
                 <span className="mt-3 text-sm text-slate-200">
-                  Puedes tocar una herramienta o arrastrarla hacia la zona de intervencion.
+                  Puedes tocar una herramienta o arrastrarla hacia la zona de intervención.
                 </span>
               </button>
             ) : null}
@@ -828,7 +828,7 @@ export default function BurnLab() {
                           : 'border-cyan-200 bg-cyan-50 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100'
                     }`}
                   >
-                    <p className="text-sm font-bold">Correccion de instrumental</p>
+                  <p className="text-sm font-bold">Corrección de instrumental</p>
                     <p className="mt-2 text-sm leading-6">{toolFeedback}</p>
                   </div>
                 </div>
@@ -836,12 +836,12 @@ export default function BurnLab() {
             </section>
 
             <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white p-5 text-slate-950 shadow-2xl shadow-black/20 dark:bg-slate-900 dark:text-white">
-              <h2 className="text-lg font-bold">Telemetria del caso</h2>
+              <h2 className="text-lg font-bold">Telemetría del caso</h2>
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <Metric label="Score" value={score} />
                 <Metric label="Fallos" value={errorsCount} />
                 <Metric label="Correctos" value={`${correctApplied}/${correctToolIds.length}`} />
-                <Metric label="Precision" value={`${precision}%`} />
+                <Metric label="Precisión" value={`${precision}%`} />
                 <Metric label="Gravedad" value={selectedSeverity ? severityLabels[selectedSeverity] : 'Pendiente'} />
               </div>
               <div className="mt-5 grid gap-3">
@@ -929,12 +929,12 @@ function Briefing({ caseData, onStart }) {
         transition={{ duration: 0.22 }}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">
-          Briefing medico
+          Briefing médico
         </p>
         <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-            <h2 className="font-bold">Que paso</h2>
+            <h2 className="font-bold">Qué pasó</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">{caseData.mechanism}</p>
             <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 p-3 text-sm leading-6 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
               <span className="font-bold">Aspecto: </span>
@@ -944,15 +944,15 @@ function Briefing({ caseData, onStart }) {
           <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
             <h2 className="font-bold">Instrucciones</h2>
             <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-              En computadora: haz clic en la herramienta y aplicala al caso. En
-              celular: toca cada opcion de la bandeja medica. Elige solo lo que
-              clasifica la gravedad y luego lo que enfria, limpia o protege;
+              En computadora: haz clic en la herramienta y aplícala al caso. En
+              celular: toca cada opción de la bandeja médica. Elige solo lo que
+              clasifica la gravedad y luego lo que enfría, limpia o protege;
               evita mitos que atrapan calor, ensucian o activan reacciones raras.
             </p>
           </div>
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Como se mide el resultado</h2>
+          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide el resultado</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
             El score final queda entre 0 y 100: 40% clasificar bien la gravedad
             de la quemadura, 40% elegir instrumentos seguros y 20% responder sin
@@ -968,7 +968,7 @@ function Briefing({ caseData, onStart }) {
             onClick={onStart}
             type="button"
           >
-            Entendido, Iniciar Simulacion
+            Entendido, iniciar simulación
           </button>
           <VideoTutorialModal title="Video tutorial quemaduras" videoId="cECkv6xUuTY" />
         </div>
@@ -1001,7 +1001,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <div>
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700">
               <BookOpen aria-hidden="true" className="h-4 w-4" />
-              Retroalimentacion clinica
+              Retroalimentación clínica
             </p>
             <h2 className="mt-1 text-2xl font-bold">{results.caseTitle}</h2>
           </div>
@@ -1012,7 +1012,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <Metric label="Precision final" value={`${results.precision}%`} />
+          <Metric label="Precisión final" value={`${results.precision}%`} />
           <Metric label="Fallos" value={results.errorsCount} />
           <Metric label="Tiempo" value={`${results.completionTimeSeconds}s`} />
           <Metric label="Gravedad" value={severityLabels[results.severitySelected] ?? 'Sin clasificar'} />
@@ -1023,7 +1023,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
             ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
             : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100'
         }`}>
-          <p className="font-bold">Clasificacion de gravedad</p>
+          <p className="font-bold">Clasificación de gravedad</p>
           <p className="mt-2 leading-6">{results.severityFeedback}</p>
         </div>
 

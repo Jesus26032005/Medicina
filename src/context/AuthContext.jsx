@@ -72,7 +72,7 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async ({ email, password }) => {
     if (!supabase) {
-      throw new Error('Supabase no esta configurado.');
+      throw new Error('Supabase no está configurado.');
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -89,7 +89,7 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async ({ email, password, fullName }) => {
     if (!supabase) {
-      throw new Error('Supabase no esta configurado.');
+      throw new Error('Supabase no está configurado.');
     }
 
     const { data, error } = await supabase.auth.signUp({
@@ -111,7 +111,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     if (!supabase) {
-      throw new Error('Supabase no esta configurado.');
+      throw new Error('Supabase no está configurado.');
     }
 
     const { error } = await supabase.auth.signOut();
