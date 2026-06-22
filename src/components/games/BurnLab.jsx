@@ -113,7 +113,7 @@ const clinicalCases = [
       call_emergency: 'Correcto: si es extensa, hay mareo o empeora, se debe pedir valoracion.',
     },
     incorrectTools: {
-      ice: 'Error: el hielo puede quemar la piel por frio y empeorar el dolor.',
+      ice: 'Error: el hielo puede quemar la piel por frío y empeorar el dolor.',
       butter: 'Error: la grasa atrapa calor y ensucia la zona.',
       toothpaste: 'Error: la pasta irrita y no es un tratamiento limpio.',
     },
@@ -125,7 +125,7 @@ const clinicalCases = [
     woundDescription: 'Piel muy roja, brillante, con ampollas intactas y dolor intenso después del contacto con agua hirviendo.',
     visual: 'thermal',
     severity: 'second',
-    severityExplanation: 'La presencia de ampollas indica una quemadura de 2do grado.',
+    severityExplanation: 'La presencia de ampollas indica una quemadura de segundo grado.',
     hint: 'Enfría poco a poco y cubre limpio. Nada de remedios grasosos.',
     correctTools: {
       cool_water: 'Correcto: el agua fresca baja el calor que sigue dañando la piel.',
@@ -145,7 +145,7 @@ const clinicalCases = [
     woundDescription: 'Zona roja con ampollas y dolor fuerte alrededor de la manga quemada; la piel aún está sensible.',
     visual: 'thermal',
     severity: 'second',
-    severityExplanation: 'Ampollas y dolor intenso sugieren 2do grado; si fuera correosa o sin dolor central, pensaríamos en 3er grado.',
+    severityExplanation: 'Las ampollas y el dolor intenso sugieren segundo grado; si la piel fuera correosa o no hubiera dolor central, pensaríamos en tercer grado.',
     hint: 'Primero detén lo que quema; luego enfría y cubre limpio.',
     correctTools: {
       stop_burning: 'Correcto: apagar la fuente evita que la piel siga recibiendo calor.',
@@ -165,7 +165,7 @@ const clinicalCases = [
     woundDescription: 'Piel enrojecida, húmeda, con ardor intenso y pequeñas ampollas bajo la zona mojada con químico.',
     visual: 'chemical',
     severity: 'second',
-    severityExplanation: 'Ampollas, humedad y dolor intenso por corrosivo apuntan a 2do grado hasta que un profesional valore profundidad.',
+    severityExplanation: 'Las ampollas, la humedad y el dolor intenso por corrosivos apuntan a segundo grado hasta que un profesional valore la profundidad.',
     hint: 'Si es líquido corrosivo, quita lo contaminado y enjuaga con mucha agua.',
     correctTools: {
       remove_clothing: 'Correcto: la ropa mojada con químico sigue quemando si se queda pegada.',
@@ -185,7 +185,7 @@ const clinicalCases = [
     woundDescription: 'Polvo blanco adherido, piel muy irritada y dolorosa, con zonas rojizas que pueden formar ampollas.',
     visual: 'chemical',
     severity: 'second',
-    severityExplanation: 'Dolor, irritación intensa y posible ampolla sugieren 2do grado; primero se retira el polvo en seco.',
+    severityExplanation: 'El dolor, la irritación intensa y las posibles ampollas sugieren segundo grado; primero se retira el polvo en seco.',
     hint: 'Si es polvo que reacciona con agua, primero retíralo en seco.',
     correctTools: {
       brush_powder: 'Correcto: quitar el polvo en seco evita activar más reacción.',
@@ -205,7 +205,7 @@ const clinicalCases = [
     woundDescription: 'Punto oscuro de entrada, textura seca/correosa y dolor menor en el centro pese al daño visible.',
     visual: 'electrical',
     severity: 'third',
-    severityExplanation: 'La piel correosa, oscura o con poca sensibilidad central sugiere daño profundo de 3er grado.',
+    severityExplanation: 'La piel correosa, oscura o con poca sensibilidad central sugiere daño profundo de tercer grado.',
     hint: 'Aquí lo peligroso puede estar por dentro: llama emergencias y revisa respiración.',
     correctTools: {
       call_emergency: 'Correcto: con electricidad fuerte, el corazón puede estar en riesgo aunque la piel se vea pequeña.',
@@ -225,7 +225,7 @@ const clinicalCases = [
     woundDescription: 'Piel raspada, roja, húmeda, con zonas abiertas superficiales y dolor intenso por fricción.',
     visual: 'friction',
     severity: 'second',
-    severityExplanation: 'Cuando la fricción abre la piel y deja superficie húmeda/dolorosa, se maneja como 2do grado superficial.',
+    severityExplanation: 'Cuando la fricción abre la piel y deja una superficie húmeda y dolorosa, se maneja como una lesión superficial de segundo grado.',
     hint: 'Piensa en enfriar, limpiar suavemente y cubrir sin productos contaminantes.',
     correctTools: {
       cool_water: 'Correcto: el agua ayuda a enfriar y retirar suciedad superficial.',
@@ -245,7 +245,7 @@ const clinicalCases = [
     woundDescription: 'Piel pálida, rígida, con dolor y posible ampollamiento al recalentarse.',
     visual: 'cold',
     severity: 'second',
-    severityExplanation: 'Las lesiones por frío con rigidez y ampollas se tratan como daño parcial profundo, compatible con 2do grado.',
+    severityExplanation: 'Las lesiones por frío con rigidez y ampollas se tratan como daño parcial profundo, compatible con segundo grado.',
     hint: 'No frotes ni uses hielo; recalienta de forma controlada.',
     correctTools: {
       warm_water: 'Correcto: el recalentamiento gradual con agua tibia protege tejido congelado.',
@@ -265,7 +265,7 @@ const clinicalCases = [
     woundDescription: 'Piel muy roja con ampollas extensas, dolor intenso y sensibilidad al roce.',
     visual: 'thermal',
     severity: 'second',
-    severityExplanation: 'Las ampollas extensas son el dato clave de 2do grado.',
+    severityExplanation: 'Las ampollas extensas son el dato clave de una quemadura de segundo grado.',
     hint: 'Enfría, cubre y deriva si hay ampollas extensas o compromiso sistémico.',
     correctTools: {
       cool_water: 'Correcto: enfriar alivia dolor y reduce calor residual.',
@@ -285,7 +285,7 @@ const clinicalCases = [
     woundDescription: 'Material negro pegado, zonas blanquecinas o carbonizadas alrededor y dolor irregular.',
     visual: 'tar',
     severity: 'third',
-    severityExplanation: 'El material adherido caliente puede causar daño profundo; piel blanquecina, correosa o carbonizada sugiere 3er grado.',
+    severityExplanation: 'El material caliente adherido puede causar daño profundo; la piel blanquecina, correosa o carbonizada sugiere tercer grado.',
     hint: 'Enfría el material, pero no lo arranques de la piel.',
     correctTools: {
       cool_water: 'Correcto: enfriar solidifica y baja la temperatura del alquitrán.',
@@ -306,7 +306,7 @@ const clinicalCases = [
     visual: 'airway',
     severity: 'third',
     severityExplanation: 'Humo, hollín y ronquera son datos de alarma: la prioridad es vía aérea y se considera grave.',
-    hint: 'Si respiro humo, lo urgente puede ser que la garganta se cierre, no solo la piel.',
+    hint: 'Si respiró humo, lo urgente puede ser que la garganta se cierre, no solo la lesión en la piel.',
     correctTools: {
       airway_assessment: 'Correcto: ronquera y hollín son pistas de que respirar puede ponerse difícil.',
       call_emergency: 'Correcto: necesita ayuda urgente y vigilancia para respirar.',
@@ -336,20 +336,20 @@ const severityOptions = [
   },
   {
     key: 'second',
-    label: '2do grado',
+    label: 'Segundo grado',
     description: 'Ampollas o piel abierta superficial.',
   },
   {
     key: 'third',
-    label: '3er grado',
+    label: 'Tercer grado',
     description: 'Profunda, carbonizada, eléctrica o vía aérea comprometida.',
   },
 ];
 
 const severityLabels = {
   first: '1er grado',
-  second: '2do grado',
-  third: '3er grado',
+  second: 'Segundo grado',
+  third: 'Tercer grado',
 };
 
 function getRandomItem(items) {
@@ -646,7 +646,7 @@ export default function BurnLab() {
 
   return (
     <main
-      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white"
       style={{
         backgroundImage:
           'radial-gradient(circle at 20% 20%, rgba(14,165,233,0.12), transparent 26%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',
@@ -656,16 +656,16 @@ export default function BurnLab() {
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between gap-4">
           <Link
-            className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+            className="flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
             to="/dashboard"
           >
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
           </Link>
-          <div className="rounded-md border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-sm font-semibold text-cyan-100">
+          <div className="rounded-md border border-cyan-300 bg-cyan-50 px-3 py-2 text-sm font-semibold text-cyan-800 dark:border-cyan-400/30 dark:bg-cyan-400/10 dark:text-cyan-100">
             Caso aleatorio: {caseData.title}
           </div>
-          <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
+          <ThemeToggle />
         </header>
 
         {showBriefing ? (
@@ -695,14 +695,14 @@ export default function BurnLab() {
               </button>
             ) : null}
             <section>
-              <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
+              <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
                 Sala de urgencias - Burn Lab
               </p>
               <h1 className="mt-2 text-2xl font-bold md:text-5xl">
                 {caseData.title}
               </h1>
-              <p className="mt-4 max-w-2xl text-slate-300">{caseData.mechanism}</p>
-              <div className="isolate mt-4 max-w-2xl translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-6 text-cyan-50">
+              <p className="mt-4 max-w-2xl text-slate-600 dark:text-slate-300">{caseData.mechanism}</p>
+              <div className="isolate mt-4 max-w-2xl translate-z-0 transform-gpu rounded-lg border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-900 dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-50">
                 <span className="font-bold">Aspecto de la quemadura: </span>
                 {caseData.woundDescription}
               </div>
@@ -779,7 +779,7 @@ export default function BurnLab() {
                   </div>
                   <PatientVector visual={caseData.visual} />
                   <p className="mt-5 text-center text-sm font-semibold text-cyan-100">
-                    Zona de intervencion
+                    Zona de intervención
                   </p>
                   <p className="mt-2 max-w-sm text-center text-sm text-slate-400">
                     Suelta o selecciona herramientas. Completa todas las acciones correctas.
@@ -838,7 +838,7 @@ export default function BurnLab() {
             <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white p-5 text-slate-950 shadow-2xl shadow-black/20 dark:bg-slate-900 dark:text-white">
               <h2 className="text-lg font-bold">Telemetría del caso</h2>
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <Metric label="Score" value={score} />
+                <Metric label="Puntuación" value={score} />
                 <Metric label="Fallos" value={errorsCount} />
                 <Metric label="Correctos" value={`${correctApplied}/${correctToolIds.length}`} />
                 <Metric label="Precisión" value={`${precision}%`} />
@@ -954,7 +954,7 @@ function Briefing({ caseData, onStart }) {
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
           <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide el resultado</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            El score final queda entre 0 y 100: 40% clasificar bien la gravedad
+            La puntuación final queda entre 0 y 100: 40% clasificar bien la gravedad
             de la quemadura, 40% elegir instrumentos seguros y 20% responder sin
             tardar demasiado. Los mitos o elecciones peligrosas bajan el
             resultado.
@@ -1006,7 +1006,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
             <h2 className="mt-1 text-2xl font-bold">{results.caseTitle}</h2>
           </div>
           <div className="rounded-md bg-rose-50 px-3 py-2 text-right dark:bg-rose-400/10">
-            <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Score</p>
+            <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Puntuación</p>
             <p className="text-2xl font-bold text-rose-700 dark:text-rose-100">{results.score}</p>
           </div>
         </div>

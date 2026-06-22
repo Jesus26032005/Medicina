@@ -215,7 +215,7 @@ function getConsciousnessLabel(consciousness) {
     alerta: 'alerta',
     inconsciente: 'inconsciente',
     responde_dolor: 'responde al dolor',
-    responde_voz: 'responde a voz',
+    responde_voz: 'responde a la voz',
   };
   return labels[consciousness] ?? consciousness;
 }
@@ -271,7 +271,7 @@ function evaluateManchesterCase(caseData) {
     return {
       expected: 'yellow',
       explanation:
-        'MTS: dolor moderado, fiebre o constantes alteradas, dificultad respiratoria moderada o respuesta solo a voz se clasifican AMARILLO.',
+        'MTS: el dolor moderado, la fiebre o las constantes alteradas, la dificultad respiratoria moderada o la respuesta solo a la voz se clasifican como AMARILLO.',
     };
   }
 
@@ -293,7 +293,7 @@ function evaluateManchesterCase(caseData) {
 function buildProceduralScenario(caseData) {
   const parts = [
     `Paciente en ${caseData.context}.`,
-    `Nivel de consciencia: ${getConsciousnessLabel(caseData.consciousness)}.`,
+    `Nivel de conciencia: ${getConsciousnessLabel(caseData.consciousness)}.`,
     `Hemorragia: ${getHemorrhageLabel(caseData.hemorrhage)}.`,
     `Dolor: ${getPainLabel(caseData.pain)}.`,
     `Respiración: ${getBreathingLabel(caseData.difficultyBreathing)}.`,
@@ -598,7 +598,7 @@ export default function TacticalTriage() {
 
   return (
     <main
-      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white"
       style={{
         backgroundImage:
           'radial-gradient(circle at 18% 18%, rgba(249,115,22,0.13), transparent 28%), linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px)',
@@ -607,14 +607,14 @@ export default function TacticalTriage() {
     >
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex flex-wrap items-center justify-between gap-4">
-          <Link className="flex h-10 touch-manipulation select-none items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10" to="/dashboard">
+          <Link className="flex h-10 touch-manipulation select-none items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10" to="/dashboard">
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
           </Link>
-          <div className="rounded-md border border-orange-400/30 bg-orange-400/10 px-3 py-2 text-sm font-semibold text-orange-100">
+          <div className="rounded-md border border-orange-300 bg-orange-50 px-3 py-2 text-sm font-semibold text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/10 dark:text-orange-100">
             Triage Táctico - Manchester MTS
           </div>
-          <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
+          <ThemeToggle />
         </header>
 
         {showBriefing ? (
@@ -643,30 +643,30 @@ export default function TacticalTriage() {
                 </span>
               </button>
             ) : null}
-            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-orange-400/20 bg-slate-900/95 p-4 shadow-2xl shadow-orange-950/20 md:p-6">
+            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-orange-200 bg-white p-4 shadow-xl dark:border-orange-400/20 dark:bg-slate-900/95 dark:shadow-orange-950/20 md:p-6">
               <div className="mb-5 flex flex-col gap-4 rounded-lg border border-orange-300/25 bg-orange-400/10 p-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-orange-200">
+                  <p className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-orange-800 dark:text-orange-200">
                     <ClipboardList aria-hidden="true" className="h-4 w-4" />
                     Manchester Triage System
                   </p>
-                  <p className="mt-1 text-sm leading-6 text-slate-300">
+                  <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
                     Clasifica prioridad intrahospitalaria según riesgo clínico y tiempo máximo de atención.
                   </p>
                 </div>
-                <div className="rounded-md border border-cyan-300/30 bg-cyan-300/10 px-3 py-2 text-xs font-bold uppercase tracking-wide text-cyan-100">
+                <div className="rounded-md border border-cyan-300 bg-cyan-50 px-3 py-2 text-xs font-bold uppercase tracking-wide text-cyan-800 dark:border-cyan-300/30 dark:bg-cyan-300/10 dark:text-cyan-100">
                   5 niveles MTS
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-300">
+                  <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">
                     <Siren aria-hidden="true" className="h-4 w-4" />
                     Paciente {currentIndex + 1} de {PATIENTS_PER_GAME}
                   </p>
                   <h1 className="mt-2 break-words text-2xl font-bold leading-tight md:text-3xl">{currentPatient.title}</h1>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg border border-yellow-300/30 bg-yellow-300/10 px-4 py-3 text-yellow-100">
+                <div className="flex items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-3 text-yellow-800 dark:border-yellow-300/30 dark:bg-yellow-300/10 dark:text-yellow-100">
                   <Timer aria-hidden="true" className="h-5 w-5" />
                   <span className="text-2xl font-bold">{secondsLeft}s</span>
                 </div>
@@ -688,7 +688,7 @@ export default function TacticalTriage() {
               <div className="isolate mt-6 grid w-full grid-cols-1 gap-3 overflow-y-auto overscroll-none sm:grid-cols-2 lg:grid-cols-5">
                 {triageOptions.map((option) => (
                   <button
-                    className={`min-h-[76px] w-full translate-z-0 transform-gpu touch-manipulation select-none rounded-lg border px-4 py-4 text-left text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-24 lg:px-3 ${option.colorClass}`}
+                    className={`colorblind-triage colorblind-triage-${option.key} min-h-[76px] w-full translate-z-0 transform-gpu touch-manipulation select-none rounded-lg border px-4 py-4 text-left text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-24 lg:px-3 ${option.colorClass}`}
                     disabled={isLocked || showTutorial}
                     key={option.key}
                     onClick={() => classifyPatient(option.key)}
@@ -704,8 +704,8 @@ export default function TacticalTriage() {
               {feedback ? (
                 <div className={`mt-6 rounded-lg border p-4 text-sm font-semibold ${
                   answers.at(-1)?.correct
-                    ? 'border-emerald-300/30 bg-emerald-400/10 text-emerald-100'
-                    : 'border-red-300/30 bg-red-400/10 text-red-100'
+                    ? 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
+                    : 'border-red-300 bg-red-50 text-red-800 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-100'
                 }`}>
                   {feedback}
                   <button
@@ -720,7 +720,7 @@ export default function TacticalTriage() {
               ) : null}
             </section>
 
-            <aside className="isolate w-full translate-z-0 transform-gpu rounded-lg border border-slate-700 bg-slate-900/95 p-5 text-white shadow-2xl shadow-black/20">
+            <aside className="isolate w-full translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-5 text-slate-950 shadow-lg dark:border-slate-700 dark:bg-slate-900/95 dark:text-white dark:shadow-black/20">
               <h2 className="font-bold">Telemetría MTS</h2>
               <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
                 <ClinicalMetric label="Correctos" value={`${correctCount}/${answers.length}`} />
@@ -755,10 +755,10 @@ function Briefing({ onStart }) {
     <section className="grid flex-1 place-items-center py-10">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-6"
+        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:shadow-black/30 md:p-6"
         initial={{ opacity: 0, y: 16 }}
       >
-        <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">
+        <p className="text-sm font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">
           Briefing médico
         </p>
         <h1 className="mt-2 text-3xl font-bold">Triage Táctico Manchester</h1>
@@ -766,17 +766,17 @@ function Briefing({ onStart }) {
           El Sistema de Triage de Manchester (MTS) es el estándar intrahospitalario para priorizar pacientes en urgencias basado en su riesgo clínico.
         </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-md border border-slate-700 bg-slate-950/70 p-4">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
             <h2 className="font-bold">Instrucciones</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+            <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
               En computadora y celular: toca o haz clic en uno de los cinco
               niveles Manchester. Lee conciencia, hemorragia, dolor,
               respiración, temperatura y datos de alto riesgo antes de decidir.
             </p>
           </div>
-          <div className="rounded-md border border-slate-700 bg-slate-950/70 p-4">
-            <h2 className="font-bold">Inicio vs Final</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+            <h2 className="font-bold">Inicio vs. final</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
               Inicio es el promedio de precisión de los primeros 2 pacientes.
               Final es el promedio de los últimos 2. Así se mide si priorizas
               mejor conforme avanza el turno de triage.
@@ -800,23 +800,23 @@ function Briefing({ onStart }) {
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
-          <h2 className="font-bold">Cómo se calcula el score</h2>
+          <h2 className="font-bold">Cómo se calcula la puntuación</h2>
           <p className="mt-2">
-            El score va de 0 a 100: 40% decisión clínica, 40% precisión de
+            La puntuación va de 0 a 100: 40% decisión clínica, 40% precisión de
             clasificación y 20% tiempo restante. Cada paciente correcto suma
             precisión; cada error o tiempo agotado baja el promedio final.
           </p>
         </div>
-        <div className="mt-4 rounded-md border border-slate-700 bg-slate-950/70 p-4">
+        <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
           <h2 className="font-bold">Niveles MTS</h2>
           <div className="mt-3 grid gap-3">
             {manchesterSteps.map((step) => (
-              <div className="grid gap-2 rounded-md border border-slate-700 bg-slate-900 p-3 text-sm sm:grid-cols-[120px_1fr]" key={step.color}>
+              <div className="grid gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-[120px_1fr]" key={step.color}>
                 <div>
-                  <p className="font-black text-white">{step.color}</p>
+                  <p className="font-black text-slate-950 dark:text-white">{step.color}</p>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{step.rule}</p>
                 </div>
-                <p className="leading-6 text-slate-300">{step.description}</p>
+                <p className="leading-6 text-slate-600 dark:text-slate-300">{step.description}</p>
               </div>
             ))}
           </div>
@@ -843,10 +843,15 @@ function Briefing({ onStart }) {
 }
 
 function ClinicalMetric({ label, value }) {
+  const displayValue =
+    typeof value === 'string' && value.length
+      ? `${value.charAt(0).toUpperCase()}${value.slice(1)}`
+      : value;
+
   return (
-    <div className="rounded-md border border-slate-700 bg-slate-950/80 p-3">
+    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950/80">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-lg font-bold text-white">{value}</p>
+      <p className="mt-1 text-lg font-bold text-slate-950 dark:text-white">{displayValue}</p>
     </div>
   );
 }
@@ -856,10 +861,10 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
       <motion.section
         animate={{ opacity: 1, y: 0 }}
-        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-black/30 md:p-8"
+        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:shadow-black/30 md:p-8"
         initial={{ opacity: 0, y: 18 }}
       >
-        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-300">
+        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">
           <BookOpen aria-hidden="true" className="h-4 w-4" />
           Retroalimentación clínica
         </p>
@@ -867,7 +872,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <ResultMetric label="Inicial" value={`${results.initialPrecision}%`} />
           <ResultMetric label="Final" value={`${results.finalPrecision}%`} />
-          <ResultMetric label="Score" value={results.score} />
+          <ResultMetric label="Puntuación" value={results.score} />
         </div>
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -891,9 +896,9 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
 
 function ResultMetric({ label, value }) {
   return (
-    <div className="rounded-md border border-slate-700 bg-slate-950/80 p-3">
+    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950/80">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-white">{value}</p>
+      <p className="mt-1 text-2xl font-bold text-slate-950 dark:text-white">{value}</p>
     </div>
   );
 }

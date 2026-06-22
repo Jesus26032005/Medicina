@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Activity, LogIn, MessageSquareQuote, ShieldCheck, Users } from 'lucide-react';
+import { Activity, LogIn, LogOut, MessageSquareQuote, ShieldCheck, Users } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -12,11 +12,16 @@ import {
   YAxis,
 } from 'recharts';
 import { supabase } from '../../lib/supabaseClient';
+import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../common/ThemeToggle';
 
+const testimonialLimitOptions = [10, 25, 50];
+
 export default function GlobalEvidence() {
+  const { isAuthenticated, logout } = useAuth();
   const [sessions, setSessions] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [testimonialLimit, setTestimonialLimit] = useState(10);
   const [registeredUsersCount, setRegisteredUsersCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -43,7 +48,7 @@ export default function GlobalEvidence() {
             .from('testimonials')
             .select('id, content, learning_text, user_id, created_at')
             .order('created_at', { ascending: false })
-            .limit(12),
+            .limit(50),
           supabase.rpc('get_profiles_count'),
         ]);
 
@@ -124,6 +129,7 @@ export default function GlobalEvidence() {
     (sum, session) => sum + Number(session.errors_count ?? 0),
     0
   );
+  const visibleTestimonials = testimonials.slice(0, testimonialLimit);
 
   return (
     <main className="min-h-screen bg-white text-gray-900 transition-colors dark:bg-slate-950 dark:text-white">
@@ -135,21 +141,35 @@ export default function GlobalEvidence() {
             </span>
             LifeSaver Arcade
           </Link>
-          <nav className="flex items-center gap-3">
-            <Link className="text-sm font-semibold text-cyan-700 hover:text-cyan-900 dark:text-cyan-200 dark:hover:text-white" to="/dashboard">
-              Mi dashboard
-            </Link>
+          <nav className="flex flex-wrap items-center justify-end gap-3">
+            {isAuthenticated ? (
+              <Link className="text-sm font-semibold text-cyan-700 hover:text-cyan-900 dark:text-cyan-200 dark:hover:text-white" to="/dashboard">
+                Mi dashboard
+              </Link>
+            ) : null}
             <Link className="text-sm font-semibold text-emerald-700 hover:text-emerald-900 dark:text-emerald-200 dark:hover:text-white" to="/respaldo-medico">
               Respaldo médico
             </Link>
             <ThemeToggle />
-            <Link
-              className="flex h-10 items-center gap-2 rounded-md border border-gray-300 px-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
-              to="/login"
-            >
-              <LogIn aria-hidden="true" className="h-4 w-4" />
-              Entrar
-            </Link>
+            {isAuthenticated ? (
+              <button
+                className="flex h-10 items-center gap-2 rounded-md border border-gray-300 px-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
+                onClick={logout}
+                type="button"
+              >
+                <LogOut aria-hidden="true" className="h-4 w-4" />
+                Salir
+              </button>
+            ) : null}
+            {!isAuthenticated ? (
+              <Link
+                className="flex h-10 items-center gap-2 rounded-md border border-gray-300 px-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
+                to="/login"
+              >
+                <LogIn aria-hidden="true" className="h-4 w-4" />
+                Entrar
+              </Link>
+            ) : null}
           </nav>
         </div>
       </header>
@@ -193,33 +213,45 @@ export default function GlobalEvidence() {
           <div className="mt-4 h-80 rounded-lg bg-white p-3 dark:bg-slate-900">
             <ResponsiveContainer height="100%" width="100%">
               <BarChart data={impactData}>
-                <CartesianGrid stroke="#64748b" strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fill: '#94a3b8' }} />
-                <YAxis domain={[0, 100]} tick={{ fill: '#94a3b8' }} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc' }} />
+                <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fill: 'var(--chart-axis)' }} />
+                <YAxis domain={[0, 100]} tick={{ fill: 'var(--chart-axis)' }} />
+                <Tooltip contentStyle={{ backgroundColor: 'var(--chart-tooltip-bg)', borderColor: 'var(--chart-tooltip-border)', color: 'var(--chart-tooltip-text)' }} />
                 <Legend />
-                <Bar dataKey="initial" fill="#f97316" name="Precisión inicial" />
-                <Bar dataKey="final" fill="#06b6d4" name="Precisión final" />
+                <Bar dataKey="initial" fill="var(--chart-initial)" name="Precisión inicial" />
+                <Bar dataKey="final" fill="var(--chart-final)" name="Precisión final" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </section>
 
         <section className="mt-8">
-          <div className="flex items-end justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
                 Aprendizajes de usuarios
               </p>
               <h2 className="mt-1 text-2xl font-bold">Testimonios del simulador</h2>
             </div>
-            <p className="hidden text-sm text-gray-500 dark:text-slate-400 sm:block">
-              {testimonials.length} registros recientes
-            </p>
+            <label className="text-sm font-semibold text-gray-700 dark:text-slate-200" htmlFor="testimonial-limit">
+              Ver últimos
+              <select
+                className="mt-2 h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950 sm:w-40"
+                id="testimonial-limit"
+                onChange={(event) => setTestimonialLimit(Number(event.target.value))}
+                value={testimonialLimit}
+              >
+                {testimonialLimitOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option} testimonios
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {testimonials.length ? (
-              testimonials.map((testimonial) => (
+              visibleTestimonials.map((testimonial) => (
                 <article
                   className="rounded-lg border border-gray-200 bg-gray-50 p-5 shadow-md transition hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-50 dark:border-white/10 dark:bg-white/10 dark:shadow-slate-950/20 dark:hover:border-cyan-300/40 dark:hover:bg-white/[0.14]"
                   key={testimonial.id}

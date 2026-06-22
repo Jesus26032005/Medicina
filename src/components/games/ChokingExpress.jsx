@@ -54,12 +54,12 @@ const actionOptions = [
   {
     id: 'apply_heimlich',
     label: 'Aplicar maniobra indicada',
-    className: 'border-cyan-300/30 bg-cyan-400/15 text-cyan-100 hover:bg-cyan-400/25',
+    className: 'border-cyan-300 bg-cyan-100 text-cyan-900 hover:bg-cyan-200 dark:border-cyan-300/30 dark:bg-cyan-400/15 dark:text-cyan-100 dark:hover:bg-cyan-400/25',
   },
   {
     id: 'do_not_apply',
     label: 'No aplicar (animar a toser)',
-    className: 'border-emerald-300/30 bg-emerald-400/15 text-emerald-100 hover:bg-emerald-400/25',
+    className: 'border-emerald-300 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 dark:border-emerald-300/30 dark:bg-emerald-400/15 dark:text-emerald-100 dark:hover:bg-emerald-400/25',
   },
 ];
 
@@ -502,24 +502,24 @@ export default function ChokingExpress() {
   }
 
   return (
-    <main className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white">
+    <main className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between">
-          <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
+          <Link className="flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10" to="/dashboard">
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
           </Link>
-          <div className="rounded-md border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-sm font-semibold text-cyan-100">
+          <div className="rounded-md border border-cyan-300 bg-cyan-50 px-3 py-2 text-sm font-semibold text-cyan-800 dark:border-cyan-400/30 dark:bg-cyan-400/10 dark:text-cyan-100">
             Ahogo Express
           </div>
-          <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
+          <ThemeToggle />
         </header>
 
         {showBriefing ? (
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
           <div className="grid flex-1 items-center gap-6 py-4 md:gap-8 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <section className="isolate relative flex min-h-[calc(100dvh-120px)] flex-col justify-start overflow-visible rounded-lg border border-white/10 bg-white/5 p-3 md:min-h-0 md:justify-center md:p-6">
+            <section className="isolate relative flex min-h-[calc(100dvh-120px)] flex-col justify-start overflow-visible rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-white/5 md:min-h-0 md:justify-center md:p-6">
               {showTutorial ? (
                 <button
                   aria-label="Cerrar tutorial e iniciar práctica"
@@ -548,16 +548,16 @@ export default function ChokingExpress() {
                 </button>
               ) : null}
               {assessmentPhase === 'pending' ? (
-                <div className="isolate mx-auto w-full max-w-xl translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-900/95 p-5 text-center">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
+                <div className="isolate mx-auto w-full max-w-xl translate-z-0 transform-gpu rounded-lg border border-cyan-200 bg-cyan-50 p-5 text-center dark:border-cyan-300/20 dark:bg-slate-900/95">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
                     Evaluación inicial
                   </p>
                   <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
-                  <p className="mt-3 text-slate-300">{caseData.description}</p>
-                  <div className="mt-4 rounded-md border border-cyan-300/30 bg-cyan-300/10 p-3 text-sm font-semibold leading-6 text-cyan-100">
+                  <p className="mt-3 text-slate-600 dark:text-slate-300">{caseData.description}</p>
+                  <div className="mt-4 rounded-md border border-cyan-300 bg-cyan-100 p-3 text-sm font-semibold leading-6 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-300/10 dark:text-cyan-100">
                     {caseData.recommendation}
                   </div>
-                  <p className="mt-4 rounded-md border border-amber-300/30 bg-amber-300/10 p-3 text-sm font-semibold text-amber-100">
+                  <p className="mt-4 rounded-md border border-amber-300 bg-amber-100 p-3 text-sm font-semibold text-amber-900 dark:border-amber-300/30 dark:bg-amber-300/10 dark:text-amber-100">
                     Antes de comprimir, elige la primera acción correcta según el protocolo.
                   </p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -576,15 +576,15 @@ export default function ChokingExpress() {
                 </div>
               ) : (
                 <>
-                  <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
                     Técnica {caseData.force}
                   </p>
                   <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
-                  <p className="mt-3 text-slate-300">{caseData.description}</p>
-                  <p className="mt-4 rounded-md border border-cyan-300/20 bg-cyan-300/10 p-3 text-sm font-bold text-cyan-100">
+                  <p className="mt-3 text-slate-600 dark:text-slate-300">{caseData.description}</p>
+                  <p className="mt-4 rounded-md border border-cyan-300 bg-cyan-100 p-3 text-sm font-bold text-cyan-900 dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-100">
                     Objetivo: {caseData.targetLabel}
                   </p>
-                  <p className="mt-3 rounded-md border border-emerald-300/30 bg-emerald-300/10 p-3 text-sm font-bold text-emerald-100">
+                  <p className="mt-3 rounded-md border border-emerald-300 bg-emerald-100 p-3 text-sm font-bold text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-300/10 dark:text-emerald-100">
                     Zona de acción: {compressionZone.label}. El marcador brillante sobre el paciente muestra dónde actuar.
                   </p>
 
@@ -592,14 +592,14 @@ export default function ChokingExpress() {
                     <div ref={trackRef} className="relative h-56 w-14 shrink-0 translate-z-0 transform-gpu overflow-hidden rounded-full border border-white/10 bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
                       <div
                         ref={targetRef}
-                        className="absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
+                        className="colorblind-target-zone absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
                         style={{
                           bottom: `${caseData.greenMin}%`,
                           height: `${caseData.greenMax - caseData.greenMin}%`,
                         }}
                       />
                       <div
-                        className="heimlich-indicator absolute left-1/2 top-0 h-5 w-14 rounded-full bg-cyan-300 shadow-lg shadow-cyan-400/50 md:h-6 md:w-20"
+                        className="colorblind-moving-indicator heimlich-indicator absolute left-1/2 top-0 h-5 w-14 rounded-full bg-cyan-300 shadow-lg shadow-cyan-400/50 md:h-6 md:w-20"
                         ref={indicatorRef}
                       />
                     </div>
@@ -637,7 +637,7 @@ export default function ChokingExpress() {
                           {compressionZone.shortLabel}
                         </div>
                       </div>
-                      <p className="mt-3 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-center text-xs font-bold text-cyan-100">
+                      <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-center text-xs font-bold text-cyan-800 dark:border-white/10 dark:bg-white/5 dark:text-cyan-100">
                         {compressionZone.label}
                       </p>
                     </div>
@@ -722,12 +722,12 @@ function Briefing({ caseData, onStart }) {
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula el score</h2>
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula la puntuación</h2>
           <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
-            El score va de 0 a 100: 40% decisión inicial, 40% precisión al
+            La puntuación va de 0 a 100: 40% decisión inicial, 40% precisión al
             aplicar la compresión en la zona correcta y 20% rapidez. Si aplicas
-            una maniobra cuando la persona todavía tose, se marca error crítico y el
-            score cae a 0.
+            una maniobra cuando la persona todavía tose, se marca un error crítico y
+            la puntuación cae a 0.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -773,7 +773,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <Metric label="Decisión" value={`${results.knowledgeDecision}%`} />
           <Metric label="Mecánica" value={`${results.mechanicalPrecision}%`} />
           <Metric label="Tiempo" value={`${results.timeResponse}%`} />
-          <Metric label="Score" value={results.score} />
+          <Metric label="Puntuación" value={results.score} />
         </div>
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">

@@ -553,7 +553,7 @@ export default function RcpHero() {
 
   return (
     <main
-      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white"
+      className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white"
       style={{
         backgroundImage:
           'linear-gradient(rgba(34,197,94,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.08) 1px, transparent 1px)',
@@ -563,16 +563,16 @@ export default function RcpHero() {
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between gap-4">
           <Link
-            className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+            className="flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
             to="/dashboard"
           >
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
           </Link>
-          <div className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-100">
+          <div className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-100">
             Objetivo: {targetBPM} BPM · {gameDurationMs / 1000}s
           </div>
-          <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
+          <ThemeToggle />
         </header>
 
         {showBriefing ? (
@@ -608,14 +608,14 @@ export default function RcpHero() {
             </button>
           ) : null}
           <section className="flex flex-col items-center text-center">
-            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-emerald-300">
+            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
               <Monitor aria-hidden="true" className="h-4 w-4" />
               Monitor vital - RCP Hero
             </p>
-            <h1 className="mt-2 text-2xl font-bold text-emerald-50 md:text-5xl">
+            <h1 className="mt-2 text-2xl font-bold text-emerald-950 dark:text-emerald-50 md:text-5xl">
               Mantén el flujo de sangre efectivo
             </h1>
-            <p className="mt-4 max-w-2xl text-slate-300">
+            <p className="mt-4 max-w-2xl text-slate-600 dark:text-slate-300">
               Sigue la pista musical y comprime cuando el anillo ECG cierre. El
               margen de éxito es de +/- {SUCCESS_WINDOW_MS} ms por latido.
             </p>
@@ -687,7 +687,7 @@ export default function RcpHero() {
 
             <div className="isolate mt-8 w-full max-w-2xl translate-z-0 transform-gpu overflow-hidden rounded-lg border border-emerald-400/20 bg-black/50 p-4 shadow-2xl shadow-emerald-950/30">
               <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-emerald-300">
-                <span>ECG Rhythm Sync</span>
+                <span>Sincronización del ritmo ECG</span>
                 <span>{currentBeat + 1} / {getTotalBeats(gameDurationMs, beatIntervalMs)} latidos</span>
               </div>
               <svg
@@ -752,7 +752,7 @@ export default function RcpHero() {
                 {attempts.length || results ? 'Reiniciar' : 'Iniciar'}
               </button>
               <button
-                className="flex h-12 items-center gap-2 rounded-md border border-cyan-300/30 bg-cyan-300/10 px-5 text-sm font-bold text-cyan-100 transition hover:bg-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-12 items-center gap-2 rounded-md border border-cyan-300 bg-cyan-50 px-5 text-sm font-bold text-cyan-800 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-cyan-300/30 dark:bg-cyan-300/10 dark:text-cyan-100 dark:hover:bg-cyan-300/20"
                 disabled={!isRunning || showTutorial}
                 onClick={recordCompression}
                 type="button"
@@ -761,7 +761,7 @@ export default function RcpHero() {
                 Comprimir
               </button>
               <button
-                className="flex h-12 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-5 text-sm font-bold text-slate-100 transition hover:bg-white/10"
+                className="flex h-12 items-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:hover:bg-white/10"
                 disabled={showTutorial}
                 onClick={() => setIsMuted((value) => !value)}
                 type="button"
@@ -784,7 +784,7 @@ export default function RcpHero() {
               <Metric label="BPM" value={targetBPM} />
               <Metric label="Latido" value={currentBeat + 1} />
               <Metric label="Pulsaciones" value={attempts.length} />
-              <Metric label="Spam" value={spamAttemptsRef.current} />
+                <Metric label="Pulsaciones inválidas" value={spamAttemptsRef.current} />
               <Metric label="Precisión media" value={`${averagePrecision}%`} />
             </div>
             <div className="mt-5 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-4">
@@ -905,7 +905,7 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
           </p>
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide Inicio vs Final</h2>
+          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide el inicio vs. el final</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
             Inicio es tu precisión promedio en los primeros 10 segundos. Final
             es tu precisión promedio en los últimos 10 segundos de la duración
@@ -913,9 +913,9 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula el score</h2>
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula la puntuación</h2>
           <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
-            El score va de 0 a 100 y depende solo de tu ejecución: 65% precisión
+            La puntuación va de 0 a 100 y depende solo de tu ejecución: 65% precisión
             al caer cerca del latido ideal y 35% ritmo promedio cercano a
             100-120 BPM. Los fallos, clics fuera de tiempo o pulsaciones tipo
             spam restan puntos.
@@ -967,7 +967,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
             <h2 className="mt-1 text-2xl font-bold">Sesión RCP Hero completada</h2>
           </div>
           <div className="rounded-md bg-rose-50 px-3 py-2 text-right dark:bg-rose-400/10">
-            <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Score</p>
+            <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Puntuación</p>
             <p className="text-2xl font-bold text-rose-700 dark:text-rose-100">{results.score}</p>
           </div>
         </div>
@@ -978,7 +978,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <Metric label="Ritmo promedio" value={`${results.averageBPM} BPM`} />
           <Metric label="Fallos" value={results.errorsCount} />
           <Metric label="Spam" value={results.spamAttempts} />
-          <Metric label="Score" value={results.score} />
+          <Metric label="Puntuación" value={results.score} />
         </div>
 
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">

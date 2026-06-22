@@ -30,13 +30,14 @@ import ThemeToggle from '../common/ThemeToggle';
 
 const games = [
   ['RCP Hero', 'rcp_hero', 'Practica ritmo y resistencia para compresiones.'],
-  ['Laboratorio de Quemaduras', 'burn_lab', 'Aprende que ayuda y que empeora una quemadura.'],
+  ['Laboratorio de Quemaduras', 'burn_lab', 'Aprende qué ayuda y qué empeora una quemadura.'],
   ['Código Torniquete', 'tourniquet_code', 'Controla sangrado con presión suficiente y segura.'],
   ['Ahogo Express', 'choking_express', 'Reconoce dónde aplicar la maniobra según el caso.'],
-  ['Triage Táctico', 'tactical_triage', 'Clasifica múltiples víctimas con protocolo START.'],
+  ['Triage Táctico', 'tactical_triage', 'Prioriza pacientes mediante el Sistema de Triage de Manchester.'],
 ];
 
 const limitOptions = [10, 25, 50, 100];
+const TESTIMONIAL_MAX_LENGTH = 100;
 const gameLabels = Object.fromEntries(games.map(([label, key]) => [key, label]));
 const gameIcons = {
   burn_lab: PlayCircle,
@@ -67,7 +68,7 @@ const localInfoCards = [
     title: 'Dato curioso',
   },
   {
-    text: 'Triage START se recuerda como "30 - 2 - Puede": respiración, pulso/perfusión y estado mental.',
+    text: 'El sistema Manchester organiza la prioridad clínica en cinco niveles: rojo, naranja, amarillo, verde y azul.',
     title: 'Recordatorio clínico',
   },
   {
@@ -232,6 +233,7 @@ export default function UserDashboard() {
   const [infoCards, setInfoCards] = useState(localInfoCards);
   const [infoCardsStatus, setInfoCardsStatus] = useState('loading');
   const [progressLimit, setProgressLimit] = useState(10);
+  const displayName = user?.user_metadata?.full_name?.trim() || 'usuario';
 
   const loadDashboard = useCallback(async () => {
     if (!user?.id || !supabase) {
@@ -424,6 +426,12 @@ Reglas:
       return;
     }
 
+    if (cleanTestimonial.length > TESTIMONIAL_MAX_LENGTH) {
+      setTestimonialState('error');
+      setTestimonialMessage(`El testimonio debe tener máximo ${TESTIMONIAL_MAX_LENGTH} caracteres.`);
+      return;
+    }
+
     setTestimonialState('checking');
     setTestimonialMessage('Revisando que el testimonio sea respetuoso...');
 
@@ -433,7 +441,7 @@ Reglas:
       setTestimonialState('blocked');
       setTestimonialMessage(
         moderation.reason ||
-          'Tu testimonio no se subira si contiene groserias, insultos o lenguaje agresivo.'
+          'Tu testimonio no se subirá si contiene groserías, insultos o lenguaje agresivo.'
       );
       return;
     }
@@ -493,7 +501,9 @@ Reglas:
           <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
             Panel personal
           </p>
-          <h1 className="mt-2 text-2xl font-bold md:text-3xl">Hola, vamos a practicar con datos reales</h1>
+          <h1 className="mt-2 text-2xl font-bold md:text-3xl">
+            Hola, {displayName}
+          </h1>
           <p className="mt-3 max-w-2xl text-gray-600 dark:text-gray-300">
             Tu sesión es {user?.email}. Este panel compara cómo empiezas y cómo
             terminas cada intento, para ver si la práctica de verdad está
@@ -572,16 +582,32 @@ Reglas:
                 <div className="grid h-full place-items-center text-sm text-gray-500 dark:text-gray-400">
                   Cargando tus sesiones...
                 </div>
+              ) : personalProgressData.length === 0 ? (
+                <div className="grid h-full place-items-center rounded-lg border border-dashed border-cyan-300 bg-cyan-50 p-6 text-center dark:border-cyan-300/30 dark:bg-cyan-300/10">
+                  <div>
+                    <PlayCircle aria-hidden="true" className="mx-auto h-10 w-10 text-cyan-600 dark:text-cyan-300" />
+                    <h3 className="mt-3 text-lg font-bold">Juega tu primera partida</h3>
+                    <p className="mx-auto mt-2 max-w-md text-sm text-gray-600 dark:text-gray-300">
+                      Cuando termines un minijuego, aquí aparecerá la comparación de tu precisión inicial y final.
+                    </p>
+                    <Link
+                      className="mt-4 inline-flex h-11 items-center justify-center rounded-md bg-cyan-600 px-5 text-sm font-bold text-white hover:bg-cyan-700"
+                      to="/games/rcp_hero"
+                    >
+                      Comenzar primera partida
+                    </Link>
+                  </div>
+                </div>
               ) : (
                 <ResponsiveContainer height="100%" width="100%">
                   <BarChart data={personalProgressData} margin={{ bottom: 8, left: 0, right: 12, top: 8 }}>
-                    <CartesianGrid stroke="#64748b" strokeDasharray="3 3" />
-                    <XAxis dataKey="intento" tick={{ fill: '#94a3b8' }} />
-                    <YAxis domain={[0, 100]} tick={{ fill: '#94a3b8' }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc' }} />
+                    <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
+                    <XAxis dataKey="intento" tick={{ fill: 'var(--chart-axis)' }} />
+                    <YAxis domain={[0, 100]} tick={{ fill: 'var(--chart-axis)' }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--chart-tooltip-bg)', borderColor: 'var(--chart-tooltip-border)', color: 'var(--chart-tooltip-text)' }} />
                     <Legend />
-                    <Bar dataKey="initial" fill="#f97316" name="Inicio" />
-                    <Bar dataKey="final" fill="#06b6d4" name="Final" />
+                    <Bar dataKey="initial" fill="var(--chart-initial)" name="Inicio" />
+                    <Bar dataKey="final" fill="var(--chart-final)" name="Final" />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -589,7 +615,7 @@ Reglas:
           </article>
         </section>
 
-        <section>
+        <section id="minijuegos">
           <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
             Minijuegos
           </p>
@@ -669,17 +695,21 @@ Reglas:
             </p>
             <h2 className="mt-1 text-2xl font-bold">Comparte qué aprendiste</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-700 dark:text-gray-200">
-              Este mensaje puede aparecer en el Dashboard Global como evidencia
+              Este mensaje puede aparecer en el dashboard global como evidencia
               cualitativa. La IA revisa que sea respetuoso antes de publicarlo.
             </p>
             <form className="mt-5 space-y-4" onSubmit={handleSubmitTestimonial}>
               <textarea
                 className="min-h-32 w-full rounded-lg border border-cyan-300 bg-white p-4 text-sm text-gray-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"
+                maxLength={TESTIMONIAL_MAX_LENGTH}
                 onChange={(event) => setTestimonialText(event.target.value)}
                 placeholder="Ej. Aprendí que el hielo puede empeorar una quemadura..."
                 required
                 value={testimonialText}
               />
+              <p className="text-right text-xs font-semibold text-gray-500 dark:text-gray-400">
+                {testimonialText.length}/{TESTIMONIAL_MAX_LENGTH} caracteres
+              </p>
               <button
                 className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-5 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-500 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
                 disabled={testimonialState === 'checking' || testimonialState === 'saving'}

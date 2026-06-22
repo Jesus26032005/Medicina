@@ -25,19 +25,27 @@ const featureCards = [
     title: 'Casos clínicos simplificados',
   },
   {
-    description: 'Compara como empiezas y como terminas para ver tu avance.',
+    description: 'Compara cómo empiezas y cómo terminas para ver tu avance.',
     icon: BarChart3,
-    title: 'Telemetria de aprendizaje',
+    title: 'Telemetría de aprendizaje',
   },
   {
     description: 'Cada módulo incluye fuentes para revisar el fundamento académico.',
     icon: BookOpenCheck,
-    title: 'Respaldo cientifico',
+    title: 'Respaldo científico',
   },
 ];
 
 function getFriendlyAuthError(error) {
   const message = (error?.message ?? '').toLowerCase();
+
+  if (message.includes('username already registered')) {
+    return 'Este nombre de usuario ya está ocupado. Elige uno diferente.';
+  }
+
+  if (message.includes('verificar la disponibilidad')) {
+    return 'No pudimos comprobar el nombre de usuario. Inténtalo nuevamente en unos momentos.';
+  }
 
   if (message.includes('invalid login credentials')) {
     return 'El correo o la contraseña son incorrectos. Por favor, verifica tus datos.';
@@ -166,7 +174,7 @@ export default function AuthPage() {
           <div className="mt-8 rounded-lg border border-cyan-200 bg-cyan-50 p-5 text-sm leading-6 text-cyan-900 shadow-sm dark:border-cyan-300/20 dark:bg-cyan-400/10 dark:text-cyan-100">
             <Activity aria-hidden="true" className="mb-3 h-5 w-5" />
             La app guarda precisión inicial, precisión final y errores para que
-            tu avance no sea solo una sensación: se pueda ver en datos.
+            tu avance no sea solo una sensación, sino que pueda verse en datos.
           </div>
         </div>
 
@@ -209,11 +217,13 @@ export default function AuthPage() {
             {isRegisterMode ? (
               <label className="block">
                 <span className="text-sm font-medium text-teal-900 dark:text-slate-200">
-                  Nombre completo
+                  Nombre de usuario
                 </span>
                 <input
                   className="mt-2 h-12 w-full rounded-md border border-teal-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"
                   autoComplete="name"
+                  maxLength={50}
+                  minLength={3}
                   onChange={(event) => setFullName(event.target.value)}
                   placeholder="Ej. Ana Martinez"
                   required
@@ -240,14 +250,14 @@ export default function AuthPage() {
 
             <label className="block">
               <span className="text-sm font-medium text-teal-900 dark:text-slate-200">
-                Contrasena
+                Contraseña
               </span>
               <input
                 className="mt-2 h-12 w-full rounded-md border border-teal-200 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"
                 autoComplete={isRegisterMode ? 'new-password' : 'current-password'}
                 minLength={6}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder="Minimo 6 caracteres"
+                placeholder="Mínimo 6 caracteres"
                 required
                 type="password"
                 value={password}

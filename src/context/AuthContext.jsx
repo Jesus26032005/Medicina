@@ -92,12 +92,26 @@ export function AuthProvider({ children }) {
       throw new Error('Supabase no está configurado.');
     }
 
+    const normalizedFullName = fullName.trim().replace(/\s+/g, ' ');
+    const { data: isUsernameAvailable, error: usernameCheckError } = await supabase.rpc(
+      'is_username_available',
+      { candidate: normalizedFullName }
+    );
+
+    if (usernameCheckError) {
+      throw new Error('No se pudo verificar la disponibilidad del nombre de usuario.');
+    }
+
+    if (!isUsernameAvailable) {
+      throw new Error('username already registered');
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: fullName,
+          full_name: normalizedFullName,
         },
       },
     });

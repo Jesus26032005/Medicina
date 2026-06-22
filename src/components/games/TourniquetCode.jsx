@@ -409,17 +409,17 @@ export default function TourniquetCode() {
   }
 
   return (
-    <main className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 text-white">
+    <main className="isolate min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 md:px-8">
         <header className="flex items-center justify-between gap-3">
-          <Link className="flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 text-sm font-semibold text-slate-200" to="/dashboard">
+          <Link className="flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10" to="/dashboard">
             <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Dashboard
           </Link>
-          <div className="rounded-md border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-sm font-semibold text-rose-100">
+          <div className="rounded-md border border-rose-300 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-800 dark:border-rose-400/30 dark:bg-rose-400/10 dark:text-rose-100">
             Código Torniquete
           </div>
-          <ThemeToggle className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
+          <ThemeToggle />
         </header>
 
         {showBriefing ? (
@@ -446,11 +446,11 @@ export default function TourniquetCode() {
               </button>
             ) : null}
 
-            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-white/10 bg-white/5 p-4 md:p-6">
-              <p className="text-sm font-semibold uppercase tracking-wide text-rose-300">{caseData.bleedRate} pérdida</p>
+            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5 md:p-6">
+              <p className="text-sm font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-300">{caseData.bleedRate} pérdida</p>
               <h1 className="mt-2 text-2xl font-bold md:text-4xl">{caseData.title}</h1>
-              <p className="mt-3 text-slate-300">{caseData.description}</p>
-              <div className="mt-4 rounded-md border border-rose-300/30 bg-rose-400/10 p-3 text-sm font-semibold text-rose-100">
+              <p className="mt-3 text-slate-600 dark:text-slate-300">{caseData.description}</p>
+              <div className="mt-4 rounded-md border border-rose-300 bg-rose-50 p-3 text-sm font-semibold text-rose-900 dark:border-rose-300/30 dark:bg-rose-400/10 dark:text-rose-100">
                 Coloca el torniquete 5-7 cm arriba de la herida. Nunca sobre una articulación.
               </div>
 
@@ -577,26 +577,26 @@ function Briefing({ caseData, onStart }) {
             En computadora: presiona repetidamente la barra espaciadora o el botón.
             En celular: toca Aplicar presión. La zona ideal es 65% a 85%:
             ahí el sangrado baja rápido. Si pasas de 85%, el sangrado puede
-            detenerse, pero sube el daño al tejido y nervios.
+            detenerse, pero aumenta el daño en los tejidos y los nervios.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-900 dark:border-rose-300/30 dark:bg-rose-400/10 dark:text-rose-100">
           Coloca el torniquete 5-7 cm arriba de la herida y nunca encima de una articulación.
         </div>
         <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide Inicio vs Final</h2>
+          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide el inicio vs. el final</h2>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
             Inicio es el control del sangrado durante el primer tercio de la partida.
             Final es el control durante el último tercio. La meta es hemorragia controlada: 0% de sangrado activo.
           </p>
         </div>
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula el score</h2>
+          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula la puntuación</h2>
           <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
-            El score va de 0 a 100: 40% decisión clínica de controlar la
+            La puntuación va de 0 a 100: 40% decisión clínica de controlar la
             hemorragia, 40% precisión manteniendo tensión útil sin excederte y
             20% tiempo. Si pasas demasiado tiempo por arriba de 85%, sube el
-            daño tisular y el resultado se penaliza fuerte.
+            daño tisular y el resultado recibe una penalización considerable.
           </p>
         </div>
         <MedicalDisclaimer />
@@ -639,7 +639,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Metric label="Inicial" value={`${results.initialPrecision}%`} />
           <Metric label="Final" value={`${results.finalPrecision}%`} />
-          <Metric label="Score" value={results.score} />
+          <Metric label="Puntuación" value={results.score} />
           <Metric label="Daño tisular" value={`${results.tissueDamage}%`} />
         </div>
         <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
