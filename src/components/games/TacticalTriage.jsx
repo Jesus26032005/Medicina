@@ -387,6 +387,8 @@ export default function TacticalTriage() {
   const [saveState, setSaveState] = useState('idle');
   const [saveError, setSaveError] = useState('');
   const startTimeRef = useRef(Date.now());
+  const casePanelRef = useRef(null);
+  const feedbackRef = useRef(null);
 
   const currentPatient = patients[currentIndex];
   const errorsCount = answers.filter((answer) => !answer.correct).length;
@@ -571,6 +573,30 @@ export default function TacticalTriage() {
     return () => window.cancelAnimationFrame(frameId);
   }, [results, showBriefing, showTutorial]);
 
+  useEffect(() => {
+    if (!feedback) {
+      return undefined;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [feedback]);
+
+  useEffect(() => {
+    if (currentIndex === 0 || showBriefing || showTutorial || results) {
+      return undefined;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      casePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [currentIndex, results, showBriefing, showTutorial]);
+
   function startSimulation() {
     scrollToGameTop();
     setShowBriefing(false);
@@ -643,7 +669,7 @@ export default function TacticalTriage() {
                 </span>
               </button>
             ) : null}
-            <section className="isolate translate-z-0 transform-gpu rounded-lg border border-orange-200 bg-white p-4 shadow-xl dark:border-orange-400/20 dark:bg-slate-900/95 dark:shadow-orange-950/20 md:p-6">
+            <section className="isolate scroll-mt-4 translate-z-0 transform-gpu rounded-lg border border-orange-200 bg-white p-4 shadow-xl dark:border-orange-400/20 dark:bg-slate-900/95 dark:shadow-orange-950/20 md:p-6" ref={casePanelRef}>
               <div className="mb-5 flex flex-col gap-4 rounded-lg border border-orange-300/25 bg-orange-400/10 p-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-orange-800 dark:text-orange-200">
@@ -685,7 +711,7 @@ export default function TacticalTriage() {
                 </div>
               </div>
 
-              <div className="isolate mt-6 grid w-full grid-cols-1 gap-3 overflow-y-auto overscroll-none sm:grid-cols-2 lg:grid-cols-5">
+              <div className="isolate mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
                 {triageOptions.map((option) => (
                   <button
                     className={`colorblind-triage colorblind-triage-${option.key} min-h-[76px] w-full translate-z-0 transform-gpu touch-manipulation select-none rounded-lg border px-4 py-4 text-left text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-24 lg:px-3 ${option.colorClass}`}
@@ -702,7 +728,7 @@ export default function TacticalTriage() {
               </div>
 
               {feedback ? (
-                <div className={`mt-6 rounded-lg border p-4 text-sm font-semibold ${
+                <div ref={feedbackRef} className={`scroll-mt-4 mt-6 rounded-lg border p-4 text-sm font-semibold ${
                   answers.at(-1)?.correct
                     ? 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
                     : 'border-red-300 bg-red-50 text-red-800 dark:border-red-300/30 dark:bg-red-400/10 dark:text-red-100'
