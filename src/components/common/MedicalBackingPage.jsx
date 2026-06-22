@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, LogOut, ShieldCheck } from 'lucide-react';
+import { ExternalLink, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import { evidenceByModule, evidenceCategories } from './ClinicalEvidenceDisclosure';
@@ -25,11 +25,10 @@ export default function MedicalBackingPage() {
           </Link>
           <nav className="flex flex-wrap items-center justify-end gap-3">
             <Link
-              className="flex h-10 items-center gap-2 rounded-md border border-gray-300 px-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 text-sm font-semibold text-emerald-700 transition hover:text-emerald-900 dark:text-emerald-200 dark:hover:text-white"
               to="/dashboard"
             >
-              <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-              Dashboard
+              Mi dashboard
             </Link>
             <Link className="text-sm font-semibold text-cyan-700 hover:text-cyan-900 dark:text-cyan-200 dark:hover:text-white" to="/evidencia">
               Dashboard global
