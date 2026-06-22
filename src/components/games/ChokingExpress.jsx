@@ -519,7 +519,7 @@ export default function ChokingExpress() {
           <Briefing caseData={caseData} onStart={startSimulation} />
         ) : (
           <div className="grid flex-1 items-center gap-6 py-4 md:gap-8 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <section className="isolate relative flex h-[calc(100dvh-120px)] flex-col justify-center overflow-y-auto overscroll-none rounded-lg border border-white/10 bg-white/5 p-3 md:h-auto md:overflow-visible md:p-6">
+            <section className="isolate relative flex min-h-[calc(100dvh-120px)] flex-col justify-start overflow-visible rounded-lg border border-white/10 bg-white/5 p-3 md:min-h-0 md:justify-center md:p-6">
               {showTutorial ? (
                 <button
                   aria-label="Cerrar tutorial e iniciar práctica"
@@ -588,7 +588,7 @@ export default function ChokingExpress() {
                     Zona de acción: {compressionZone.label}. El marcador brillante sobre el paciente muestra dónde actuar.
                   </p>
 
-                  <div className="isolate mx-auto mt-4 flex w-full max-w-md translate-z-0 transform-gpu flex-row items-center justify-evenly gap-4 overflow-hidden md:mt-8 md:max-w-none md:gap-8">
+                  <div className="isolate mx-auto mt-4 flex w-full max-w-md shrink-0 translate-z-0 transform-gpu flex-row items-center justify-evenly gap-4 overflow-visible md:mt-8 md:max-w-none md:gap-8">
                     <div ref={trackRef} className="relative h-56 w-14 shrink-0 translate-z-0 transform-gpu overflow-hidden rounded-full border border-white/10 bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
                       <div
                         ref={targetRef}

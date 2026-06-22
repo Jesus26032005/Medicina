@@ -53,20 +53,27 @@ body {
 
 @keyframes heimlich-qte-sweep {
   0% {
-    transform: translate(-50%, 0);
+    top: 0;
   }
 
   50% {
-    transform: translate(-50%, calc(520px - 1.5rem));
+    top: calc(100% - var(--heimlich-indicator-height));
   }
 
   100% {
-    transform: translate(-50%, 0);
+    top: 0;
   }
 }
 
 .heimlich-indicator {
+  --heimlich-indicator-height: 1.25rem;
   animation: heimlich-qte-sweep 3s linear infinite;
-  transform: translate(-50%, 0);
-  will-change: transform;
+  transform: translateX(-50%);
+  will-change: top;
+}
+
+@media (min-width: 768px) {
+  .heimlich-indicator {
+    --heimlich-indicator-height: 1.5rem;
+  }
 }
