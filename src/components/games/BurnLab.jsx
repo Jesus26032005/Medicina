@@ -99,8 +99,8 @@ const toolDefinitions = {
 
 const clinicalCases = [
   {
-    id: 'solar_first_degree',
-    title: 'Solar: quemadura leve de 1er grado',
+    id: 'solar_burn_1',
+    title: 'Solar: quemadura leve',
     mechanism: 'Exposición solar prolongada en hombros sin ampollas.',
     woundDescription: 'Piel enrojecida, seca, caliente y dolorosa al tacto; no hay ampollas ni zonas abiertas.',
     visual: 'thermal',
@@ -259,8 +259,8 @@ const clinicalCases = [
     },
   },
   {
-    id: 'solar_second_degree',
-    title: 'Solar: quemadura grave de 2do grado',
+    id: 'solar_burn_2',
+    title: 'Solar: quemadura grave',
     mechanism: 'Ampollas extensas tras exposición solar prolongada.',
     woundDescription: 'Piel muy roja con ampollas extensas, dolor intenso y sensibilidad al roce.',
     visual: 'thermal',
