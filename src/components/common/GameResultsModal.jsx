@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 
 export function ResultMetric({ label, value }) {
   return (
-    <div className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700/50 dark:bg-slate-800/50">
       <p className="break-words text-xs font-semibold uppercase tracking-wide text-slate-400">
         {label}
       </p>
-      <p className="mt-1 break-words text-2xl font-bold text-white">{value}</p>
+      <p className="mt-1 break-words text-2xl font-bold text-slate-950 dark:text-white">{value}</p>
     </div>
   );
 }
@@ -28,7 +28,7 @@ export default function GameResultsModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-3 backdrop-blur-sm md:p-6">
       <motion.section
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="isolate max-h-[90dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-2xl border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl md:max-w-2xl md:p-6 lg:max-w-3xl"
+        className="isolate max-h-[90dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-white md:max-w-2xl md:p-6 lg:max-w-3xl"
         initial={{ opacity: 0, y: 18, scale: 0.98 }}
         transition={{ duration: 0.2 }}
       >
@@ -42,10 +42,10 @@ export default function GameResultsModal({
           </div>
           {score !== undefined ? (
             <div className="w-full rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 md:w-auto md:min-w-32 md:text-right">
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-200">
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-200">
                 Puntuación
               </p>
-              <p className="text-3xl font-bold text-white">{score}</p>
+              <p className="text-3xl font-bold text-slate-950 dark:text-white">{score}</p>
             </div>
           ) : null}
         </div>
@@ -58,7 +58,7 @@ export default function GameResultsModal({
 
         {children}
 
-        <div className="mt-4 flex items-start gap-2 break-words text-sm text-slate-300">
+        <div className="mt-4 flex items-start gap-2 break-words text-sm text-slate-600 dark:text-slate-300">
           <Save aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             {saveState === 'saving' ? 'Guardando tu progreso...' : null}
@@ -71,7 +71,7 @@ export default function GameResultsModal({
 
         <div className="mt-6 flex flex-col justify-center gap-4 md:flex-row md:justify-end">
           <button
-            className="w-full rounded-xl border border-slate-600 bg-transparent px-6 py-3 font-bold text-slate-300 transition-all hover:bg-slate-800 md:w-auto"
+            className="w-full rounded-xl border border-slate-400 bg-transparent px-6 py-3 font-bold text-slate-700 transition-all hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 md:w-auto"
             onClick={onExit}
             type="button"
           >

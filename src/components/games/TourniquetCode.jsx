@@ -481,8 +481,8 @@ export default function TourniquetCode() {
                 Coloca el torniquete 5-7 cm arriba de la herida. Nunca sobre una articulación.
               </div>
 
-              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4">
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                   <span>Sangrado activo</span>
                   <span>{Math.round(activeBleeding)}%</span>
                 </div>
@@ -493,35 +493,35 @@ export default function TourniquetCode() {
                     transition={{ type: 'spring', stiffness: 100, damping: 18 }}
                   />
                 </div>
-                <div className="mt-2 flex justify-between text-xs text-slate-400">
+                <div className="mt-2 flex justify-between text-xs text-slate-500 dark:text-slate-400">
                   <span>Controlado 0%</span>
                   <span>Activo 100%</span>
                 </div>
               </div>
 
-              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4">
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                   <span>Daño tisular</span>
                   <span>{Math.round(tissueDamage)}%</span>
                 </div>
-                <div className="mt-3 h-8 overflow-hidden rounded-full bg-white/10">
+                <div className="mt-3 h-8 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
                   <motion.div
                     animate={{ width: `${tissueDamage}%` }}
                     className="h-full rounded-full bg-red-600"
                     transition={{ type: 'spring', stiffness: 130, damping: 18 }}
                   />
                 </div>
-                <p className="mt-2 text-xs leading-5 text-slate-400">
+                <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
                   El daño aumenta si mantienes la presión por encima de {IDEAL_PRESSURE_MAX}%.
                 </p>
               </div>
 
-              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-white/10 bg-slate-900 p-4 shadow-2xl shadow-rose-950/20">
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-300">
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-slate-50 p-4 shadow-xl dark:border-white/10 dark:bg-slate-900 dark:shadow-2xl dark:shadow-rose-950/20">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                   <span>Barra de tensión</span>
                   <span>{Math.round(pressureApplied)}%</span>
                 </div>
-                <div className="mt-3 h-10 overflow-hidden rounded-full bg-white/10">
+                <div className="mt-3 h-10 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
                   <motion.div
                     animate={{ width: `${pressureApplied}%` }}
                     className={`h-full rounded-full ${pressureBarClass}`}
@@ -530,10 +530,10 @@ export default function TourniquetCode() {
                 </div>
                 <p className={`mt-2 text-sm font-bold ${
                   pressureApplied > IDEAL_PRESSURE_MAX
-                    ? 'text-red-200'
+                    ? 'text-red-700 dark:text-red-200'
                     : pressureApplied >= IDEAL_PRESSURE_MIN
-                      ? 'text-teal-200'
-                      : 'text-slate-300'
+                      ? 'text-teal-700 dark:text-teal-200'
+                      : 'text-slate-700 dark:text-slate-300'
                 }`}>
                   {pressureStatus}
                 </p>
@@ -652,7 +652,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       score={results.score}
       title={results.criticalError ? 'Error crítico por exceso de presión' : 'Hemorragia controlada'}
     >
-      <p className="mt-4 break-words rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm leading-6 text-cyan-100 md:text-base">
+      <p className="mt-4 break-words rounded-xl border border-cyan-300 bg-cyan-50 p-4 text-sm leading-6 text-cyan-900 dark:border-cyan-300/20 dark:bg-cyan-400/10 dark:text-cyan-100 md:text-base">
         {results.note}
       </p>
     </GameResultsModal>

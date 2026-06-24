@@ -592,7 +592,7 @@ export default function ChokingExpress() {
                   </p>
 
                   <div className="isolate mx-auto mt-4 flex w-full max-w-md shrink-0 translate-z-0 transform-gpu flex-row items-center justify-evenly gap-4 overflow-visible md:mt-8 md:max-w-none md:gap-8">
-                    <div ref={trackRef} className="relative h-56 w-14 shrink-0 translate-z-0 transform-gpu overflow-hidden rounded-full border border-white/10 bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
+                    <div ref={trackRef} className="relative h-56 w-14 shrink-0 translate-z-0 transform-gpu overflow-hidden rounded-full border border-slate-300 bg-slate-200 shadow-inner dark:border-white/10 dark:bg-slate-900 sm:h-64 sm:w-16 md:h-96 md:w-24">
                       <div
                         ref={targetRef}
                         className="colorblind-target-zone absolute left-2 right-2 rounded-full bg-emerald-400/45 ring-2 ring-emerald-300"
@@ -751,7 +751,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       score={results.score}
       title={results.criticalError ? 'Decisión crítica revisada' : 'Práctica completada'}
     >
-      <p className="mt-4 break-words rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm leading-6 text-cyan-100 md:text-base">
+      <p className="mt-4 break-words rounded-xl border border-cyan-300 bg-cyan-50 p-4 text-sm leading-6 text-cyan-900 dark:border-cyan-300/20 dark:bg-cyan-400/10 dark:text-cyan-100 md:text-base">
         {results.note}
       </p>
     </GameResultsModal>

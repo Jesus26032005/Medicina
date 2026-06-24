@@ -734,19 +734,19 @@ export default function BurnLab() {
                 <span className="font-bold">Aspecto de la quemadura: </span>
                 {caseData.woundDescription}
               </div>
-              <div className="isolate mt-5 translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-900/95 p-4">
+              <div className="isolate mt-5 translate-z-0 transform-gpu rounded-lg border border-cyan-200 bg-white/90 p-4 shadow-sm dark:border-cyan-300/20 dark:bg-slate-900/95">
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <h2 className="font-bold text-cyan-100">Clasifica la gravedad</h2>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <h2 className="font-bold text-cyan-900 dark:text-cyan-100">Clasifica la gravedad</h2>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                       Primero decide la profundidad probable; luego aplica el tratamiento.
                     </p>
                   </div>
                   {selectedSeverity ? (
                     <span className={`rounded-md px-3 py-2 text-sm font-bold ${
                       selectedSeverity === caseData.severity
-                        ? 'bg-emerald-400/15 text-emerald-100'
-                        : 'bg-rose-400/15 text-rose-100'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-100'
+                        : 'bg-rose-100 text-rose-800 dark:bg-rose-400/15 dark:text-rose-100'
                     }`}>
                       {severityLabels[selectedSeverity]}
                     </span>
@@ -757,8 +757,8 @@ export default function BurnLab() {
                     <button
                       className={`min-h-12 w-full touch-manipulation select-none rounded-md border p-3 text-left text-sm transition ${
                         selectedSeverity === option.key
-                          ? 'border-cyan-300 bg-cyan-400/20 text-cyan-50'
-                          : 'border-white/10 bg-white/5 text-slate-200 hover:bg-white/10'
+                          ? 'border-cyan-500 bg-cyan-100 text-cyan-950 dark:border-cyan-300 dark:bg-cyan-400/20 dark:text-cyan-50'
+                          : 'border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10'
                       }`}
                       disabled={severityLocked || showTutorial}
                       key={option.key}
@@ -766,7 +766,7 @@ export default function BurnLab() {
                       type="button"
                     >
                       <span className="block font-black">{option.label}</span>
-                      <span className="mt-1 block text-xs leading-5 text-slate-300">{option.description}</span>
+                      <span className="mt-1 block text-xs leading-5 text-slate-600 dark:text-slate-300">{option.description}</span>
                     </button>
                   ))}
                 </div>
@@ -796,20 +796,20 @@ export default function BurnLab() {
                         }
                       : { x: 0 }
                   }
-                  className="isolate relative flex min-h-[440px] translate-z-0 transform-gpu flex-col items-center justify-center overflow-hidden rounded-lg border border-cyan-300/20 bg-slate-900/95 p-6 shadow-2xl shadow-cyan-950/30"
+                  className="isolate relative flex min-h-[440px] translate-z-0 transform-gpu flex-col items-center justify-center overflow-hidden rounded-lg border border-cyan-200 bg-cyan-50/70 p-6 shadow-xl dark:border-cyan-300/20 dark:bg-slate-900/95 dark:shadow-2xl dark:shadow-cyan-950/30"
                   key={`${caseData.id}-${shakeKey}`}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   transition={{ duration: 0.36 }}
                 >
-                  <div className="absolute left-4 top-4 rounded-md border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-cyan-100">
+                  <div className="absolute left-4 top-4 rounded-md border border-cyan-300 bg-cyan-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-cyan-800 dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-100">
                     Mecanismo: {caseData.visual}
                   </div>
                   <PatientVector visual={caseData.visual} />
-                  <p className="mt-5 text-center text-sm font-semibold text-cyan-100">
+                  <p className="mt-5 text-center text-sm font-semibold text-cyan-900 dark:text-cyan-100">
                     Zona de intervención
                   </p>
-                  <p className="mt-2 max-w-sm text-center text-sm text-slate-400">
+                  <p className="mt-2 max-w-sm text-center text-sm text-slate-600 dark:text-slate-400">
                     Suelta o selecciona herramientas. Completa todas las acciones correctas.
                   </p>
                 </motion.div>
@@ -1006,7 +1006,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       score={results.score}
       title="Burn Lab completado"
     >
-        <div className="mt-4 rounded-xl border border-purple-300/30 bg-purple-400/10 p-4 text-sm text-purple-100">
+        <div className="mt-4 rounded-xl border border-purple-300 bg-purple-50 p-4 text-sm text-purple-900 dark:border-purple-300/30 dark:bg-purple-400/10 dark:text-purple-100">
           <p className="font-bold">Nota sobre la precisión inicial</p>
           <p className="mt-2 leading-6">
             Burn Lab registra el inicio como 0% porque no utiliza una fase de

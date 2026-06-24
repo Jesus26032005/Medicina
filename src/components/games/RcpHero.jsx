@@ -618,15 +618,15 @@ export default function RcpHero() {
               margen de éxito es de +/- {SUCCESS_WINDOW_MS} ms por latido.
             </p>
 
-            <div className="isolate mt-6 w-full max-w-2xl translate-z-0 transform-gpu rounded-lg border border-emerald-400/20 bg-black/70 p-3 text-left shadow-2xl shadow-emerald-950/30">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-emerald-300">
+            <div className="isolate mt-6 w-full max-w-2xl translate-z-0 transform-gpu rounded-lg border border-emerald-300 bg-white/90 p-3 text-left shadow-xl dark:border-emerald-400/20 dark:bg-black/70 dark:shadow-2xl dark:shadow-emerald-950/30">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
                 <span className="flex items-center gap-2">
                   <Music aria-hidden="true" className="h-4 w-4" />
                   Pista RCP
                 </span>
                 <span>{selectedTrack.name} · {selectedTrack.bpm} BPM</span>
               </div>
-              <p className="mt-2 text-xs leading-5 text-slate-400">
+              <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-400">
                 El intervalo objetivo de esta partida es de {roundMetric(beatIntervalMs)} ms por compresión.
               </p>
             </div>
@@ -683,8 +683,8 @@ export default function RcpHero() {
               </motion.div>
             </motion.div>
 
-            <div className="isolate mt-8 w-full max-w-2xl translate-z-0 transform-gpu overflow-hidden rounded-lg border border-emerald-400/20 bg-black/50 p-4 shadow-2xl shadow-emerald-950/30">
-              <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-emerald-300">
+            <div className="isolate mt-8 w-full max-w-2xl translate-z-0 transform-gpu overflow-hidden rounded-lg border border-emerald-300 bg-white/90 p-4 shadow-xl dark:border-emerald-400/20 dark:bg-black/50 dark:shadow-2xl dark:shadow-emerald-950/30">
+              <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
                 <span>Sincronización del ritmo ECG</span>
                 <span>{currentBeat + 1} / {getTotalBeats(gameDurationMs, beatIntervalMs)} latidos</span>
               </div>
@@ -774,8 +774,8 @@ export default function RcpHero() {
             </div>
           </section>
 
-          <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-emerald-400/20 bg-black/80 p-5 text-emerald-50 shadow-2xl shadow-emerald-950/30">
-            <h2 className="text-lg font-bold text-emerald-300">Telemetría en vivo</h2>
+          <aside className="isolate translate-z-0 transform-gpu rounded-lg border border-emerald-300 bg-white/90 p-5 text-slate-950 shadow-xl dark:border-emerald-400/20 dark:bg-black/80 dark:text-emerald-50 dark:shadow-2xl dark:shadow-emerald-950/30">
+            <h2 className="text-lg font-bold text-emerald-700 dark:text-emerald-300">Telemetría en vivo</h2>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Metric label="Tiempo" value={`${secondsLeft}s`} />
               <Metric label="Modo" value={`${gameDurationMs / 1000}s`} />
@@ -786,10 +786,10 @@ export default function RcpHero() {
               <Metric label="Precisión media" value={`${averagePrecision}%`} />
             </div>
             <div className="mt-5 rounded-md border border-emerald-400/20 bg-emerald-400/10 p-4">
-              <p className="text-sm font-semibold text-emerald-300">Feedback</p>
-              <p className="mt-1 text-sm font-bold text-emerald-50">{lastFeedback}</p>
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Feedback</p>
+              <p className="mt-1 text-sm font-bold text-emerald-950 dark:text-emerald-50">{lastFeedback}</p>
             </div>
-            <div className="mt-5 text-sm text-slate-300">
+            <div className="mt-5 text-sm text-slate-600 dark:text-slate-300">
               Barra espaciadora activa durante la partida. Evita mantenerla
               presionada; cada compresión debe ser intencional.
             </div>
@@ -839,11 +839,11 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
         </p>
       </BriefingCard>
       <BriefingCard title="Duración de la simulación">
-          <label className="text-sm font-bold text-white" htmlFor="rcp-duration">
+          <label className="text-sm font-bold text-slate-950 dark:text-white" htmlFor="rcp-duration">
             Duración de la simulación
           </label>
           <select
-            className="mt-3 h-11 w-full rounded-xl border border-slate-600 bg-slate-950 px-3 text-sm font-semibold text-white outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
+            className="mt-3 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-950 dark:text-white"
             id="rcp-duration"
             onChange={(event) => onDurationChange(Number(event.target.value))}
             value={durationMs}
@@ -854,17 +854,17 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
               </option>
             ))}
           </select>
-          <p className="mt-2 break-words text-xs leading-5 text-slate-300">
+          <p className="mt-2 break-words text-xs leading-5 text-slate-600 dark:text-slate-300">
             Practica rápido para probar cambios, o usa 120 segundos para simular
             el ciclo completo recomendado antes de cambiar de reanimador.
           </p>
       </BriefingCard>
       <BriefingCard title="Canción guía">
-          <label className="text-sm font-bold text-white" htmlFor="rcp-track">
+          <label className="text-sm font-bold text-slate-950 dark:text-white" htmlFor="rcp-track">
             Canción guía para memoria muscular
           </label>
           <select
-            className="mt-3 h-11 w-full rounded-xl border border-slate-600 bg-slate-950 px-3 text-sm font-semibold text-white outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
+            className="mt-3 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-950 dark:text-white"
             id="rcp-track"
             onChange={(event) => onTrackChange(event.target.value)}
             value={selectedTrackId}
@@ -875,7 +875,7 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
               </option>
             ))}
           </select>
-          <p className="mt-2 break-words text-xs leading-5 text-slate-300">
+          <p className="mt-2 break-words text-xs leading-5 text-slate-600 dark:text-slate-300">
             Esta pista ajusta automáticamente el ritmo objetivo a {selectedTrack.bpm} BPM,
             equivalente a {roundMetric(60000 / selectedTrack.bpm)} ms por compresión.
           </p>
@@ -911,9 +911,9 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       score={results.score}
       title="Sesión RCP Hero completada"
     >
-      <div className="mt-4 rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4">
-        <p className="text-sm font-bold text-cyan-100">Nota adicional</p>
-        <p className="mt-2 break-words text-sm leading-6 text-cyan-100 md:text-base">
+      <div className="mt-4 rounded-xl border border-cyan-300 bg-cyan-50 p-4 dark:border-cyan-300/20 dark:bg-cyan-400/10">
+        <p className="text-sm font-bold text-cyan-950 dark:text-cyan-100">Nota adicional</p>
+        <p className="mt-2 break-words text-sm leading-6 text-cyan-900 dark:text-cyan-100 md:text-base">
           {results.note}
         </p>
       </div>

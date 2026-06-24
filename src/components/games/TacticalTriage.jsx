@@ -703,9 +703,9 @@ export default function TacticalTriage() {
                 </div>
               </div>
 
-              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-cyan-300/20 bg-slate-950/90 p-4 shadow-inner md:p-5">
-                <p className="text-sm font-semibold uppercase tracking-wide text-slate-400">Tarjeta clínica</p>
-                <p className="mt-3 text-lg font-semibold leading-7 text-white">{currentPatient.scenario}</p>
+              <div className="isolate mt-6 translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-slate-50 p-4 shadow-inner dark:border-cyan-300/20 dark:bg-slate-950/90 md:p-5">
+                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Tarjeta clínica</p>
+                <p className="mt-3 text-lg font-semibold leading-7 text-slate-950 dark:text-white">{currentPatient.scenario}</p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <ClinicalMetric label="Conciencia" value={getConsciousnessLabel(currentPatient.consciousness)} />
                   <ClinicalMetric label="Hemorragia" value={getHemorrhageLabel(currentPatient.hemorrhage)} />
@@ -829,12 +829,12 @@ function Briefing({ onStart }) {
       <BriefingCard title="Niveles MTS">
           <div className="mt-3 grid gap-3">
             {manchesterSteps.map((step) => (
-              <div className="grid gap-2 rounded-xl border border-slate-700 bg-slate-900 p-3 text-sm md:grid-cols-[120px_1fr]" key={step.color}>
+              <div className="grid gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-900 md:grid-cols-[120px_1fr]" key={step.color}>
                 <div>
-                  <p className="font-black text-white">{step.color}</p>
+                  <p className="font-black text-slate-950 dark:text-white">{step.color}</p>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{step.rule}</p>
                 </div>
-                <p className="break-words leading-6 text-slate-300">{step.description}</p>
+                <p className="break-words leading-6 text-slate-600 dark:text-slate-300">{step.description}</p>
               </div>
             ))}
           </div>
@@ -873,7 +873,7 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       score={results.score}
       title="Triage Manchester completado"
     >
-      <p className="mt-4 break-words rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm leading-6 text-cyan-100 md:text-base">
+      <p className="mt-4 break-words rounded-xl border border-cyan-300 bg-cyan-50 p-4 text-sm leading-6 text-cyan-900 dark:border-cyan-300/20 dark:bg-cyan-400/10 dark:text-cyan-100 md:text-base">
         {results.note}
       </p>
     </GameResultsModal>
