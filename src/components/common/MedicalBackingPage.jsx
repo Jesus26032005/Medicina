@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import usePreventSpaceScroll from '../../hooks/usePreventSpaceScroll';
 import ThemeToggle from './ThemeToggle';
 import { evidenceByModule, evidenceCategories } from './ClinicalEvidenceDisclosure';
 
@@ -11,6 +12,8 @@ const bibliography = evidenceCategories.map(([moduleKey, title]) => ({
 }));
 
 export default function MedicalBackingPage() {
+  usePreventSpaceScroll();
+
   const { isAuthenticated, logout } = useAuth();
 
   return (

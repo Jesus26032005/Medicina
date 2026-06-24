@@ -13,11 +13,14 @@ import {
 } from 'recharts';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import usePreventSpaceScroll from '../../hooks/usePreventSpaceScroll';
 import ThemeToggle from '../common/ThemeToggle';
 
 const testimonialLimitOptions = [10, 25, 50];
 
 export default function GlobalEvidence() {
+  usePreventSpaceScroll();
+
   const { isAuthenticated, logout } = useAuth();
   const [sessions, setSessions] = useState([]);
   const [testimonials, setTestimonials] = useState([]);

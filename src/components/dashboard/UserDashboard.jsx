@@ -24,6 +24,7 @@ import {
   YAxis,
 } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
+import usePreventSpaceScroll from '../../hooks/usePreventSpaceScroll';
 import { supabase } from '../../lib/supabaseClient';
 import { LAST_MEDICAL_REVIEW } from '../common/Footer';
 import ThemeToggle from '../common/ThemeToggle';
@@ -217,6 +218,8 @@ ${text}
 }
 
 export default function UserDashboard() {
+  usePreventSpaceScroll();
+
   const { user, logout } = useAuth();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);

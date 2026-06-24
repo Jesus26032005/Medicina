@@ -2,17 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
-  BookOpen,
   ClipboardList,
-  Save,
   Siren,
   Timer,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
-import VideoTutorialModal from '../common/VideoTutorialModal';
-import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
+import GameBriefingLayout, { BriefingCard } from '../common/GameBriefingLayout';
+import GameResultsModal from '../common/GameResultsModal';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -548,11 +545,19 @@ export default function TacticalTriage() {
 
   useEffect(() => {
     function handleKeyDown(event) {
-      if (event.code !== 'Space') {
+      const isSpaceKey = event.code === 'Space' || event.key === ' ';
+
+      if (!isSpaceKey) {
         return;
       }
 
       event.preventDefault();
+
+      if (event.repeat || showBriefing || results || !showTutorial) {
+        return;
+      }
+
+      dismissTutorial();
     }
 
     window.addEventListener('keydown', handleKeyDown, { passive: false });
@@ -560,7 +565,7 @@ export default function TacticalTriage() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [results, showBriefing, showTutorial]);
 
   useEffect(() => {
     if (!showTutorial || showBriefing || results) {
@@ -777,45 +782,34 @@ export default function TacticalTriage() {
 }
 
 function Briefing({ onStart }) {
+  const handleStart = () => onStart();
+
   return (
-    <section className="grid flex-1 place-items-center py-10">
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:shadow-black/30 md:p-6"
-        initial={{ opacity: 0, y: 16 }}
-      >
-        <p className="text-sm font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">
-          Briefing médico
-        </p>
-        <h1 className="mt-2 text-3xl font-bold">Triage Táctico Manchester</h1>
-        <p className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-950 dark:border-orange-300/30 dark:bg-orange-400/10 dark:text-orange-100">
-          El Sistema de Triage de Manchester (MTS) es el estándar intrahospitalario para priorizar pacientes en urgencias basado en su riesgo clínico.
-        </p>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
-            <h2 className="font-bold">Instrucciones</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+    <GameBriefingLayout
+      evidenceKey="tactical_triage"
+      onStart={handleStart}
+      title="Tactical Triage MTS"
+      videoId="_B4y6W59WNQ"
+      videoTitle="Video tutorial triage hospitalario MTS"
+    >
+      <BriefingCard title="📖 Instrucciones" variant="instructions">
+        <p>
               En computadora y celular: toca o haz clic en uno de los cinco
               niveles Manchester. Lee conciencia, hemorragia, dolor,
               respiración, temperatura y datos de alto riesgo antes de decidir.
-            </p>
-          </div>
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
-            <h2 className="font-bold">Inicio vs. final</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              Inicio es el promedio de precisión de los primeros 2 pacientes.
-              Final es el promedio de los últimos 2. Así se mide si priorizas
-              mejor conforme avanza el turno de triage.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 dark:border-yellow-300/30 dark:bg-yellow-400/10 dark:text-yellow-100">
-          Tendrás {SECONDS_PER_PATIENT} segundos por paciente. Si el tiempo se
-          acaba, cuenta como error y se explica el discriminador MTS esperado.
-        </div>
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
-          <h2 className="font-bold">Cómo clasificar rápido</h2>
-          <p className="mt-2">
+              Tendrás {SECONDS_PER_PATIENT} segundos por paciente.
+        </p>
+      </BriefingCard>
+      <BriefingCard title="⚡ Toma de Decisiones Críticas" variant="critical">
+        <p>
+          La evaluación prioriza asignar correctamente el color Manchester
+          desde la primera lectura de los discriminadores. Elegir una prioridad
+          inferior ante inconsciencia, hemorragia exanguinante u otra amenaza
+          vital penaliza la decisión inicial.
+        </p>
+      </BriefingCard>
+      <BriefingCard title="📖 Cómo clasificar" variant="mechanics">
+        <p>
             Primero descarta ROJO: inconsciente, paro, respiración crítica o
             hemorragia exanguinante. Luego busca NARANJA: dolor severo,
             dificultad respiratoria severa, dolor torácico de alto riesgo o
@@ -823,48 +817,29 @@ function Briefing({ onStart }) {
             dolor moderado, fiebre o dificultad respiratoria moderada. VERDE es
             problema menor con síntomas tolerables. AZUL es solicitud sin
             síntomas agudos.
-          </p>
-        </div>
-        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
-          <h2 className="font-bold">Cómo se calcula la puntuación</h2>
-          <p className="mt-2">
+        </p>
+      </BriefingCard>
+      <BriefingCard title="🎯 Puntuación" variant="score">
+        <p>
             La puntuación va de 0 a 100: 40% decisión clínica, 40% precisión de
             clasificación y 20% tiempo restante. Cada paciente correcto suma
             precisión; cada error o tiempo agotado baja el promedio final.
-          </p>
-        </div>
-        <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
-          <h2 className="font-bold">Niveles MTS</h2>
+        </p>
+      </BriefingCard>
+      <BriefingCard title="Niveles MTS">
           <div className="mt-3 grid gap-3">
             {manchesterSteps.map((step) => (
-              <div className="grid gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-[120px_1fr]" key={step.color}>
+              <div className="grid gap-2 rounded-xl border border-slate-700 bg-slate-900 p-3 text-sm md:grid-cols-[120px_1fr]" key={step.color}>
                 <div>
-                  <p className="font-black text-slate-950 dark:text-white">{step.color}</p>
+                  <p className="font-black text-white">{step.color}</p>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{step.rule}</p>
                 </div>
-                <p className="leading-6 text-slate-600 dark:text-slate-300">{step.description}</p>
+                <p className="break-words leading-6 text-slate-300">{step.description}</p>
               </div>
             ))}
           </div>
-        </div>
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-950 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
-          <p className="font-bold">Respaldo clínico</p>
-          <p className="mt-2">
-            Basado conceptualmente en las guías del Grupo de Triage de
-            Manchester (Manchester Triage Group). El espacio de video queda
-            reservado para un material validado sobre escala hospitalaria de 5 niveles.
-          </p>
-        </div>
-        <MedicalDisclaimer />
-        <ClinicalEvidenceDisclosure moduleKey="tactical_triage" />
-        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
-          <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-orange-500 active:scale-95 sm:w-auto" onClick={onStart} type="button">
-            Entendido, iniciar simulación
-          </button>
-          <VideoTutorialModal title="Video tutorial triage hospitalario MTS" videoId="_B4y6W59WNQ" />
-        </div>
-      </motion.div>
-    </section>
+      </BriefingCard>
+    </GameBriefingLayout>
   );
 }
 
@@ -884,47 +859,23 @@ function ClinicalMetric({ label, value }) {
 
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
-      <motion.section
-        animate={{ opacity: 1, y: 0 }}
-        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:shadow-black/30 md:p-8"
-        initial={{ opacity: 0, y: 18 }}
-      >
-        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">
-          <BookOpen aria-hidden="true" className="h-4 w-4" />
-          Retroalimentación clínica
-        </p>
-        <h2 className="mt-1 text-2xl font-bold">Triage Manchester completado</h2>
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <ResultMetric label="Inicial" value={`${results.initialPrecision}%`} />
-          <ResultMetric label="Final" value={`${results.finalPrecision}%`} />
-          <ResultMetric label="Puntuación" value={results.score} />
-        </div>
-        <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
-        <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-          <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
-          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
-          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
-        </div>
-        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
-          <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-slate-700 active:scale-95 sm:w-auto" onClick={onExit} type="button">
-            Salir al Dashboard
-          </button>
-          <button className="flex min-h-12 w-full touch-manipulation select-none items-center justify-center rounded-lg bg-orange-600 px-4 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-orange-500 active:scale-95 sm:w-auto" onClick={onRestart} type="button">
-            Nuevo turno MTS
-          </button>
-        </div>
-      </motion.section>
-    </div>
-  );
-}
-
-function ResultMetric({ label, value }) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950/80">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-slate-950 dark:text-white">{value}</p>
-    </div>
+    <GameResultsModal
+      metrics={[
+        { label: 'Inicial', value: `${results.initialPrecision}%` },
+        { label: 'Final', value: `${results.finalPrecision}%` },
+        { label: 'Puntuación', value: results.score },
+      ]}
+      onExit={onExit}
+      onRestart={onRestart}
+      restartLabel="Nuevo turno MTS"
+      saveError={saveError}
+      saveState={saveState}
+      score={results.score}
+      title="Triage Manchester completado"
+    >
+      <p className="mt-4 break-words rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm leading-6 text-cyan-100 md:text-base">
+        {results.note}
+      </p>
+    </GameResultsModal>
   );
 }

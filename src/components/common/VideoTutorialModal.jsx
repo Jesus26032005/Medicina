@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { PlayCircle, X } from 'lucide-react';
 
-export default function VideoTutorialModal({ title, videoId }) {
+export default function VideoTutorialModal({ buttonClassName = '', title, videoId }) {
   const [open, setOpen] = useState(false);
   const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
@@ -31,7 +31,10 @@ export default function VideoTutorialModal({ title, videoId }) {
   return (
     <>
       <button
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:hover:bg-white/10 sm:w-auto"
+        className={
+          buttonClassName ||
+          'flex h-12 w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:hover:bg-white/10 sm:w-auto'
+        }
         onClick={() => setOpen(true)}
         type="button"
       >

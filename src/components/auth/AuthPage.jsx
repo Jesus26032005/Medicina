@@ -143,10 +143,6 @@ export default function AuthPage() {
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
             LifeSaver Arcade
           </p>
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-bold text-amber-800 shadow-sm dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100">
-            <BookOpenCheck aria-hidden="true" className="h-4 w-4" />
-            En proceso de aval clínico y evaluación académica
-          </div>
           <h1 className="text-3xl font-black leading-tight text-teal-950 dark:text-white md:text-6xl">
             Aprende a salvar vidas jugando
           </h1>

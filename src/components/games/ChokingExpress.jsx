@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BookOpen, Save } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
-import VideoTutorialModal from '../common/VideoTutorialModal';
-import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
+import GameBriefingLayout, { BriefingCard } from '../common/GameBriefingLayout';
+import Metric from '../common/GameMetric';
+import GameResultsModal from '../common/GameResultsModal';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -435,13 +435,16 @@ export default function ChokingExpress() {
   useEffect(() => {
     function handleKeyDown(event) {
       const isSpaceKey = event.code === 'Space' || event.key === ' ';
-      const isGameActive = !showBriefing && !results;
 
-      if (!isSpaceKey || event.repeat || !isGameActive) {
+      if (!isSpaceKey) {
         return;
       }
 
       event.preventDefault();
+
+      if (event.repeat || showBriefing || results) {
+        return;
+      }
 
       if (!showBriefing && showTutorial && !results) {
         beginInteractiveRun();
@@ -516,7 +519,7 @@ export default function ChokingExpress() {
         </header>
 
         {showBriefing ? (
-          <Briefing caseData={caseData} onStart={startSimulation} />
+          <Briefing onStart={startSimulation} />
         ) : (
           <div className="grid flex-1 items-center gap-6 py-4 md:gap-8 md:py-8 lg:grid-cols-[minmax(0,1fr)_360px]">
             <section className="isolate relative flex min-h-[calc(100dvh-120px)] flex-col justify-start overflow-visible rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-white/5 md:min-h-0 md:justify-center md:p-6">
@@ -689,116 +692,68 @@ export default function ChokingExpress() {
   );
 }
 
-function Briefing({ caseData, onStart }) {
+function Briefing({ onStart }) {
+  const handleStart = () => onStart();
+
   return (
-    <section className="grid flex-1 place-items-center py-10">
-      <div className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white">
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">Briefing médico</p>
-        <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
-        <p className="mt-3 text-slate-700 dark:text-slate-300">{caseData.description}</p>
-        <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold leading-6 text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100">
-          {caseData.recommendation}
-        </div>
-        <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-          <h2 className="font-bold">Instrucciones</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-            Primero elige entre dos acciones: aplicar la maniobra indicada o no
-            aplicarla y animar a toser. Si la persona tose, llora o hace sonidos,
-            no comprimas. Si no emite sonido, no puede toser o respira muy mal,
-            aplica la técnica que indique el caso: abdominal, torácica o pediátrica.
-            Después, en computadora presiona espacio o el botón cuando el indicador
-            pase por la zona verde; en celular toca Aplicar compresión.
-          </p>
-        </div>
-        <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 p-3 text-sm font-semibold text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
-          Objetivo: {caseData.targetLabel}. Requiere {REQUIRED_HITS} aciertos.
+    <GameBriefingLayout
+      evidenceKey="choking_express"
+      onStart={handleStart}
+      title="Choking Express"
+      videoId="lsrrkUnf_JM"
+      videoTitle="Video tutorial Heimlich"
+    >
+      <BriefingCard title="📖 Instrucciones" variant="instructions">
+        <p>
+          Primero elige entre dos acciones: aplicar la maniobra indicada o no
+          aplicarla y animar a toser. Si la persona tose, llora o hace sonidos,
+          no comprimas. Si no emite sonido, no puede toser o respira muy mal,
+          aplica la técnica indicada. Después usa espacio o el botón cuando el
+          indicador pase por la zona verde. Se requieren {REQUIRED_HITS} aciertos.
         </p>
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide inicio vs. final</h2>
-          <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            Inicio es el promedio de precisión del primer tercio de compresiones
-            intentadas. Final es el promedio del último tercio. Así se evalúa si
-            reconoces mejor la zona correcta conforme avanza el caso.
-          </p>
-        </div>
-        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula la puntuación</h2>
-          <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
+      </BriefingCard>
+      <BriefingCard title="⚡ Toma de Decisiones Críticas" variant="critical">
+        <p>
+          El mayor peso recae en la primera decisión: animar a toser cuando la
+          obstrucción es parcial o aplicar la maniobra cuando es grave. Una
+          intervención innecesaria ante una persona que todavía tose se
+          considera un error crítico y recibe la penalización máxima.
+        </p>
+      </BriefingCard>
+      <BriefingCard title="🎯 Puntuación" variant="score">
+        <p>
             La puntuación va de 0 a 100: 40% decisión inicial, 40% precisión al
             aplicar la compresión en la zona correcta y 20% rapidez. Si aplicas
             una maniobra cuando la persona todavía tose, se marca un error crítico y
             la puntuación cae a 0.
-          </p>
-        </div>
-        <MedicalDisclaimer />
-        <ClinicalEvidenceDisclosure moduleKey="choking_express" />
-        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
-          <button
-            className="h-12 touch-manipulation select-none rounded-md bg-cyan-600 px-5 text-sm font-bold text-white transition hover:bg-cyan-700"
-            onClick={onStart}
-            type="button"
-          >
-            Entendido, iniciar simulación
-          </button>
-          <VideoTutorialModal title="Video tutorial Heimlich" videoId="lsrrkUnf_JM" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Metric({ label, value }) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
-      <p className="mt-1 text-xl font-bold text-slate-950 dark:text-white">{value}</p>
-    </div>
+        </p>
+      </BriefingCard>
+    </GameBriefingLayout>
   );
 }
 
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section animate={{ opacity: 1, y: 0 }} className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8" initial={{ opacity: 0, y: 18 }}>
-        <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
-          <BookOpen aria-hidden="true" className="h-4 w-4" />
-          Retroalimentación clínica
-        </p>
-        <h2 className="mt-1 text-2xl font-bold">
-          {results.criticalError ? 'Decisión crítica revisada' : 'Práctica completada'}
-        </h2>
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <Metric label="Inicial" value={`${results.initialPrecision}%`} />
-          <Metric label="Final" value={`${results.finalPrecision}%`} />
-          <Metric label="Decisión" value={`${results.knowledgeDecision}%`} />
-          <Metric label="Mecánica" value={`${results.mechanicalPrecision}%`} />
-          <Metric label="Tiempo" value={`${results.timeResponse}%`} />
-          <Metric label="Puntuación" value={results.score} />
-        </div>
-        <p className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">{results.note}</p>
-        <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-          <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
-          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
-          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
-        </div>
-        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
-          <button
-            className="h-12 w-full touch-manipulation select-none rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto"
-            onClick={onExit}
-            type="button"
-          >
-            Salir al dashboard
-          </button>
-          <button
-            className="h-12 w-full touch-manipulation select-none rounded-md bg-cyan-600 px-4 text-sm font-semibold text-white transition hover:bg-cyan-700 sm:w-auto"
-            onClick={onRestart}
-            type="button"
-          >
-            Nuevo caso
-          </button>
-        </div>
-      </motion.section>
-    </div>
+    <GameResultsModal
+      metrics={[
+        { label: 'Inicial', value: `${results.initialPrecision}%` },
+        { label: 'Final', value: `${results.finalPrecision}%` },
+        { label: 'Decisión', value: `${results.knowledgeDecision}%` },
+        { label: 'Mecánica', value: `${results.mechanicalPrecision}%` },
+        { label: 'Tiempo', value: `${results.timeResponse}%` },
+        { label: 'Puntuación', value: results.score },
+      ]}
+      onExit={onExit}
+      onRestart={onRestart}
+      restartLabel="Nuevo caso"
+      saveError={saveError}
+      saveState={saveState}
+      score={results.score}
+      title={results.criticalError ? 'Decisión crítica revisada' : 'Práctica completada'}
+    >
+      <p className="mt-4 break-words rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm leading-6 text-cyan-100 md:text-base">
+        {results.note}
+      </p>
+    </GameResultsModal>
   );
 }

@@ -3,21 +3,19 @@ import { motion } from 'framer-motion';
 import {
   Activity,
   ArrowLeft,
-  BookOpen,
   HeartPulse,
   Monitor,
   Music,
   Play,
   RotateCcw,
-  Save,
   Volume2,
   VolumeX,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
-import VideoTutorialModal from '../common/VideoTutorialModal';
-import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
+import GameBriefingLayout, { BriefingCard } from '../common/GameBriefingLayout';
+import Metric from '../common/GameMetric';
+import GameResultsModal from '../common/GameResultsModal';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -815,59 +813,37 @@ export default function RcpHero() {
 
 function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, selectedTrackId }) {
   const selectedTrack = cprPlaylist.find((track) => track.id === selectedTrackId) ?? cprPlaylist[0];
+  const handleStart = () => onStart();
 
   return (
-    <section className="grid flex-1 place-items-center py-10">
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-slate-900 dark:text-white"
-        initial={{ opacity: 0, y: 16 }}
-        transition={{ duration: 0.22 }}
-      >
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">
-          Briefing médico
+    <GameBriefingLayout
+      evidenceKey="rcp_hero"
+      onStart={handleStart}
+      title="RCP Hero"
+      videoId="O1AOt_s1NzM"
+      videoTitle="Video tutorial RCP"
+    >
+      <BriefingCard title="📖 Instrucciones" variant="instructions">
+        <p>
+          Escucha la pista y presiona la barra espaciadora cuando el anillo se
+          cierre. En celular, toca Comprimir al mismo ritmo. La AHA recomienda
+          100-120 compresiones por minuto. Este ejercicio mide ritmo, no
+          profundidad ni retroceso torácico físico.
         </p>
-        <h1 className="mt-2 text-3xl font-bold">RCP Hero</h1>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-            <h2 className="font-bold">Por qué importa</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-              La AHA recomienda 100-120 compresiones por minuto porque ese
-              ritmo ayuda a mover sangre cuando el corazón no lo está logrando
-              por sí solo.
-            </p>
-          </div>
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-            <h2 className="font-bold">Instrucciones</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
-              En computadora: escucha la pista y presiona la barra espaciadora
-              cuando el anillo se cierre. En celular: toca el botón Comprimir al
-              mismo ritmo. Nota: Las compresiones reales deben tener una
-              profundidad de 5 a 6 cm.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 rounded-md border border-rose-200 bg-rose-50 p-4 dark:border-rose-300/30 dark:bg-rose-400/10">
-          <h2 className="font-bold text-rose-900 dark:text-rose-100">Prueba de resistencia</h2>
-          <p className="mt-2 text-sm leading-6 text-rose-800 dark:text-rose-100">
-            A los 2 minutos los brazos empiezan a cansarse. Mantener el ritmo
-            de la canción elegida, dentro del rango 100-120 BPM, muestra si tu
-            ritmo aguanta cuando la adrenalina y la fatiga aparecen.
-          </p>
-        </div>
-        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-300/30 dark:bg-amber-400/10">
-          <h2 className="font-bold text-amber-950 dark:text-amber-100">Nota clínica</h2>
-          <p className="mt-2 text-sm leading-6 text-amber-900 dark:text-amber-100">
-            Este ejercicio mide el ritmo de compresiones. No evalúa la
-            profundidad ni el retroceso torácico físico real.
-          </p>
-        </div>
-        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <label className="text-sm font-bold text-emerald-950 dark:text-emerald-100" htmlFor="rcp-duration">
+      </BriefingCard>
+      <BriefingCard title="⏱️ Inicio vs. Final" variant="progress">
+        <p>
+          Inicio es tu precisión promedio en los primeros 10 segundos. Final
+          es tu precisión promedio en los últimos 10 segundos de la duración
+          elegida. Así se evalúa si mantienes el ritmo pese a la fatiga.
+        </p>
+      </BriefingCard>
+      <BriefingCard title="Duración de la simulación">
+          <label className="text-sm font-bold text-white" htmlFor="rcp-duration">
             Duración de la simulación
           </label>
           <select
-            className="mt-3 h-11 w-full rounded-md border border-emerald-300 bg-white px-3 text-sm font-semibold text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-emerald-950"
+            className="mt-3 h-11 w-full rounded-xl border border-slate-600 bg-slate-950 px-3 text-sm font-semibold text-white outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
             id="rcp-duration"
             onChange={(event) => onDurationChange(Number(event.target.value))}
             value={durationMs}
@@ -878,17 +854,17 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
               </option>
             ))}
           </select>
-          <p className="mt-2 text-xs leading-5 text-emerald-800 dark:text-emerald-100">
+          <p className="mt-2 break-words text-xs leading-5 text-slate-300">
             Practica rápido para probar cambios, o usa 120 segundos para simular
             el ciclo completo recomendado antes de cambiar de reanimador.
           </p>
-        </div>
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <label className="text-sm font-bold text-cyan-950 dark:text-cyan-100" htmlFor="rcp-track">
+      </BriefingCard>
+      <BriefingCard title="Canción guía">
+          <label className="text-sm font-bold text-white" htmlFor="rcp-track">
             Canción guía para memoria muscular
           </label>
           <select
-            className="mt-3 h-11 w-full rounded-md border border-cyan-300 bg-white px-3 text-sm font-semibold text-slate-950 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-slate-950 dark:text-white dark:focus:ring-cyan-950"
+            className="mt-3 h-11 w-full rounded-xl border border-slate-600 bg-slate-950 px-3 text-sm font-semibold text-white outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
             id="rcp-track"
             onChange={(event) => onTrackChange(event.target.value)}
             value={selectedTrackId}
@@ -899,118 +875,48 @@ function Briefing({ durationMs, onDurationChange, onStart, onTrackChange, select
               </option>
             ))}
           </select>
-          <p className="mt-2 text-xs leading-5 text-cyan-900 dark:text-cyan-100">
+          <p className="mt-2 break-words text-xs leading-5 text-slate-300">
             Esta pista ajusta automáticamente el ritmo objetivo a {selectedTrack.bpm} BPM,
             equivalente a {roundMetric(60000 / selectedTrack.bpm)} ms por compresión.
           </p>
-        </div>
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide el inicio vs. el final</h2>
-          <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
-            Inicio es tu precisión promedio en los primeros 10 segundos. Final
-            es tu precisión promedio en los últimos 10 segundos de la duración
-            elegida. Así vemos si tu ritmo mejora o se mantiene con la práctica.
-          </p>
-        </div>
-        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/30 dark:bg-emerald-400/10">
-          <h2 className="font-bold text-emerald-950 dark:text-emerald-100">Cómo se calcula la puntuación</h2>
-          <p className="mt-2 text-sm leading-6 text-emerald-900 dark:text-emerald-100">
+      </BriefingCard>
+      <BriefingCard title="🎯 Puntuación" variant="score">
+          <p>
             La puntuación va de 0 a 100 y depende solo de tu ejecución: 65% precisión
             al caer cerca del latido ideal y 35% ritmo promedio cercano a
             100-120 BPM. Los fallos, clics fuera de tiempo o pulsaciones tipo
             spam restan puntos.
           </p>
-        </div>
-        <MedicalDisclaimer />
-        <ClinicalEvidenceDisclosure moduleKey="rcp_hero" />
-        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
-          <button
-            className="flex h-12 w-full items-center justify-center rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700 sm:w-auto"
-            onClick={onStart}
-            type="button"
-          >
-            Entendido, iniciar simulación
-          </button>
-          <VideoTutorialModal title="Video tutorial RCP" videoId="O1AOt_s1NzM" />
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function Metric({ label, value }) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-        {label}
-      </p>
-      <p className="mt-1 text-2xl font-bold text-slate-950 dark:text-white">{value}</p>
-    </div>
+      </BriefingCard>
+    </GameBriefingLayout>
   );
 }
 
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
-        initial={{ opacity: 0, y: 18, scale: 0.98 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700">
-              <BookOpen aria-hidden="true" className="h-4 w-4" />
-              Retroalimentación clínica
-            </p>
-            <h2 className="mt-1 text-2xl font-bold">Sesión RCP Hero completada</h2>
-          </div>
-          <div className="rounded-md bg-rose-50 px-3 py-2 text-right dark:bg-rose-400/10">
-            <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Puntuación</p>
-            <p className="text-2xl font-bold text-rose-700 dark:text-rose-100">{results.score}</p>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <Metric label="Precisión inicial" value={`${results.initialPrecision}%`} />
-          <Metric label="Precisión final" value={`${results.finalPrecision}%`} />
-          <Metric label="Ritmo promedio" value={`${results.averageBPM} BPM`} />
-          <Metric label="Fallos" value={results.errorsCount} />
-          <Metric label="Spam" value={results.spamAttempts} />
-          <Metric label="Puntuación" value={results.score} />
-        </div>
-
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <p className="text-sm font-bold text-cyan-950 dark:text-cyan-100">Nota adicional</p>
-          <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">{results.note}</p>
-        </div>
-
-        <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-          <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
-          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
-          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
-        </div>
-
-        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
-          <button
-            className="flex h-12 w-full touch-manipulation select-none items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto"
-            onClick={onExit}
-            type="button"
-          >
-            Salir al Dashboard
-          </button>
-          <button
-            className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700 sm:w-auto"
-            onClick={onRestart}
-            type="button"
-          >
-            <RotateCcw aria-hidden="true" className="h-4 w-4" />
-            Reintentar
-          </button>
-        </div>
-      </motion.section>
-    </div>
+    <GameResultsModal
+      metrics={[
+        { label: 'Precisión inicial', value: `${results.initialPrecision}%` },
+        { label: 'Precisión final', value: `${results.finalPrecision}%` },
+        { label: 'Ritmo promedio', value: `${results.averageBPM} BPM` },
+        { label: 'Fallos', value: results.errorsCount },
+        { label: 'Spam', value: results.spamAttempts },
+        { label: 'Puntuación', value: results.score },
+      ]}
+      onExit={onExit}
+      onRestart={onRestart}
+      restartLabel="Reintentar"
+      saveError={saveError}
+      saveState={saveState}
+      score={results.score}
+      title="Sesión RCP Hero completada"
+    >
+      <div className="mt-4 rounded-xl border border-cyan-300/20 bg-cyan-400/10 p-4">
+        <p className="text-sm font-bold text-cyan-100">Nota adicional</p>
+        <p className="mt-2 break-words text-sm leading-6 text-cyan-100 md:text-base">
+          {results.note}
+        </p>
+      </div>
+    </GameResultsModal>
   );
 }

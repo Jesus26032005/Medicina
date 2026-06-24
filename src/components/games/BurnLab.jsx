@@ -4,14 +4,12 @@ import {
   Activity,
   ArrowLeft,
   BadgeCheck,
-  BookOpen,
   Brush,
   Droplets,
   Flame,
   HelpCircle,
   Package,
   RotateCcw,
-  Save,
   ShieldAlert,
   Snowflake,
   Sun,
@@ -19,10 +17,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import MedicalDisclaimer from '../common/MedicalDisclaimer';
 import ThemeToggle from '../common/ThemeToggle';
-import VideoTutorialModal from '../common/VideoTutorialModal';
-import ClinicalEvidenceDisclosure from '../common/ClinicalEvidenceDisclosure';
+import GameBriefingLayout, { BriefingCard } from '../common/GameBriefingLayout';
+import Metric from '../common/GameMetric';
+import GameResultsModal from '../common/GameResultsModal';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -366,6 +364,14 @@ function calculateUniversalScore({ knowledgeDecision, mechanicalPrecision, timeR
   );
 }
 
+function calculateToolPrecision(correctApplied, totalAttempts) {
+  if (!totalAttempts) {
+    return 0;
+  }
+
+  return Math.round((correctApplied / totalAttempts) * 100);
+}
+
 function scrollToGameTop() {
   window.scrollTo({ behavior: 'auto', left: 0, top: 0 });
   document.documentElement.scrollTop = 0;
@@ -406,7 +412,7 @@ export default function BurnLab() {
     () => usedTools.filter((toolId) => correctToolIds.includes(toolId)).length,
     [correctToolIds, usedTools]
   );
-  const precision = Math.round((correctApplied / correctToolIds.length) * 100);
+  const precision = calculateToolPrecision(correctApplied, usedTools.length);
 
   const persistSession = useCallback(
     async (nextResults, finalActions) => {
@@ -462,7 +468,7 @@ export default function BurnLab() {
       const nextCorrectApplied = nextUsedTools.filter((toolId) =>
         correctToolIds.includes(toolId)
       ).length;
-      const nextPrecision = Math.round((nextCorrectApplied / correctToolIds.length) * 100);
+      const nextPrecision = calculateToolPrecision(nextCorrectApplied, nextUsedTools.length);
       const severityCorrect = selectedSeverity === caseData.severity;
       const severityScore = severityCorrect ? 100 : selectedSeverity ? 0 : 40;
       const completionTimeSeconds = Math.max(
@@ -545,7 +551,7 @@ export default function BurnLab() {
     const nextCorrectApplied = nextUsedTools.filter((nextToolId) =>
       correctToolIds.includes(nextToolId)
     ).length;
-    const nextPrecision = Math.round((nextCorrectApplied / correctToolIds.length) * 100);
+    const nextPrecision = calculateToolPrecision(nextCorrectApplied, nextUsedTools.length);
     const severityCorrect = selectedSeverity === caseData.severity;
     const severityScore = severityCorrect ? 100 : selectedSeverity ? 0 : 40;
     const timeResponse = Math.round(
@@ -629,6 +635,28 @@ export default function BurnLab() {
     setShowTutorial(false);
   }
 
+  useEffect(() => {
+    function handleSpaceKey(event) {
+      const isSpaceKey = event.code === 'Space' || event.key === ' ';
+
+      if (!isSpaceKey) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (event.repeat || showBriefing || results || !showTutorial) {
+        return;
+      }
+
+      dismissTutorial();
+    }
+
+    window.addEventListener('keydown', handleSpaceKey, { passive: false });
+
+    return () => window.removeEventListener('keydown', handleSpaceKey);
+  }, [results, showBriefing, showTutorial]);
+
   function showHint() {
     setToolFeedback(`Pista: ${caseData.hint}`);
   }
@@ -669,7 +697,7 @@ export default function BurnLab() {
         </header>
 
         {showBriefing ? (
-          <Briefing caseData={caseData} onStart={startSimulation} />
+          <Briefing onStart={startSimulation} />
         ) : (
           <div className="relative grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_380px]">
             {showTutorial ? (
@@ -919,105 +947,62 @@ function PatientVector({ visual }) {
   );
 }
 
-function Briefing({ caseData, onStart }) {
+function Briefing({ onStart }) {
+  const handleStart = () => onStart();
+
   return (
-    <section className="grid flex-1 place-items-center py-10">
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="isolate w-full max-w-3xl translate-z-0 transform-gpu rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-slate-900 dark:text-white"
-        initial={{ opacity: 0, y: 16 }}
-        transition={{ duration: 0.22 }}
-      >
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">
-          Briefing médico
-        </p>
-        <h1 className="mt-2 text-3xl font-bold">{caseData.title}</h1>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-            <h2 className="font-bold">Qué pasó</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">{caseData.mechanism}</p>
-            <p className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 p-3 text-sm leading-6 text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-400/10 dark:text-cyan-100">
-              <span className="font-bold">Aspecto: </span>
-              {caseData.woundDescription}
-            </p>
-          </div>
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-            <h2 className="font-bold">Instrucciones</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">
+    <GameBriefingLayout
+      evidenceKey="burn_lab"
+      onStart={handleStart}
+      title="Burn Lab"
+      videoId="cECkv6xUuTY"
+      videoTitle="Video tutorial quemaduras"
+    >
+      <BriefingCard title="📖 Instrucciones" variant="instructions">
+        <p>
               En computadora: haz clic en la herramienta y aplícala al caso. En
               celular: toca cada opción de la bandeja médica. Elige solo lo que
               clasifica la gravedad y luego lo que enfría, limpia o protege;
               evita mitos que atrapan calor, ensucian o activan reacciones raras.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 rounded-md border border-cyan-200 bg-cyan-50 p-4 dark:border-cyan-300/30 dark:bg-cyan-400/10">
-          <h2 className="font-bold text-cyan-950 dark:text-cyan-100">Cómo se mide el resultado</h2>
-          <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">
+        </p>
+      </BriefingCard>
+      <BriefingCard title="🔬 Mecánica de Diagnóstico" variant="mechanics">
+        <p>
+          La evaluación se basa en reconocer de inmediato el agente causante,
+          clasificar la gravedad y elegir la acción inicial segura. No utiliza
+          una comparación de rendimiento continuo entre inicio y final; cada
+          herramienta se valida por su pertinencia clínica para el caso.
+        </p>
+      </BriefingCard>
+      <BriefingCard title="🎯 Puntuación" variant="score">
+        <p>
             La puntuación final queda entre 0 y 100: 40% clasificar bien la gravedad
             de la quemadura, 40% elegir instrumentos seguros y 20% responder sin
             tardar demasiado. Los mitos o elecciones peligrosas bajan el
             resultado.
-          </p>
-        </div>
-        <MedicalDisclaimer />
-        <ClinicalEvidenceDisclosure moduleKey="burn_lab" />
-        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-3">
-          <button
-            className="flex h-12 w-full items-center justify-center rounded-md bg-rose-600 px-5 text-sm font-bold text-white transition hover:bg-rose-700 sm:w-auto"
-            onClick={onStart}
-            type="button"
-          >
-            Entendido, iniciar simulación
-          </button>
-          <VideoTutorialModal title="Video tutorial quemaduras" videoId="cECkv6xUuTY" />
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function Metric({ label, value }) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-        {label}
-      </p>
-      <p className="mt-1 text-2xl font-bold text-slate-950 dark:text-white">{value}</p>
-    </div>
+        </p>
+      </BriefingCard>
+    </GameBriefingLayout>
   );
 }
 
 function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-6 backdrop-blur-sm">
-      <motion.section
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="isolate max-h-[85dvh] w-full max-w-xl translate-z-0 transform-gpu overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-4 text-slate-950 shadow-2xl dark:border-white/10 dark:bg-slate-900 dark:text-white md:p-8"
-        initial={{ opacity: 0, y: 18, scale: 0.98 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-cyan-700">
-              <BookOpen aria-hidden="true" className="h-4 w-4" />
-              Retroalimentación clínica
-            </p>
-            <h2 className="mt-1 text-2xl font-bold">{results.caseTitle}</h2>
-          </div>
-          <div className="rounded-md bg-rose-50 px-3 py-2 text-right dark:bg-rose-400/10">
-            <p className="text-xs font-semibold text-rose-700 dark:text-rose-200">Puntuación</p>
-            <p className="text-2xl font-bold text-rose-700 dark:text-rose-100">{results.score}</p>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <Metric label="Precisión final" value={`${results.precision}%`} />
-          <Metric label="Fallos" value={results.errorsCount} />
-          <Metric label="Tiempo" value={`${results.completionTimeSeconds}s`} />
-          <Metric label="Gravedad" value={severityLabels[results.severitySelected] ?? 'Sin clasificar'} />
-        </div>
-
+    <GameResultsModal
+      metrics={[
+        { label: 'Precisión final', value: `${results.precision}%` },
+        { label: 'Fallos', value: results.errorsCount },
+        { label: 'Tiempo', value: `${results.completionTimeSeconds}s` },
+        { label: 'Gravedad', value: severityLabels[results.severitySelected] ?? 'Sin clasificar' },
+      ]}
+      onExit={onExit}
+      onRestart={onRestart}
+      restartLabel="Nuevo caso"
+      saveError={saveError}
+      saveState={saveState}
+      score={results.score}
+      title="Burn Lab completado"
+    >
         <div className={`mt-4 rounded-md border p-4 text-sm ${
           results.severityCorrect
             ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
@@ -1031,32 +1016,6 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
           <p className="text-sm font-bold text-cyan-950 dark:text-cyan-100">Nota adicional</p>
           <p className="mt-2 text-sm leading-6 text-cyan-900 dark:text-cyan-100">{results.note}</p>
         </div>
-
-        <div className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-          <Save aria-hidden="true" className="h-4 w-4" />
-          {saveState === 'saving' ? 'Guardando tu progreso...' : null}
-          {saveState === 'saved' ? 'Progreso guardado en tu expediente.' : null}
-          {saveState === 'error' ? `No se pudo registrar el progreso: ${saveError}` : null}
-        </div>
-
-        <div className="mt-5 flex flex-col items-center justify-center gap-2 md:flex-row md:justify-end md:gap-4">
-          <button
-            className="flex h-12 w-full touch-manipulation select-none items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 sm:w-auto"
-            onClick={onExit}
-            type="button"
-          >
-            Salir al Dashboard
-          </button>
-          <button
-            className="flex h-12 w-full touch-manipulation select-none items-center justify-center gap-2 rounded-md bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700 sm:w-auto"
-            onClick={onRestart}
-            type="button"
-          >
-            <ShieldAlert aria-hidden="true" className="h-4 w-4" />
-            Nuevo caso
-          </button>
-        </div>
-      </motion.section>
-    </div>
+    </GameResultsModal>
   );
 }
