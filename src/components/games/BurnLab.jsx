@@ -972,6 +972,9 @@ function Briefing({ onStart }) {
           clasificar la gravedad y elegir la acción inicial segura. No utiliza
           una comparación de rendimiento continuo entre inicio y final; cada
           herramienta se valida por su pertinencia clínica para el caso.
+          Por compatibilidad con la telemetría general, la precisión inicial se
+          registra como 0%, ya que en Burn Lab no existe una medición previa.
+          Este valor no representa un fallo del usuario.
         </p>
       </BriefingCard>
       <BriefingCard title="🎯 Puntuación" variant="score">
@@ -1003,6 +1006,14 @@ function ResultsModal({ onExit, onRestart, results, saveError, saveState }) {
       score={results.score}
       title="Burn Lab completado"
     >
+        <div className="mt-4 rounded-xl border border-purple-300/30 bg-purple-400/10 p-4 text-sm text-purple-100">
+          <p className="font-bold">Nota sobre la precisión inicial</p>
+          <p className="mt-2 leading-6">
+            Burn Lab registra el inicio como 0% porque no utiliza una fase de
+            medición inicial. Es un valor técnico de referencia y no un error
+            del usuario.
+          </p>
+        </div>
         <div className={`mt-4 rounded-md border p-4 text-sm ${
           results.severityCorrect
             ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-400/10 dark:text-emerald-100'
