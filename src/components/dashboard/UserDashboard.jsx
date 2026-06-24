@@ -513,10 +513,6 @@ Reglas:
             <ShieldCheck aria-hidden="true" className="h-4 w-4" />
             Fecha de última revisión médica clínica: {LAST_MEDICAL_REVIEW}
           </div>
-          <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 dark:border-amber-300/30 dark:bg-amber-400/10 dark:text-amber-100">
-            <BookOpenCheck aria-hidden="true" className="h-4 w-4" />
-            Proyecto en proceso de aval clínico y evaluación académica.
-          </div>
         </div>
 
         <section className="rounded-lg border border-cyan-200 bg-cyan-50 p-5 shadow-sm dark:border-cyan-300/20 dark:bg-cyan-300/10">
